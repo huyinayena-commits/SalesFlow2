@@ -1,0 +1,8 @@
+name = "salesflow2-api"
+main = "src/index.js"
+compatibility_date = "2026-08-27"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "salesflow2"
+database_id = "38eaa69b-b320-4bb8-b4c6-9a89190ee997"
