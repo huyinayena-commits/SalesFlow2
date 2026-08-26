@@ -1,6 +1,8 @@
 name = "salesflow2"
 main = "src/index.js"
 compatibility_date = "2026-08-26"
+[assets]
+directory = "./public"
 
 [[d1_databases]]
 binding = "DB"

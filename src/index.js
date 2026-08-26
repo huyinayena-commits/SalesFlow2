@@ -114,7 +114,7 @@ export default {
   async fetch(request, env) {
     if (request.method === "OPTIONS") return new Response(null, { headers: JSON_HEADERS });
     const url = new URL(request.url);
-    if (!url.pathname.startsWith("/api/")) return json({ service: "salesflow2-api" });
+    if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
 
     try {
       if (url.pathname === "/api/month" && request.method === "GET") {
