@@ -397,6 +397,7 @@
     var viewYear=currentYear;
     var viewMonth=currentMonthIndex;
     var saveTimer=null;
+    var syncTimer=null;
     var toastTimer=null;
     var lastSettingsFocus=null;
     var names=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -451,6 +452,41 @@
       return{version:1,months:{}};
     }
 
+    var API_BASE=window.location.origin;
+
+    async function loadRemoteMonth(year,month){
+      var key=monthKey(year,month);
+      try{
+        var response=await fetch(API_BASE+"/api/month?month="+encodeURIComponent(key),{cache:"no-store"});
+        if(!response.ok)throw new Error("HTTP "+response.status);
+        var remote=await response.json();
+        var data=ensureMonth(year,month);
+        data.targetSpd=remote.targetSpd||"";
+        data.targetAkm=remote.targetAkm||"";
+        (remote.days||[]).forEach(function(row){
+          if(validDayNumber(year,month,row.day)){
+            data.salesNet[row.day-1]=row.salesNet===null?"":row.salesNet;
+            data.totalStruk[row.day-1]=row.totalStruk===null?"":row.totalStruk;
+          }
+        });
+        try{localStorage.setItem(KEY,JSON.stringify(store))}catch(error){}
+        renderMonth(true);
+        elements.saveState.textContent="Tersimpan di D1";
+      }catch(error){console.warn("D1 tidak dapat dibaca, memakai data lokal.",error)}
+    }
+
+    function validDayNumber(year,month,day){return Number.isInteger(day)&&day>=1&&day<=dayCount(year,month)}
+
+    function syncRemoteMonth(){
+      var key=monthKey(viewYear,viewMonth),data=ensureMonth(viewYear,viewMonth);
+      var days=data.salesNet.map(function(value,index){return{day:index+1,salesNet:value===""?null:value,totalStruk:data.totalStruk[index]===""?null:data.totalStruk[index]}});
+      fetch(API_BASE+"/api/month",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({month:key,targetSpd:data.targetSpd===""?0:data.targetSpd,targetAkm:data.targetAkm===""?0:data.targetAkm,days:days})})
+        .then(function(response){if(!response.ok)throw new Error("HTTP "+response.status);elements.saveState.textContent="Tersimpan di D1";elements.saveState.classList.remove("saving")})
+        .catch(function(error){console.warn("D1 tidak dapat disimpan.",error);elements.saveState.textContent="Tersimpan lokal (D1 gagal)";elements.saveState.classList.remove("saving")});
+    }
+
+    function scheduleRemoteSync(){clearTimeout(syncTimer);syncTimer=setTimeout(syncRemoteMonth,700)}
+
     function applyTheme(mode,persist){
       themeMode=mode==='dark'?'dark':'light';
       document.documentElement.setAttribute('data-theme',themeMode);
@@ -472,6 +508,7 @@
         elements.saveState.classList.add('saving');
         clearTimeout(saveTimer);
         saveTimer=setTimeout(function(){elements.saveState.textContent='Tersimpan';elements.saveState.classList.remove('saving')},450);
+        scheduleRemoteSync();
       }catch(error){elements.saveState.textContent='Gagal tersimpan';elements.saveState.classList.remove('saving')}
     }
 
@@ -636,7 +673,7 @@
       });
     }
 
-    function renderMonth(){
+    function renderMonth(skipRemote){
       var data=ensureMonth(viewYear,viewMonth);
       var count=dayCount(viewYear,viewMonth);
       var label=names[viewMonth]+' '+viewYear;
@@ -650,6 +687,7 @@
       elements.nextMonth.disabled=viewYear===currentYear&&viewMonth===currentMonthIndex;
       renderData(data);
       paintCalculations();
+      if(!skipRemote)loadRemoteMonth(viewYear,viewMonth);
     }
 
     function changeMonth(offset){
