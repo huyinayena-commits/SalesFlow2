@@ -1,7 +1,7 @@
 PRAGMA foreign_keys = ON;
 
 CREATE TABLE IF NOT EXISTS month_targets (
-  month TEXT PRIMARY KEY CHECK (month GLOB '####-##'),
+  month TEXT PRIMARY KEY CHECK (month LIKE '____-__'),
   target_spd INTEGER NOT NULL DEFAULT 0 CHECK (target_spd >= 0),
   target_akm INTEGER NOT NULL DEFAULT 0 CHECK (target_akm >= 0),
   created_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
