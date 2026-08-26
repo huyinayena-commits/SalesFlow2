@@ -388,6 +388,7 @@
     var KEY='sales-harian-data-v1';
     var VIEW_KEY='sales-harian-view-v1';
     var THEME_KEY='sales-harian-theme-v1';
+    var AUTH_KEY='salesflow2-api-password';
     var themeMode=loadThemeMode();
     document.documentElement.setAttribute('data-theme',themeMode);
     document.documentElement.style.colorScheme=themeMode;
@@ -454,10 +455,31 @@
 
     var API_BASE=window.location.origin;
 
+    function apiHeaders(options){
+      var headers=Object.assign({},options&&options.headers||{});
+      var password='';
+      try{password=localStorage.getItem(AUTH_KEY)||''}catch(error){}
+      if(password)headers.Authorization='Bearer '+password;
+      return headers;
+    }
+
+    async function apiFetch(url,options){
+      var request=Object.assign({},options||{}, {headers:apiHeaders(options)});
+      var response=await fetch(url,request);
+      if(response.status===401){
+        var password=window.prompt('Masukkan password aplikasi:');
+        if(!password)throw new Error('Password diperlukan.');
+        try{localStorage.setItem(AUTH_KEY,password)}catch(error){}
+        request.headers=apiHeaders(options);
+        response=await fetch(url,request);
+      }
+      return response;
+    }
+
     async function loadRemoteMonth(year,month){
       var key=monthKey(year,month);
       try{
-        var response=await fetch(API_BASE+"/api/month?month="+encodeURIComponent(key),{cache:"no-store"});
+        var response=await apiFetch(API_BASE+"/api/month?month="+encodeURIComponent(key),{cache:"no-store"});
         if(!response.ok)throw new Error("HTTP "+response.status);
         var remote=await response.json();
         var data=ensureMonth(year,month);
@@ -480,7 +502,7 @@
     function syncRemoteMonth(){
       var key=monthKey(viewYear,viewMonth),data=ensureMonth(viewYear,viewMonth);
       var days=data.salesNet.map(function(value,index){return{day:index+1,salesNet:value===""?null:value,totalStruk:data.totalStruk[index]===""?null:data.totalStruk[index]}});
-      fetch(API_BASE+"/api/month",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({month:key,targetSpd:data.targetSpd===""?0:data.targetSpd,targetAkm:data.targetAkm===""?0:data.targetAkm,days:days})})
+      apiFetch(API_BASE+"/api/month",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({month:key,targetSpd:data.targetSpd===""?0:data.targetSpd,targetAkm:data.targetAkm===""?0:data.targetAkm,days:days})})
         .then(function(response){if(!response.ok)throw new Error("HTTP "+response.status);elements.saveState.textContent="Tersimpan di D1";elements.saveState.classList.remove("saving")})
         .catch(function(error){console.warn("D1 tidak dapat disimpan.",error);elements.saveState.textContent="Tersimpan lokal (D1 gagal)";elements.saveState.classList.remove("saving")});
     }

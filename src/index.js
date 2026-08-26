@@ -116,6 +116,9 @@ export default {
     const url = new URL(request.url);
     if (!url.pathname.startsWith("/api/")) return env.ASSETS.fetch(request);
 
+    if (!env.APP_PASSWORD) return error("APP_PASSWORD belum dikonfigurasi.", 503);
+    if (request.headers.get("Authorization") !== "Bearer "+env.APP_PASSWORD) return error("Password diperlukan.", 401);
+
     try {
       if (url.pathname === "/api/month" && request.method === "GET") {
         const month = url.searchParams.get("month");
