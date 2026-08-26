@@ -1,0 +1,834 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="description" content="Dashboard Sales Harian mobile untuk Sales NET, Struk, SPD, STD, APC, achievement, dan growth otomatis.">
+  <meta name="theme-color" id="themeColor" content="#f4f6f9">
+  <title>Sales Harian</title>
+  <style>
+    :root{
+      color-scheme:light;
+      --bg:#f4f6f9;
+      --surface:#ffffff;
+      --surface-2:#f8fafc;
+      --ink:#182230;
+      --muted:#6b7789;
+      --line:#e1e6ee;
+      --blue:#245a87;
+      --blue-soft:#eaf2f9;
+      --green:#4f7f36;
+      --green-soft:#edf5e8;
+      --orange:#c45b12;
+      --orange-soft:#fdf0e7;
+      --positive:#14764a;
+      --positive-soft:#e7f6ef;
+      --negative:#c33d46;
+      --negative-soft:#fdecef;
+      --focus:#4c8fd0;
+      --track:#e9edf3;
+      --day-bg:#f0f3f7;
+      --sales-cell:#fbfdff;
+      --struk-cell:#fcfefb;
+      --apc-cell:#fffdfb;
+      --scrim:rgba(11,18,27,.52);
+      --shadow:0 8px 24px rgba(24,34,48,.07);
+    }
+
+    html[data-theme="dark"]{
+      color-scheme:dark;
+      --bg:#0d131b;
+      --surface:#151d27;
+      --surface-2:#1a2430;
+      --ink:#edf2f7;
+      --muted:#9aa8ba;
+      --line:#2a3747;
+      --blue:#4b87b9;
+      --blue-soft:#172c3e;
+      --green:#76a65c;
+      --green-soft:#203422;
+      --orange:#e17d36;
+      --orange-soft:#3b271c;
+      --positive:#58c58c;
+      --positive-soft:#193729;
+      --negative:#ff7b83;
+      --negative-soft:#3d2026;
+      --focus:#70afe8;
+      --track:#202b38;
+      --day-bg:#202b38;
+      --sales-cell:#141f29;
+      --struk-cell:#172219;
+      --apc-cell:#241b16;
+      --scrim:rgba(0,0,0,.7);
+      --shadow:0 10px 28px rgba(0,0,0,.28);
+    }
+
+    *{box-sizing:border-box;min-width:0}
+    html,body{width:100%;max-width:100%;margin:0;overflow-x:clip;background:var(--bg)}
+    body{min-height:100vh;min-height:100dvh;color:var(--ink);font-family:Roboto,Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+    button,input{font:inherit}
+    button{touch-action:manipulation}
+    .app{width:100%;max-width:520px;margin:0 auto;padding:0 10px calc(92px + env(safe-area-inset-bottom))}
+
+    .table-section{position:relative;width:100%}
+    .month-header{position:sticky;top:0;z-index:50;display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;gap:8px;min-height:calc(68px + env(safe-area-inset-top));padding:calc(8px + env(safe-area-inset-top)) 0 8px;background:rgba(244,246,249,.94);border-bottom:1px solid rgba(212,219,228,.85);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+    .nav-button,.month-button{min-height:48px;border:0;border-radius:14px;cursor:pointer}
+    .nav-button{display:grid;place-items:center;width:48px;background:var(--surface);color:var(--blue);box-shadow:0 2px 10px rgba(24,34,48,.08);font-size:30px;font-weight:400;line-height:1}
+    .nav-button:active:not(:disabled){transform:scale(.96);background:var(--track)}
+    .nav-button:disabled{opacity:.32;cursor:not-allowed;box-shadow:none}
+    .month-button{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;padding:4px 10px;background:transparent;color:var(--ink)}
+    .month-button small{color:var(--muted);font-size:10px;font-weight:700;line-height:1.15;letter-spacing:.09em;text-transform:uppercase}
+    .month-button strong{margin-top:3px;font-size:17px;font-weight:850;line-height:1.15;letter-spacing:-.01em}
+    .month-button:active{background:var(--track)}
+    .month-picker{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+    .list-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 4px 9px}
+    .list-heading h1{margin:0;font-size:17px;font-weight:850;letter-spacing:-.02em}
+    .list-heading p{margin:3px 0 0;color:var(--muted);font-size:11px}
+    .save-state{flex:none;color:var(--positive);font-size:10px;font-weight:750}
+    .save-state.saving{color:#9a720d}
+
+    .view-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin:0;padding:3px;border:1px solid var(--line);border-radius:15px;background:var(--track)}
+    .view-button{min-height:44px;border:0;border-radius:11px;background:transparent;color:var(--muted);font-size:12px;font-weight:800;cursor:pointer}
+    .view-button.active{background:var(--surface);color:var(--blue);box-shadow:0 2px 8px rgba(24,34,48,.09)}
+    .view-button:active{transform:scale(.985)}
+    .data-view[hidden]{display:none!important}
+
+    .horizontal-shell{overflow:hidden;width:100%;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
+    .horizontal-scroll{width:100%;max-width:100%;max-height:72svh;overflow:auto;overscroll-behavior:contain;scrollbar-color:#b7c1ce transparent}
+    .horizontal-table{width:1392px;border-collapse:separate;border-spacing:0;table-layout:fixed;font-size:11px}
+    .horizontal-table th,.horizontal-table td{height:44px;padding:5px 7px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--surface);text-align:right;white-space:nowrap}
+    .horizontal-table th:last-child,.horizontal-table td:last-child{border-right:0}
+    .horizontal-table tbody tr:last-child td{border-bottom:0}
+    .horizontal-table thead th{position:sticky;z-index:8;text-align:center;font-weight:850;text-transform:uppercase}
+    .horizontal-table .group-head th{top:0;height:38px;color:#fff;font-size:11px;letter-spacing:.04em}
+    .horizontal-table .group-sales{background:var(--blue)}
+    .horizontal-table .group-struk{background:var(--green)}
+    .horizontal-table .group-apc{background:var(--orange)}
+    .horizontal-table .column-head th{top:38px;height:48px;color:var(--ink);font-size:9px;line-height:1.15}
+    .horizontal-table .column-head small{display:block;margin-top:3px;font-size:7px;font-weight:650;text-transform:none;opacity:.72}
+    .horizontal-table .head-sales{background:var(--blue-soft)}
+    .horizontal-table .head-struk{background:var(--green-soft)}
+    .horizontal-table .head-apc{background:var(--orange-soft)}
+    .horizontal-table .sticky-day{position:sticky;left:0;z-index:6;width:48px;background:var(--day-bg);color:var(--ink);font-weight:900;text-align:center;box-shadow:1px 0 var(--line)}
+    .horizontal-table thead .sticky-day{z-index:12}
+    .horizontal-table .sales-cell{background:var(--sales-cell)}
+    .horizontal-table .struk-cell{background:var(--struk-cell)}
+    .horizontal-table .apc-cell{background:var(--apc-cell)}
+    .horizontal-table tr.today-row td{background-image:linear-gradient(rgba(244,211,109,.12),rgba(244,211,109,.12))}
+    .horizontal-table tr.today-row .sticky-day{background:#f4d36d;color:#5a450c}
+    .horizontal-table .metric-value{display:block;max-width:none;font-size:11px;overflow:visible}
+    .horizontal-table .metric-value.positive,.horizontal-table .metric-value.negative{display:inline-block;float:right}
+    .horizontal-table .table-input{width:100%;height:42px;margin:0;padding:0 5px;border:1px solid transparent;border-radius:8px;outline:0;background:transparent;color:var(--ink);font-size:12px;font-weight:800;text-align:right}
+    .horizontal-table .table-input:focus{border-color:var(--focus);border-bottom:1px solid var(--focus);background:var(--surface);box-shadow:0 0 0 3px rgba(76,143,208,.16)}
+
+    .day-list{display:grid;gap:11px}
+    .day-card{overflow:hidden;width:100%;border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:var(--shadow)}
+    .day-card.today{border-color:#d9b957;box-shadow:0 8px 26px rgba(159,124,23,.12)}
+    .day-header{display:flex;align-items:center;gap:10px;min-height:58px;padding:9px 12px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--surface),var(--surface-2))}
+    .day-number{display:flex;flex:none;flex-direction:column;align-items:center;justify-content:center;width:42px;height:42px;border-radius:13px;background:var(--track);color:var(--ink);line-height:1}
+    .day-number span{font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+    .day-number strong{margin-top:3px;font-size:17px;font-weight:900}
+    .today .day-number{background:#f4d36d;color:#5a450c}
+    .day-date{flex:1}
+    .day-date strong{display:block;font-size:13px;font-weight:800;text-transform:capitalize}
+    .day-date small{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+    .today-chip{display:none;flex:none;padding:6px 8px;border-radius:999px;background:#fff4cf;color:#75590c;font-size:9px;font-weight:850}
+    .today .today-chip{display:block}
+
+    .input-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px 10px 4px}
+    .input-box{display:block;padding:9px 10px 8px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}
+    .input-box.sales-input{border-color:#cdddeb;background:#f5f9fc}
+    .input-box.struk-input{border-color:#d5e4cd;background:#f7faf5}
+    .input-box span{display:block;color:var(--muted);font-size:9px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+    .number-input{width:100%;height:44px;margin-top:2px;padding:0;border:0;outline:0;background:transparent;color:var(--ink);font-size:17px;font-weight:850;text-align:right}
+    .number-input::placeholder{color:#bbc3ce;font-weight:600}
+    .number-input:focus{border-bottom:2px solid var(--focus)}
+
+    .metrics-section{margin:8px 10px 10px;padding:9px;border:1px solid var(--line);border-radius:15px}
+    .metrics-section.sales{background:var(--blue-soft);border-color:#d5e3ef}
+    .metrics-section.struk{background:var(--green-soft);border-color:#d9e8d2}
+    .metrics-section.apc{background:var(--orange-soft);border-color:#f0dacb}
+    .section-label{display:flex;align-items:center;gap:7px;margin:0 2px 8px;color:var(--ink);font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase}
+    .section-label::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--blue)}
+    .struk .section-label::before{background:var(--green)}
+    .apc .section-label::before{background:var(--orange)}
+    .metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+    .metric-item{display:flex;align-items:center;justify-content:space-between;gap:7px;min-height:45px;padding:7px 9px;border:1px solid rgba(132,149,169,.17);border-radius:11px;background:rgba(255,255,255,.82)}
+    .metric-item.full{grid-column:1/-1}
+    .metric-label{color:var(--muted);font-size:9px;font-weight:750;line-height:1.18}
+    .metric-label em{display:block;margin-top:2px;color:#929cac;font-size:8px;font-style:normal;font-weight:650}
+    .metric-value{flex:none;max-width:62%;color:var(--ink);font-size:12px;font-weight:850;text-align:right;overflow-wrap:anywhere}
+    .metric-value.empty{color:#aeb7c4;font-weight:650}
+    .metric-value.positive{padding:4px 6px;border-radius:7px;background:var(--positive-soft);color:var(--positive)}
+    .metric-value.negative{padding:4px 6px;border-radius:7px;background:var(--negative-soft);color:var(--negative)}
+    .metric-value.neutral{color:var(--muted)}
+
+    .targets-section{margin-top:18px;padding:15px 12px 14px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
+    .targets-header{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}
+    .targets-header h2{margin:0;font-size:15px;font-weight:850}
+    .targets-header p{margin:3px 0 0;color:var(--muted);font-size:10px}
+    .target-month{color:var(--muted);font-size:10px;font-weight:750;white-space:nowrap}
+    .target-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .target-card{display:block;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}
+    .target-card span{display:block;color:var(--muted);font-size:9px;font-weight:850;letter-spacing:.04em;text-transform:uppercase}
+    .target-input{width:100%;height:44px;margin-top:3px;padding:0;border:0;border-bottom:2px solid #ccd5e0;outline:0;background:transparent;color:var(--ink);font-size:17px;font-weight:900;text-align:right}
+    .target-input:focus{border-bottom-color:var(--focus)}
+    .target-input::placeholder{color:#b9c1cc}
+
+    .settings-fab{position:fixed;right:max(16px,calc((100vw - 520px)/2 + 16px));bottom:calc(16px + env(safe-area-inset-bottom));z-index:70;display:grid;place-items:center;width:54px;height:54px;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:var(--blue);color:#fff;box-shadow:0 12px 28px rgba(20,49,75,.28);cursor:pointer}
+    .settings-fab:active{transform:scale(.95)}
+    .settings-fab svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .settings-overlay{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;padding-top:env(safe-area-inset-top)}
+    .settings-overlay[hidden]{display:none}
+    .settings-backdrop{position:absolute;inset:0;background:var(--scrim);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+    .settings-panel{position:relative;z-index:1;width:100%;max-width:520px;max-height:92dvh;overflow:auto;overscroll-behavior:contain;border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;background:var(--surface);box-shadow:0 -14px 38px rgba(0,0,0,.18)}
+    .sheet-handle{width:42px;height:5px;margin:9px auto 2px;border-radius:999px;background:var(--line)}
+    .settings-header{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 14px 9px;background:var(--surface);border-bottom:1px solid var(--line)}
+    .settings-title-wrap h2{margin:0;font-size:19px;font-weight:900;letter-spacing:-.02em}
+    .settings-title-wrap p{margin:3px 0 0;color:var(--muted);font-size:10px}
+    .icon-button{display:grid;place-items:center;flex:none;width:46px;height:46px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2);color:var(--ink);cursor:pointer}
+    .icon-button:active{transform:scale(.96);background:var(--track)}
+    .icon-button svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .settings-body{display:grid;gap:12px;padding:14px 12px calc(22px + env(safe-area-inset-bottom))}
+    .setting-card{padding:13px;border:1px solid var(--line);border-radius:18px;background:var(--surface-2)}
+    .setting-card-header{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+    .setting-card-icon{display:grid;place-items:center;flex:none;width:38px;height:38px;border-radius:12px;background:var(--blue-soft);color:var(--blue)}
+    .setting-card-icon svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .setting-card-title{flex:1}
+    .setting-card-title h3{margin:0;font-size:14px;font-weight:850}
+    .setting-card-title p{margin:3px 0 0;color:var(--muted);font-size:10px;line-height:1.35}
+    .theme-row{display:flex;align-items:center;gap:12px}
+    .theme-copy{flex:1}
+    .theme-copy strong{display:block;font-size:13px;font-weight:850}
+    .theme-copy span{display:block;margin-top:3px;color:var(--muted);font-size:10px}
+    .theme-toggle{width:52px;height:52px;border-color:var(--line);background:var(--track);color:var(--blue)}
+    .theme-toggle .moon-icon{display:none}
+    html[data-theme="dark"] .theme-toggle .sun-icon{display:none}
+    html[data-theme="dark"] .theme-toggle .moon-icon{display:block}
+    .import-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding:9px 10px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}
+    .import-row span{color:var(--muted);font-size:10px;font-weight:700}
+    .import-row strong{font-size:11px;font-weight:850;text-align:right}
+    .import-button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;padding:8px 14px;border:0;border-radius:14px;background:var(--blue);color:#fff;font-size:12px;font-weight:850;cursor:pointer}
+    .import-button:active{transform:scale(.985)}
+    .import-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .import-help{margin:10px 2px 0;color:var(--muted);font-size:9.5px;line-height:1.5}
+    .import-help code{display:block;overflow-wrap:anywhere;margin-top:5px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:9px;line-height:1.45}
+    .import-status{display:none;margin:10px 0 0;padding:9px 10px;border-radius:11px;font-size:10px;font-weight:750;line-height:1.4}
+    .import-status.visible{display:block}
+    .import-status.success{background:var(--positive-soft);color:var(--positive)}
+    .import-status.error{background:var(--negative-soft);color:var(--negative)}
+    .toast{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));z-index:130;max-width:calc(100vw - 28px);padding:11px 14px;border:1px solid var(--line);border-radius:13px;background:var(--ink);color:var(--surface);box-shadow:0 12px 30px rgba(0,0,0,.24);font-size:11px;font-weight:800;text-align:center;transform:translateX(-50%)}
+    .toast[hidden]{display:none}
+    body.settings-open{overflow:hidden}
+
+    html[data-theme="dark"] .month-header{background:rgba(13,19,27,.94);border-bottom-color:rgba(42,55,71,.9)}
+    html[data-theme="dark"] .input-box.sales-input{border-color:#29445d;background:#142231}
+    html[data-theme="dark"] .input-box.struk-input{border-color:#314b32;background:#172219}
+    html[data-theme="dark"] .metrics-section.sales,html[data-theme="dark"] .metrics-section.struk,html[data-theme="dark"] .metrics-section.apc{border-color:var(--line)}
+    html[data-theme="dark"] .metric-item{border-color:#334154;background:rgba(21,29,39,.86)}
+    html[data-theme="dark"] .target-input{border-bottom-color:#415064}
+    html[data-theme="dark"] .settings-fab{border-color:rgba(255,255,255,.1)}
+
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    :focus-visible{outline:3px solid rgba(76,143,208,.32);outline-offset:2px}
+
+    @media(max-width:350px){
+      .app{padding-inline:8px}
+      .month-header{grid-template-columns:46px minmax(0,1fr) 46px;gap:5px}
+      .nav-button{width:46px}
+      .month-button strong{font-size:16px}
+      .day-header{padding-inline:10px}
+      .input-grid{gap:6px;padding-inline:8px}
+      .input-box{padding-inline:8px}
+      .number-input{font-size:15px}
+      .metrics-section{margin-inline:8px;padding:7px}
+      .metric-grid{gap:5px}
+      .metric-item{padding-inline:7px}
+      .metric-label{font-size:8.5px}
+      .metric-value{font-size:11px}
+      .targets-section{padding-inline:10px}
+      .target-grid{gap:6px}
+      .target-input{font-size:15px}
+    }
+
+    @media(min-width:481px){
+      .app{padding-inline:14px}
+      .day-card{border-radius:22px}
+      .metric-item{min-height:48px}
+    }
+
+    @media(prefers-reduced-motion:no-preference){
+      .nav-button,.month-button,.day-card,.settings-fab,.icon-button,.import-button{transition:transform .14s ease,background .14s ease,box-shadow .14s ease}
+      .settings-panel{animation:sheet-in .2s ease-out}
+    }
+
+    @keyframes sheet-in{from{transform:translateY(24px);opacity:.72}to{transform:translateY(0);opacity:1}}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="table-section" aria-labelledby="tableHeading">
+      <header class="month-header">
+        <button class="nav-button" id="previousMonth" type="button" aria-label="Bulan sebelumnya">&#8249;</button>
+        <button class="month-button" id="monthButton" type="button" aria-label="Pilih bulan">
+          <small>Sales Harian</small>
+          <strong id="monthTitle">Bulan Tahun</strong>
+        </button>
+        <button class="nav-button" id="nextMonth" type="button" aria-label="Bulan berikutnya">&#8250;</button>
+        <label class="sr-only" for="monthPicker">Pilih bulan</label>
+        <input class="month-picker" id="monthPicker" type="month" tabindex="-1">
+      </header>
+
+      <div class="list-heading">
+        <div><h1 id="tableHeading">Keseluruhan Tabel</h1><p id="daysLabel">Data harian bulan berjalan</p></div>
+        <span class="save-state" id="saveState" role="status" aria-live="polite">Tersimpan</span>
+      </div>
+
+      <div id="dataViews">
+        <div class="data-view" id="horizontalView">
+          <div class="horizontal-shell">
+            <div class="horizontal-scroll" aria-label="Tabel horizontal, geser untuk melihat semua kolom" tabindex="0">
+              <table class="horizontal-table">
+                <colgroup><col style="width:48px"><col style="width:118px"><col style="width:118px"><col style="width:100px"><col style="width:92px"><col style="width:104px"><col style="width:94px"><col style="width:112px"><col style="width:112px"><col style="width:92px"><col style="width:100px"><col style="width:94px"><col style="width:98px"><col style="width:100px"><col style="width:98px"></colgroup>
+                <thead>
+                  <tr class="group-head"><th class="group-sales" colspan="7" scope="colgroup">Sales NET</th><th class="group-struk" colspan="5" scope="colgroup">Struk</th><th class="group-apc" colspan="3" scope="colgroup">APC</th></tr>
+                  <tr class="column-head">
+                    <th class="head-sales sticky-day" scope="col">No</th><th class="head-sales" scope="col">Sales NET<small>Input</small></th><th class="head-sales" scope="col">AKM Sales</th><th class="head-sales" scope="col">SPD</th><th class="head-sales" scope="col">Ach SPD</th><th class="head-sales" scope="col">SPD Lalu</th><th class="head-sales" scope="col">Growth</th>
+                    <th class="head-struk" scope="col">Total Struk<small>Input</small></th><th class="head-struk" scope="col">AKM Struk</th><th class="head-struk" scope="col">STD</th><th class="head-struk" scope="col">STD Lalu</th><th class="head-struk" scope="col">Growth</th>
+                    <th class="head-apc" scope="col">APC</th><th class="head-apc" scope="col">APC Lalu</th><th class="head-apc" scope="col">Growth</th>
+                  </tr>
+                </thead>
+                <tbody id="horizontalRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-view" id="verticalView" hidden>
+          <div class="day-list" id="dayList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="targets-section" aria-labelledby="targetsHeading">
+      <div class="targets-header">
+        <div><h2 id="targetsHeading">Target Bulan</h2><p>Dipakai untuk menghitung achievement</p></div>
+        <span class="target-month" id="targetMonth">Bulan Tahun</span>
+      </div>
+      <div class="target-grid">
+        <label class="target-card"><span>Target SPD</span><input class="target-input" id="targetSpd" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Target SPD"></label>
+        <label class="target-card"><span>Target AKM</span><input class="target-input" id="targetAkm" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Target AKM"></label>
+      </div>
+    </section>
+  </main>
+
+  <button class="settings-fab" id="settingsButton" type="button" aria-label="Buka Pengaturan" aria-controls="settingsOverlay" aria-expanded="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.5 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.5 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.37.36.7.65.96.3.25.67.4 1.06.44H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"></path></svg>
+  </button>
+
+  <div class="settings-overlay" id="settingsOverlay" hidden>
+    <div class="settings-backdrop" data-close-settings aria-hidden="true"></div>
+    <section class="settings-panel" id="settingsPanel" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <div class="sheet-handle" aria-hidden="true"></div>
+      <header class="settings-header">
+        <div class="settings-title-wrap"><h2 id="settingsTitle">Pengaturan</h2><p>Sesuaikan tampilan dan kelola data</p></div>
+        <button class="icon-button" id="closeSettings" type="button" aria-label="Tutup Pengaturan">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+      </header>
+
+      <div class="settings-body">
+        <section class="setting-card" aria-labelledby="orientationTitle">
+          <div class="setting-card-header">
+            <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M8 5v14"></path></svg></span>
+            <div class="setting-card-title"><h3 id="orientationTitle">Orientasi Tabel</h3><p>Horizontal menjadi tampilan awal aplikasi.</p></div>
+          </div>
+          <div class="view-switch" id="viewSwitch" role="group" aria-label="Pilih tampilan tabel">
+            <button class="view-button active" id="horizontalToggle" type="button" aria-pressed="true">Horizontal</button>
+            <button class="view-button" id="verticalToggle" type="button" aria-pressed="false">Vertikal</button>
+          </div>
+        </section>
+
+        <section class="setting-card" aria-labelledby="themeTitle">
+          <div class="theme-row">
+            <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg></span>
+            <div class="theme-copy"><strong id="themeTitle">Tema Aplikasi</strong><span id="themeLabel">Mode Terang</span></div>
+            <button class="icon-button theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan Mode Gelap">
+              <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
+              <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>
+            </button>
+          </div>
+        </section>
+
+        <section class="setting-card" aria-labelledby="importTitle">
+          <div class="setting-card-header">
+            <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2"></path></svg></span>
+            <div class="setting-card-title"><h3 id="importTitle">Import Data JSON</h3><p>Memperbarui Sales NET dan Total Struk.</p></div>
+          </div>
+          <div class="import-row"><span>Tujuan import</span><strong id="importMonth">Bulan Tahun</strong></div>
+          <button class="import-button" id="importButton" type="button">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2"></path></svg>
+            Pilih File JSON
+          </button>
+          <input class="sr-only" id="jsonFileInput" type="file" accept="application/json,.json" tabindex="-1">
+          <p class="import-help">Nomor hari harus sesuai bulan yang sedang dibuka. Baris yang tidak ada di file tetap dipertahankan.<code>[{"no":1,"total_net":100000,"total_struk":12}]</code></p>
+          <p class="import-status" id="importStatus" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script>
+  (function(){
+    'use strict';
+
+    var KEY='sales-harian-data-v1';
+    var VIEW_KEY='sales-harian-view-v1';
+    var THEME_KEY='sales-harian-theme-v1';
+    var themeMode=loadThemeMode();
+    document.documentElement.setAttribute('data-theme',themeMode);
+    document.documentElement.style.colorScheme=themeMode;
+    var now=new Date();
+    var currentYear=now.getFullYear();
+    var currentMonthIndex=now.getMonth();
+    var viewYear=currentYear;
+    var viewMonth=currentMonthIndex;
+    var saveTimer=null;
+    var toastTimer=null;
+    var lastSettingsFocus=null;
+    var names=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    var elements={
+      previousMonth:document.getElementById('previousMonth'),
+      nextMonth:document.getElementById('nextMonth'),
+      monthButton:document.getElementById('monthButton'),
+      monthPicker:document.getElementById('monthPicker'),
+      monthTitle:document.getElementById('monthTitle'),
+      daysLabel:document.getElementById('daysLabel'),
+      dataViews:document.getElementById('dataViews'),
+      horizontalView:document.getElementById('horizontalView'),
+      verticalView:document.getElementById('verticalView'),
+      horizontalRows:document.getElementById('horizontalRows'),
+      dayList:document.getElementById('dayList'),
+      horizontalToggle:document.getElementById('horizontalToggle'),
+      verticalToggle:document.getElementById('verticalToggle'),
+      saveState:document.getElementById('saveState'),
+      targetMonth:document.getElementById('targetMonth'),
+      targetSpd:document.getElementById('targetSpd'),
+      targetAkm:document.getElementById('targetAkm'),
+      themeColor:document.getElementById('themeColor'),
+      settingsButton:document.getElementById('settingsButton'),
+      settingsOverlay:document.getElementById('settingsOverlay'),
+      settingsPanel:document.getElementById('settingsPanel'),
+      closeSettings:document.getElementById('closeSettings'),
+      themeToggle:document.getElementById('themeToggle'),
+      themeLabel:document.getElementById('themeLabel'),
+      importButton:document.getElementById('importButton'),
+      jsonFileInput:document.getElementById('jsonFileInput'),
+      importStatus:document.getElementById('importStatus'),
+      importMonth:document.getElementById('importMonth'),
+      toast:document.getElementById('toast')
+    };
+    var store=loadStore();
+    var viewMode=loadViewMode();
+    elements.monthPicker.max=monthKey(currentYear,currentMonthIndex);
+
+    function loadThemeMode(){
+      try{return localStorage.getItem(THEME_KEY)==='dark'?'dark':'light'}catch(error){return'light'}
+    }
+
+    function loadViewMode(){
+      try{return localStorage.getItem(VIEW_KEY)==='vertical'?'vertical':'horizontal'}catch(error){return'horizontal'}
+    }
+
+    function loadStore(){
+      try{
+        var parsed=JSON.parse(localStorage.getItem(KEY));
+        if(parsed&&parsed.months&&typeof parsed.months==='object')return parsed;
+      }catch(error){console.warn('Data lokal tidak dapat dibaca.',error)}
+      return{version:1,months:{}};
+    }
+
+    function applyTheme(mode,persist){
+      themeMode=mode==='dark'?'dark':'light';
+      document.documentElement.setAttribute('data-theme',themeMode);
+      document.documentElement.style.colorScheme=themeMode;
+      elements.themeColor.setAttribute('content',themeMode==='dark'?'#0d131b':'#f4f6f9');
+      elements.themeLabel.textContent=themeMode==='dark'?'Mode Gelap':'Mode Terang';
+      var nextTheme=themeMode==='dark'?'Terang':'Gelap';
+      elements.themeToggle.setAttribute('aria-label','Aktifkan Mode '+nextTheme);
+      elements.themeToggle.setAttribute('title','Aktifkan Mode '+nextTheme);
+      if(persist){try{localStorage.setItem(THEME_KEY,themeMode)}catch(error){}}
+    }
+
+    applyTheme(themeMode,false);
+
+    function saveStore(){
+      try{
+        localStorage.setItem(KEY,JSON.stringify(store));
+        elements.saveState.textContent='Menyimpan…';
+        elements.saveState.classList.add('saving');
+        clearTimeout(saveTimer);
+        saveTimer=setTimeout(function(){elements.saveState.textContent='Tersimpan';elements.saveState.classList.remove('saving')},450);
+      }catch(error){elements.saveState.textContent='Gagal tersimpan';elements.saveState.classList.remove('saving')}
+    }
+
+    function monthKey(year,month){return String(year)+'-'+String(month+1).padStart(2,'0')}
+    function dayCount(year,month){return new Date(year,month+1,0).getDate()}
+    function previousMonthOf(year,month){return month===0?{year:year-1,month:11}:{year:year,month:month-1}}
+    function normalize(value){if(value===''||value===null||typeof value==='undefined')return'';var number=Number(value);return Number.isFinite(number)&&number>=0?number:''}
+
+    function ensureMonth(year,month){
+      var key=monthKey(year,month);
+      var count=dayCount(year,month);
+      if(!store.months[key])store.months[key]={targetSpd:'',targetAkm:'',salesNet:[],totalStruk:[]};
+      var data=store.months[key];
+      data.targetSpd=normalize(data.targetSpd);
+      data.targetAkm=normalize(data.targetAkm);
+      if(!Array.isArray(data.salesNet))data.salesNet=[];
+      if(!Array.isArray(data.totalStruk))data.totalStruk=[];
+      data.salesNet=data.salesNet.slice(0,count).map(normalize);
+      data.totalStruk=data.totalStruk.slice(0,count).map(normalize);
+      while(data.salesNet.length<count)data.salesNet.push('');
+      while(data.totalStruk.length<count)data.totalStruk.push('');
+      return data;
+    }
+
+    function readMonth(year,month){return store.months[monthKey(year,month)]?ensureMonth(year,month):null}
+
+    function calculateMonth(year,month,data){
+      var count=dayCount(year,month),target=data?normalize(data.targetSpd):'',sales=0,struk=0,rows=[];
+      for(var index=0;index<count;index+=1){
+        var day=index+1;
+        var salesValue=data&&index<data.salesNet.length?normalize(data.salesNet[index]):'';
+        var strukValue=data&&index<data.totalStruk.length?normalize(data.totalStruk[index]):'';
+        var hasSales=salesValue!=='';
+        var hasStruk=strukValue!=='';
+        if(hasSales)sales+=salesValue;
+        if(hasStruk)struk+=strukValue;
+        var akmSales=hasSales?sales:null;
+        var spd=hasSales?sales/day:null;
+        var achievement=spd!==null&&target!==''&&target>0?spd/target*100:null;
+        var akmStruk=hasStruk?struk:null;
+        var std=hasStruk?Math.floor(struk/day):null;
+        var apc=spd!==null&&std!==null&&std>0?spd/std:null;
+        rows.push({akmSales:akmSales,spd:spd,achievement:achievement,akmStruk:akmStruk,std:std,apc:apc});
+      }
+      return rows;
+    }
+
+    function parseInput(value){
+      var digits=String(value).replace(/[^0-9]/g,'');
+      if(!digits)return'';
+      var number=Number(digits);
+      return Number.isSafeInteger(number)?number:'';
+    }
+
+    function formatNumber(value){return value===null||value===''||typeof value==='undefined'||!Number.isFinite(Number(value))?'—':Math.round(Number(value)).toLocaleString('id-ID')}
+    function formatInput(value){return value===''||value===null||typeof value==='undefined'?'':Number(value).toLocaleString('id-ID')}
+    function formatPercent(value){return value===null||!Number.isFinite(value)?'—':value.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
+    function growth(current,previous){return current===null||previous===null||!Number.isFinite(current)||!Number.isFinite(previous)||previous===0?null:(current/previous-1)*100}
+    function growthClass(value){return value===null||!Number.isFinite(value)?'empty':value>.0001?'positive':value<-.0001?'negative':'neutral'}
+
+    function metric(label,column,detail,full){
+      var detailHtml=detail?'<em>'+detail+'</em>':'';
+      return'<div class="metric-item'+(full?' full':'')+'"><span class="metric-label">'+label+detailHtml+'</span><strong class="metric-value empty" data-column="'+column+'">—</strong></div>';
+    }
+
+    function dateLabel(day){
+      return new Date(viewYear,viewMonth,day).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'short'});
+    }
+
+    function buildCards(data){
+      var count=dayCount(viewYear,viewMonth);
+      var isCurrent=viewYear===currentYear&&viewMonth===currentMonthIndex;
+      var html='';
+      for(var index=0;index<count;index+=1){
+        var day=index+1;
+        var isToday=isCurrent&&day===now.getDate();
+        html+='<article class="day-card'+(isToday?' today':'')+'" data-day-card="'+index+'">';
+        html+='<header class="day-header"><div class="day-number"><span>Hari</span><strong>'+String(day).padStart(2,'0')+'</strong></div><div class="day-date"><strong>'+dateLabel(day)+'</strong><small>Data operasional hari ke-'+day+'</small></div><span class="today-chip">Hari ini</span></header>';
+        html+='<div class="input-grid"><label class="input-box sales-input"><span>Sales NET</span><input class="number-input" data-field="salesNet" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.salesNet[index])+'" aria-label="Sales NET hari '+day+'"></label><label class="input-box struk-input"><span>Total Struk</span><input class="number-input" data-field="totalStruk" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.totalStruk[index])+'" aria-label="Total Struk hari '+day+'"></label></div>';
+        html+='<section class="metrics-section sales"><div class="section-label">Sales NET</div><div class="metric-grid">'+metric('AKM Sales','akmSales','Akumulasi',false)+metric('SPD','spd','Sales / hari',false)+metric('Ach SPD','achievement','vs target',false)+metric('SPD Lalu','spdPast','Read-only',false)+metric('Growth','growthSpd','SPD',true)+'</div></section>';
+        html+='<section class="metrics-section struk"><div class="section-label">Struk</div><div class="metric-grid">'+metric('AKM Struk','akmStruk','Akumulasi',false)+metric('STD','std','Struk / hari',false)+metric('STD Lalu','stdPast','Read-only',false)+metric('Growth','growthStd','STD',false)+'</div></section>';
+        html+='<section class="metrics-section apc"><div class="section-label">APC</div><div class="metric-grid">'+metric('APC','apc','SPD / STD',false)+metric('APC Lalu','apcPast','Read-only',false)+metric('Growth','growthApc','APC',true)+'</div></section>';
+        html+='</article>';
+      }
+      elements.dayList.innerHTML=html;
+    }
+
+    function buildHorizontalTable(data){
+      var count=dayCount(viewYear,viewMonth);
+      var isCurrent=viewYear===currentYear&&viewMonth===currentMonthIndex;
+      var html='';
+      for(var index=0;index<count;index+=1){
+        var day=index+1;
+        var rowClass=isCurrent&&day===now.getDate()?' class="today-row"':'';
+        html+='<tr'+rowClass+' data-day-card="'+index+'">';
+        html+='<td class="sticky-day">'+day+'</td>';
+        html+='<td class="sales-cell"><input class="table-input number-input" data-field="salesNet" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.salesNet[index])+'" aria-label="Sales NET hari '+day+'"></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="akmSales">—</strong></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="spd">—</strong></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="achievement">—</strong></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="spdPast">—</strong></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="growthSpd">—</strong></td>';
+        html+='<td class="struk-cell"><input class="table-input number-input" data-field="totalStruk" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.totalStruk[index])+'" aria-label="Total Struk hari '+day+'"></td>';
+        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="akmStruk">—</strong></td>';
+        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="std">—</strong></td>';
+        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="stdPast">—</strong></td>';
+        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="growthStd">—</strong></td>';
+        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="apc">—</strong></td>';
+        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="apcPast">—</strong></td>';
+        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="growthApc">—</strong></td>';
+        html+='</tr>';
+      }
+      elements.horizontalRows.innerHTML=html;
+    }
+
+    function activeRoot(){return viewMode==='horizontal'?elements.horizontalRows:elements.dayList}
+
+    function renderData(data){
+      var horizontal=viewMode==='horizontal';
+      elements.horizontalView.hidden=!horizontal;
+      elements.verticalView.hidden=horizontal;
+      elements.horizontalToggle.classList.toggle('active',horizontal);
+      elements.verticalToggle.classList.toggle('active',!horizontal);
+      elements.horizontalToggle.setAttribute('aria-pressed',String(horizontal));
+      elements.verticalToggle.setAttribute('aria-pressed',String(!horizontal));
+      if(horizontal){elements.dayList.innerHTML='';buildHorizontalTable(data)}else{elements.horizontalRows.innerHTML='';buildCards(data)}
+    }
+
+    function setValue(index,column,value,type){
+      var card=activeRoot().querySelector('[data-day-card="'+index+'"]');
+      if(!card)return;
+      var cell=card.querySelector('[data-column="'+column+'"]');
+      if(!cell)return;
+      cell.classList.remove('empty','positive','negative','neutral');
+      cell.textContent=type==='percent'||type==='growth'?formatPercent(value):formatNumber(value);
+      if(value===null||!Number.isFinite(Number(value)))cell.classList.add('empty');
+      if(type==='growth')cell.classList.add(growthClass(value));
+    }
+
+    function paintCalculations(){
+      var data=ensureMonth(viewYear,viewMonth);
+      var currentRows=calculateMonth(viewYear,viewMonth,data);
+      var previous=previousMonthOf(viewYear,viewMonth);
+      var previousRows=calculateMonth(previous.year,previous.month,readMonth(previous.year,previous.month));
+      currentRows.forEach(function(row,index){
+        var old=index<previousRows.length?previousRows[index]:null;
+        var oldSpd=old?old.spd:null;
+        var oldStd=old?old.std:null;
+        var oldApc=old?old.apc:null;
+        setValue(index,'akmSales',row.akmSales,'number');
+        setValue(index,'spd',row.spd,'number');
+        setValue(index,'achievement',row.achievement,'percent');
+        setValue(index,'spdPast',oldSpd,'number');
+        setValue(index,'growthSpd',growth(row.spd,oldSpd),'growth');
+        setValue(index,'akmStruk',row.akmStruk,'number');
+        setValue(index,'std',row.std,'number');
+        setValue(index,'stdPast',oldStd,'number');
+        setValue(index,'growthStd',growth(row.std,oldStd),'growth');
+        setValue(index,'apc',row.apc,'number');
+        setValue(index,'apcPast',oldApc,'number');
+        setValue(index,'growthApc',growth(row.apc,oldApc),'growth');
+      });
+    }
+
+    function renderMonth(){
+      var data=ensureMonth(viewYear,viewMonth);
+      var count=dayCount(viewYear,viewMonth);
+      var label=names[viewMonth]+' '+viewYear;
+      elements.monthPicker.value=monthKey(viewYear,viewMonth);
+      elements.monthTitle.textContent=label;
+      elements.daysLabel.textContent=count+' hari • '+(viewMode==='horizontal'?'geser tabel untuk melihat kolom':'tampilan kartu harian');
+      elements.targetMonth.textContent=label;
+      elements.importMonth.textContent=label;
+      elements.targetSpd.value=formatInput(data.targetSpd);
+      elements.targetAkm.value=formatInput(data.targetAkm);
+      elements.nextMonth.disabled=viewYear===currentYear&&viewMonth===currentMonthIndex;
+      renderData(data);
+      paintCalculations();
+    }
+
+    function changeMonth(offset){
+      var next=new Date(viewYear,viewMonth+offset,1);
+      var year=next.getFullYear();
+      var month=next.getMonth();
+      if(year>currentYear||(year===currentYear&&month>currentMonthIndex))return;
+      viewYear=year;
+      viewMonth=month;
+      renderMonth();
+      window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function focusNumeric(event){var parsed=parseInput(event.target.value);event.target.value=parsed===''?'':String(parsed);event.target.select()}
+    function blurNumeric(event){event.target.value=formatInput(parseInput(event.target.value))}
+
+    elements.previousMonth.addEventListener('click',function(){changeMonth(-1)});
+    elements.nextMonth.addEventListener('click',function(){changeMonth(1)});
+    elements.horizontalToggle.addEventListener('click',function(){setViewMode('horizontal')});
+    elements.verticalToggle.addEventListener('click',function(){setViewMode('vertical')});
+    elements.monthButton.addEventListener('click',function(){if(typeof elements.monthPicker.showPicker==='function')elements.monthPicker.showPicker();else elements.monthPicker.click()});
+    elements.monthPicker.addEventListener('change',function(event){
+      var parts=event.target.value.split('-');
+      if(parts.length!==2)return;
+      var year=Number(parts[0]);
+      var month=Number(parts[1])-1;
+      if(year>currentYear||(year===currentYear&&month>currentMonthIndex)){event.target.value=monthKey(viewYear,viewMonth);return}
+      viewYear=year;
+      viewMonth=month;
+      renderMonth();
+      window.scrollTo({top:0,behavior:'smooth'});
+    });
+
+    function setViewMode(mode){
+      if(mode!== 'horizontal'&&mode!=='vertical')return;
+      viewMode=mode;
+      try{localStorage.setItem(VIEW_KEY,mode)}catch(error){}
+      renderMonth();
+    }
+
+    function showToast(message){
+      clearTimeout(toastTimer);
+      elements.toast.textContent=message;
+      elements.toast.hidden=false;
+      toastTimer=setTimeout(function(){elements.toast.hidden=true},2400);
+    }
+
+    function openSettingsMenu(){
+      lastSettingsFocus=document.activeElement;
+      elements.settingsOverlay.hidden=false;
+      document.body.classList.add('settings-open');
+      elements.settingsButton.setAttribute('aria-expanded','true');
+      requestAnimationFrame(function(){elements.closeSettings.focus()});
+    }
+
+    function closeSettingsMenu(){
+      if(elements.settingsOverlay.hidden)return;
+      elements.settingsOverlay.hidden=true;
+      document.body.classList.remove('settings-open');
+      elements.settingsButton.setAttribute('aria-expanded','false');
+      if(lastSettingsFocus&&typeof lastSettingsFocus.focus==='function')lastSettingsFocus.focus();
+    }
+
+    function setImportStatus(message,type){
+      elements.importStatus.textContent=message;
+      elements.importStatus.className='import-status'+(message?' visible '+type:'');
+    }
+
+    function parseImportedValue(value){
+      if(value===null||value==='')return{valid:true,value:''};
+      if(typeof value==='number')return{valid:Number.isSafeInteger(value)&&value>=0,value:value};
+      if(typeof value!=='string')return{valid:false,value:''};
+      var trimmed=value.trim();
+      if(trimmed==='')return{valid:true,value:''};
+      if(!/^[0-9][0-9., ]*$/.test(trimmed))return{valid:false,value:''};
+      var digits=trimmed.replace(/[^0-9]/g,'');
+      var parsed=Number(digits);
+      return{valid:Number.isSafeInteger(parsed)&&parsed>=0,value:parsed};
+    }
+
+    async function importJsonFile(file){
+      if(!file)return;
+      setImportStatus('Membaca dan memeriksa file…','success');
+      try{
+        if(file.size>2*1024*1024)throw new Error('Ukuran file melebihi batas 2 MB.');
+        var parsed=JSON.parse(await file.text());
+        if(!Array.isArray(parsed))throw new Error('Format utama JSON harus berupa array.');
+        var count=dayCount(viewYear,viewMonth);
+        var updates={};
+        var invalidRows=0;
+        parsed.forEach(function(item){
+          if(!item||typeof item!=='object'||Array.isArray(item)){invalidRows+=1;return}
+          var no=Number(item.no);
+          var hasSales=Object.prototype.hasOwnProperty.call(item,'total_net');
+          var hasStruk=Object.prototype.hasOwnProperty.call(item,'total_struk');
+          if(!Number.isInteger(no)||no<1||no>count||(!hasSales&&!hasStruk)){invalidRows+=1;return}
+          var salesResult=hasSales?parseImportedValue(item.total_net):null;
+          var strukResult=hasStruk?parseImportedValue(item.total_struk):null;
+          if((salesResult&&!salesResult.valid)||(strukResult&&!strukResult.valid)){invalidRows+=1;return}
+          updates[no]={hasSales:hasSales,sales:hasSales?salesResult.value:'',hasStruk:hasStruk,struk:hasStruk?strukResult.value:''};
+        });
+        var days=Object.keys(updates);
+        if(days.length===0)throw new Error('Tidak ada baris valid yang dapat diimpor.');
+        var data=ensureMonth(viewYear,viewMonth);
+        days.forEach(function(day){
+          var index=Number(day)-1;
+          var update=updates[day];
+          if(update.hasSales)data.salesNet[index]=update.sales;
+          if(update.hasStruk)data.totalStruk[index]=update.struk;
+        });
+        saveStore();
+        renderMonth();
+        var message=days.length+' hari berhasil diimpor'+(invalidRows?' • '+invalidRows+' baris dilewati':'')+'.';
+        setImportStatus(message,'success');
+        showToast('Import JSON berhasil');
+      }catch(error){
+        setImportStatus(error instanceof SyntaxError?'File bukan JSON yang valid.':error.message,'error');
+      }finally{
+        elements.jsonFileInput.value='';
+      }
+    }
+
+    elements.settingsButton.addEventListener('click',openSettingsMenu);
+    elements.closeSettings.addEventListener('click',closeSettingsMenu);
+    elements.settingsOverlay.addEventListener('click',function(event){if(event.target.hasAttribute('data-close-settings'))closeSettingsMenu()});
+    elements.themeToggle.addEventListener('click',function(){
+      var next=themeMode==='dark'?'light':'dark';
+      applyTheme(next,true);
+      showToast(next==='dark'?'Mode Gelap aktif':'Mode Terang aktif');
+    });
+    elements.importButton.addEventListener('click',function(){elements.jsonFileInput.click()});
+    elements.jsonFileInput.addEventListener('change',function(event){importJsonFile(event.target.files&&event.target.files[0])});
+    document.addEventListener('keydown',function(event){
+      if(elements.settingsOverlay.hidden)return;
+      if(event.key==='Escape'){event.preventDefault();closeSettingsMenu();return}
+      if(event.key!=='Tab')return;
+      var focusable=Array.prototype.slice.call(elements.settingsPanel.querySelectorAll('button:not([disabled]),input:not([disabled]):not([tabindex="-1"])'));
+      if(!focusable.length)return;
+      var first=focusable[0],last=focusable[focusable.length-1];
+      if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
+      else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+    });
+
+    elements.dataViews.addEventListener('focusin',function(event){if(event.target.matches('.number-input'))focusNumeric(event)});
+    elements.dataViews.addEventListener('focusout',function(event){if(event.target.matches('.number-input'))blurNumeric(event)});
+    elements.dataViews.addEventListener('input',function(event){
+      var input=event.target;
+      if(!input.matches('.number-input'))return;
+      ensureMonth(viewYear,viewMonth)[input.dataset.field][Number(input.dataset.index)]=parseInput(input.value);
+      saveStore();
+      paintCalculations();
+    });
+    elements.dataViews.addEventListener('keydown',function(event){
+      var input=event.target;
+      if(!input.matches('.number-input')||!['Enter','ArrowDown','ArrowUp'].includes(event.key))return;
+      event.preventDefault();
+      var direction=event.key==='ArrowUp'?-1:1;
+      var nextInput=activeRoot().querySelector('.number-input[data-field="'+input.dataset.field+'"][data-index="'+(Number(input.dataset.index)+direction)+'"]');
+      if(nextInput){nextInput.focus();nextInput.scrollIntoView({block:'center',behavior:'smooth'})}
+    });
+
+    [elements.targetSpd,elements.targetAkm].forEach(function(input){
+      input.addEventListener('focus',focusNumeric);
+      input.addEventListener('blur',blurNumeric);
+      input.addEventListener('input',function(){
+        var data=ensureMonth(viewYear,viewMonth);
+        if(input===elements.targetSpd)data.targetSpd=parseInput(input.value);else data.targetAkm=parseInput(input.value);
+        saveStore();
+        paintCalculations();
+      });
+    });
+
+    window.addEventListener('storage',function(event){
+      if(event.key===KEY){store=loadStore();renderMonth()}
+      else if(event.key===VIEW_KEY){viewMode=loadViewMode();renderMonth()}
+      else if(event.key===THEME_KEY)applyTheme(loadThemeMode(),false);
+    });
+    renderMonth();
+  })();
+  </script>
+</body>
+</html>
