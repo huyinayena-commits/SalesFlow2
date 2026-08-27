@@ -371,6 +371,7 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2"></path></svg>
             Pilih File JSON
           </button>
+          <button class="import-button" id="exportButton" type="button">Ekspor CSV</button>
           <input class="sr-only" id="jsonFileInput" type="file" accept="application/json,.json" tabindex="-1">
           <p class="import-help">Nomor hari harus sesuai bulan yang sedang dibuka. Baris yang tidak ada di file tetap dipertahankan.<code>[{"no":1,"total_net":100000,"total_struk":12}]</code></p>
           <p class="import-status" id="importStatus" role="status" aria-live="polite"></p>
@@ -428,6 +429,7 @@
       themeToggle:document.getElementById('themeToggle'),
       themeLabel:document.getElementById('themeLabel'),
       importButton:document.getElementById('importButton'),
+      exportButton:document.getElementById('exportButton'),
       jsonFileInput:document.getElementById('jsonFileInput'),
       importStatus:document.getElementById('importStatus'),
       importMonth:document.getElementById('importMonth'),
@@ -841,6 +843,13 @@
       showToast(next==='dark'?'Mode Gelap aktif':'Mode Terang aktif');
     });
     elements.importButton.addEventListener('click',function(){elements.jsonFileInput.click()});
+    function exportCsv(){
+      var data=ensureMonth(viewYear,viewMonth),lines=['day,sales_net,total_struk'];
+      for(var index=0;index<data.salesNet.length;index+=1)lines.push([index+1,data.salesNet[index]===''?'':data.salesNet[index],data.totalStruk[index]===''?'':data.totalStruk[index]].join(','));
+      var blob=new Blob([﻿+lines.join('\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+      link.href=url;link.download='salesflow2-'+monthKey(viewYear,viewMonth)+'.csv';link.click();URL.revokeObjectURL(url);showToast('Ekspor CSV berhasil');
+    }
+    elements.exportButton.addEventListener('click',exportCsv);
     elements.jsonFileInput.addEventListener('change',function(event){importJsonFile(event.target.files&&event.target.files[0])});
     document.addEventListener('keydown',function(event){
       if(elements.settingsOverlay.hidden)return;
