@@ -209,15 +209,47 @@
     .import-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding:9px 10px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}
     .import-row span{color:var(--muted);font-size:10px;font-weight:700}
     .import-row strong{font-size:11px;font-weight:850;text-align:right}
-    .import-button{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;min-height:48px;padding:8px 14px;border:0;border-radius:14px;background:var(--blue);color:#fff;font-size:12px;font-weight:850;cursor:pointer}
-    .import-button:active{transform:scale(.985)}
-    .import-button svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .backup-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .import-button,.export-button{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:48px;padding:8px 9px;border-radius:14px;font-size:11px;font-weight:850;cursor:pointer}
+    .export-button{border:1px solid var(--blue);background:var(--blue);color:#fff}
+    .import-button{border:1px solid var(--line);background:var(--surface);color:var(--blue)}
+    .import-button:active,.export-button:active{transform:scale(.985)}
+    .import-button svg,.export-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .import-help{margin:10px 2px 0;color:var(--muted);font-size:9.5px;line-height:1.5}
     .import-help code{display:block;overflow-wrap:anywhere;margin-top:5px;padding:8px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:9px;line-height:1.45}
     .import-status{display:none;margin:10px 0 0;padding:9px 10px;border-radius:11px;font-size:10px;font-weight:750;line-height:1.4}
     .import-status.visible{display:block}
     .import-status.success{background:var(--positive-soft);color:var(--positive)}
     .import-status.error{background:var(--negative-soft);color:var(--negative)}
+    .telegram-state{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding:10px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}
+    .telegram-dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--muted);box-shadow:0 0 0 4px var(--track)}
+    .telegram-dot[data-state="ready"],.telegram-dot[data-state="connected"]{background:var(--positive);box-shadow:0 0 0 4px var(--positive-soft)}
+    .telegram-dot[data-state="working"]{background:#c89116;box-shadow:0 0 0 4px #fff4d6}
+    .telegram-dot[data-state="error"]{background:var(--negative);box-shadow:0 0 0 4px var(--negative-soft)}
+    .telegram-state-copy{flex:1}
+    .telegram-state-copy strong{display:block;font-size:11px;font-weight:850}
+    .telegram-state-copy span{display:block;margin-top:3px;color:var(--muted);font-size:9.5px;line-height:1.4}
+    .telegram-button{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;min-height:48px;padding:8px 14px;border:0;border-radius:14px;background:var(--blue);color:#fff;font-size:12px;font-weight:850;cursor:pointer}
+    .telegram-button:active:not(:disabled){transform:scale(.985)}
+    .telegram-button:disabled{opacity:.5;cursor:not-allowed}
+    .telegram-button svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+    .telegram-toggle-row{display:flex;align-items:center;gap:12px;min-height:50px;margin-top:9px;padding:7px 9px;border:1px solid var(--line);border-radius:13px;background:var(--surface);cursor:pointer}
+    .telegram-toggle-copy{flex:1}
+    .telegram-toggle-copy strong{display:block;font-size:10.5px;font-weight:850}
+    .telegram-toggle-copy span{display:block;margin-top:3px;color:var(--muted);font-size:9px;line-height:1.35}
+    .switch-control{position:relative;display:block;flex:none;width:50px;height:30px}
+    .switch-control input{position:absolute;width:1px;height:1px;opacity:0}
+    .switch-track{position:absolute;inset:0;border:1px solid var(--line);border-radius:999px;background:var(--track);transition:background .16s ease,border-color .16s ease}
+    .switch-track::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--surface);box-shadow:0 2px 6px rgba(0,0,0,.2);transition:transform .16s ease}
+    .switch-control input:checked+.switch-track{border-color:var(--positive);background:var(--positive)}
+    .switch-control input:checked+.switch-track::after{transform:translateX(20px);background:#fff}
+    .switch-control input:focus-visible+.switch-track{outline:3px solid rgba(76,143,208,.32);outline-offset:2px}
+    .switch-control input:disabled+.switch-track{opacity:.45}
+    .telegram-help{margin:9px 2px 0;color:var(--muted);font-size:9.5px;line-height:1.5}
+    .telegram-message{display:none;margin:9px 0 0;padding:9px 10px;border-radius:11px;font-size:9.5px;font-weight:750;line-height:1.45}
+    .telegram-message.visible{display:block}
+    .telegram-message.success{background:var(--positive-soft);color:var(--positive)}
+    .telegram-message.error{background:var(--negative-soft);color:var(--negative)}
     .toast{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));z-index:130;max-width:calc(100vw - 28px);padding:11px 14px;border:1px solid var(--line);border-radius:13px;background:var(--ink);color:var(--surface);box-shadow:0 12px 30px rgba(0,0,0,.24);font-size:11px;font-weight:800;text-align:center;transform:translateX(-50%)}
     .toast[hidden]{display:none}
     body.settings-open{overflow:hidden}
@@ -259,7 +291,7 @@
     }
 
     @media(prefers-reduced-motion:no-preference){
-      .nav-button,.month-button,.day-card,.settings-fab,.icon-button,.import-button{transition:transform .14s ease,background .14s ease,box-shadow .14s ease}
+      .nav-button,.month-button,.day-card,.settings-fab,.icon-button,.import-button,.export-button,.telegram-button{transition:transform .14s ease,background .14s ease,box-shadow .14s ease}
       .settings-panel{animation:sheet-in .2s ease-out}
     }
 
@@ -361,19 +393,45 @@
           </div>
         </section>
 
+        <section class="setting-card" aria-labelledby="telegramTitle">
+          <div class="setting-card-header">
+            <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m21 3-7.5 18-4.2-7.3L3 10.5 21 3Z"></path><path d="m9.3 13.7 5.2-4.8"></path></svg></span>
+            <div class="setting-card-title"><h3 id="telegramTitle">Backup Telegram</h3><p>Kirim dan perbarui satu pesan untuk setiap hari.</p></div>
+          </div>
+          <div class="telegram-state">
+            <span class="telegram-dot" id="telegramDot" data-state="idle" aria-hidden="true"></span>
+            <div class="telegram-state-copy"><strong id="telegramStatusTitle">Memeriksa server…</strong><span id="telegramStatusText">Menyiapkan koneksi aman.</span></div>
+          </div>
+          <button class="telegram-button" id="telegramConnect" type="button" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12h8M12 8l4 4-4 4"></path><path d="M5 4h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z"></path></svg>
+            <span id="telegramConnectLabel">Hubungkan Bot</span>
+          </button>
+          <label class="telegram-toggle-row" for="telegramAutoSend">
+            <span class="telegram-toggle-copy"><strong>Pengiriman otomatis</strong><span>Perubahan pada Sales NET atau Total Struk dikirim setelah tersimpan.</span></span>
+            <span class="switch-control"><input id="telegramAutoSend" type="checkbox" disabled><span class="switch-track" aria-hidden="true"></span></span>
+          </label>
+          <p class="telegram-help">Token tersimpan hanya di server dan tidak pernah dimasukkan ke HTML atau penyimpanan browser. Import JSON tidak mengirim banyak pesan sekaligus.</p>
+          <p class="telegram-message" id="telegramMessage" role="status" aria-live="polite"></p>
+        </section>
+
         <section class="setting-card" aria-labelledby="importTitle">
           <div class="setting-card-header">
             <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2"></path></svg></span>
-            <div class="setting-card-title"><h3 id="importTitle">Import Data JSON</h3><p>Memperbarui Sales NET dan Total Struk.</p></div>
+            <div class="setting-card-title"><h3 id="importTitle">Backup &amp; Import JSON</h3><p>Amankan seluruh data atau pulihkan backup.</p></div>
           </div>
-          <div class="import-row"><span>Tujuan import</span><strong id="importMonth">Bulan Tahun</strong></div>
-          <button class="import-button" id="importButton" type="button">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2"></path></svg>
-            Pilih File JSON
-          </button>
-          <button class="import-button" id="exportButton" type="button">Ekspor CSV</button>
+          <div class="import-row"><span>Import format array ke</span><strong id="importMonth">Bulan Tahun</strong></div>
+          <div class="backup-actions">
+            <button class="export-button" id="exportButton" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2"></path></svg>
+              Backup JSON
+            </button>
+            <button class="import-button" id="importButton" type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21V9M7 14l5-5 5 5"></path><path d="M5 3h14a2 2 0 0 1 2 2v3M3 8V5a2 2 0 0 1 2-2"></path></svg>
+              Import JSON
+            </button>
+          </div>
           <input class="sr-only" id="jsonFileInput" type="file" accept="application/json,.json" tabindex="-1">
-          <p class="import-help">Nomor hari harus sesuai bulan yang sedang dibuka. Baris yang tidak ada di file tetap dipertahankan.<code>[{"no":1,"total_net":100000,"total_struk":12}]</code></p>
+          <p class="import-help">Backup menyimpan seluruh bulan dan target. Import menerima file backup SalesFlow atau format array untuk bulan yang sedang dibuka.<code>[{"no":1,"total_net":100000,"total_struk":12}]</code></p>
           <p class="import-status" id="importStatus" role="status" aria-live="polite"></p>
         </section>
       </div>
@@ -390,6 +448,7 @@
     var VIEW_KEY='sales-harian-view-v1';
     var THEME_KEY='sales-harian-theme-v1';
     var AUTH_KEY='salesflow2-api-password';
+    var TELEGRAM_KEY='sales-harian-telegram-v1';
     var themeMode=loadThemeMode();
     document.documentElement.setAttribute('data-theme',themeMode);
     document.documentElement.style.colorScheme=themeMode;
@@ -401,6 +460,11 @@
     var saveTimer=null;
     var syncTimer=null;
     var toastTimer=null;
+    var telegramTimers={};
+    var telegramQueue=[];
+    var telegramFailed={};
+    var telegramSending=false;
+    var telegramServerReady=false;
     var lastSettingsFocus=null;
     var names=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     var elements={
@@ -428,15 +492,23 @@
       closeSettings:document.getElementById('closeSettings'),
       themeToggle:document.getElementById('themeToggle'),
       themeLabel:document.getElementById('themeLabel'),
-      importButton:document.getElementById('importButton'),
       exportButton:document.getElementById('exportButton'),
+      importButton:document.getElementById('importButton'),
       jsonFileInput:document.getElementById('jsonFileInput'),
       importStatus:document.getElementById('importStatus'),
       importMonth:document.getElementById('importMonth'),
+      telegramDot:document.getElementById('telegramDot'),
+      telegramStatusTitle:document.getElementById('telegramStatusTitle'),
+      telegramStatusText:document.getElementById('telegramStatusText'),
+      telegramConnect:document.getElementById('telegramConnect'),
+      telegramConnectLabel:document.getElementById('telegramConnectLabel'),
+      telegramAutoSend:document.getElementById('telegramAutoSend'),
+      telegramMessage:document.getElementById('telegramMessage'),
       toast:document.getElementById('toast')
     };
     var store=loadStore();
     var viewMode=loadViewMode();
+    var telegramState=loadTelegramState();
     elements.monthPicker.max=monthKey(currentYear,currentMonthIndex);
 
     function loadThemeMode(){
@@ -455,61 +527,25 @@
       return{version:1,months:{}};
     }
 
-    var API_BASE=window.location.origin;
-
-    function apiHeaders(options){
-      var headers=Object.assign({},options&&options.headers||{});
-      var password='';
-      try{password=localStorage.getItem(AUTH_KEY)||''}catch(error){}
-      if(password)headers.Authorization='Bearer '+password;
-      return headers;
-    }
-
-    async function apiFetch(url,options){
-      var request=Object.assign({},options||{}, {headers:apiHeaders(options)});
-      var response=await fetch(url,request);
-      if(response.status===401){
-        var password=window.prompt('Masukkan password aplikasi:');
-        if(!password)throw new Error('Password diperlukan.');
-        try{localStorage.setItem(AUTH_KEY,password)}catch(error){}
-        request.headers=apiHeaders(options);
-        response=await fetch(url,request);
-      }
-      return response;
-    }
-
-    async function loadRemoteMonth(year,month){
-      var key=monthKey(year,month);
+    function loadTelegramState(){
+      var fallback={chatId:'',chatName:'',botUsername:'',enabled:false,messages:{}};
       try{
-        var response=await apiFetch(API_BASE+"/api/month?month="+encodeURIComponent(key),{cache:"no-store"});
-        if(!response.ok)throw new Error("HTTP "+response.status);
-        var remote=await response.json();
-        var data=ensureMonth(year,month);
-        data.targetSpd=remote.targetSpd||"";
-        data.targetAkm=remote.targetAkm||"";
-        (remote.days||[]).forEach(function(row){
-          if(validDayNumber(year,month,row.day)){
-            data.salesNet[row.day-1]=row.salesNet===null?"":row.salesNet;
-            data.totalStruk[row.day-1]=row.totalStruk===null?"":row.totalStruk;
-          }
-        });
-        try{localStorage.setItem(KEY,JSON.stringify(store))}catch(error){}
-        renderMonth(true);
-        elements.saveState.textContent="Tersimpan di D1";
-      }catch(error){console.warn("D1 tidak dapat dibaca, memakai data lokal.",error)}
+        var parsed=JSON.parse(localStorage.getItem(TELEGRAM_KEY));
+        if(!parsed||typeof parsed!=='object')return fallback;
+        var chatId=typeof parsed.chatId==='string'&&/^-?[0-9]{1,20}$/.test(parsed.chatId)?parsed.chatId:'';
+        return{
+          chatId:chatId,
+          chatName:typeof parsed.chatName==='string'?parsed.chatName.slice(0,80):'',
+          botUsername:typeof parsed.botUsername==='string'?parsed.botUsername.slice(0,40):'',
+          enabled:Boolean(parsed.enabled&&chatId),
+          messages:parsed.messages&&typeof parsed.messages==='object'&&!Array.isArray(parsed.messages)?parsed.messages:{}
+        };
+      }catch(error){return fallback}
     }
 
-    function validDayNumber(year,month,day){return Number.isInteger(day)&&day>=1&&day<=dayCount(year,month)}
-
-    function syncRemoteMonth(){
-      var key=monthKey(viewYear,viewMonth),data=ensureMonth(viewYear,viewMonth);
-      var days=data.salesNet.map(function(value,index){return{day:index+1,salesNet:value===""?null:value,totalStruk:data.totalStruk[index]===""?null:data.totalStruk[index]}});
-      apiFetch(API_BASE+"/api/month",{method:"PUT",headers:{"content-type":"application/json"},body:JSON.stringify({month:key,targetSpd:data.targetSpd===""?0:data.targetSpd,targetAkm:data.targetAkm===""?0:data.targetAkm,days:days})})
-        .then(function(response){if(!response.ok)throw new Error("HTTP "+response.status);elements.saveState.textContent="Tersimpan di D1";elements.saveState.classList.remove("saving")})
-        .catch(function(error){console.warn("D1 tidak dapat disimpan.",error);elements.saveState.textContent="Tersimpan lokal (D1 gagal)";elements.saveState.classList.remove("saving")});
+    function saveTelegramState(){
+      try{localStorage.setItem(TELEGRAM_KEY,JSON.stringify(telegramState))}catch(error){}
     }
-
-    function scheduleRemoteSync(){clearTimeout(syncTimer);syncTimer=setTimeout(syncRemoteMonth,700)}
 
     function applyTheme(mode,persist){
       themeMode=mode==='dark'?'dark':'light';
@@ -759,11 +795,235 @@
       toastTimer=setTimeout(function(){elements.toast.hidden=true},2400);
     }
 
+    function setTelegramMessage(message,type){
+      elements.telegramMessage.textContent=message||'';
+      elements.telegramMessage.className='telegram-message'+(message?' visible '+type:'');
+    }
+
+    function setTelegramStatus(state,title,text){
+      elements.telegramDot.dataset.state=state;
+      elements.telegramStatusTitle.textContent=title;
+      elements.telegramStatusText.textContent=text;
+    }
+
+    function refreshTelegramControls(){
+      var connected=Boolean(telegramState.chatId);
+      elements.telegramConnect.disabled=!telegramServerReady;
+      elements.telegramConnectLabel.textContent=connected?'Hubungkan Ulang':'Hubungkan Bot';
+      elements.telegramAutoSend.disabled=!connected||!telegramServerReady;
+      elements.telegramAutoSend.checked=Boolean(connected&&telegramState.enabled);
+    }
+
+    var API_BASE=window.location.origin;
+
+    function apiHeaders(options){
+      var headers=Object.assign({},options&&options.headers||{}),password='';
+      try{password=localStorage.getItem(AUTH_KEY)||''}catch(error){}
+      if(password)headers.Authorization='Bearer '+password;
+      return headers;
+    }
+
+    async function apiFetch(path,options){
+      var request=Object.assign({},options||{},{headers:apiHeaders(options)}),response=await fetch(path,request);
+      if(response.status===401){
+        var password=window.prompt('Masukkan password aplikasi:');
+        if(!password)throw new Error('Password diperlukan.');
+        try{localStorage.setItem(AUTH_KEY,password)}catch(error){}
+        request.headers=apiHeaders(options);
+        response=await fetch(path,request);
+      }
+      return response;
+    }
+
+    async function loadRemoteMonth(year,month){
+      var key=monthKey(year,month);
+      try{
+        var response=await apiFetch(API_BASE+'/api/month?month='+encodeURIComponent(key),{cache:'no-store'});
+        if(!response.ok)throw new Error('HTTP '+response.status);
+        var remote=await response.json(),data=ensureMonth(year,month);
+        data.targetSpd=remote.targetSpd||'';data.targetAkm=remote.targetAkm||'';
+        (remote.days||[]).forEach(function(row){if(Number.isInteger(row.day)&&row.day>=1&&row.day<=data.salesNet.length){data.salesNet[row.day-1]=row.salesNet===null?'':row.salesNet;data.totalStruk[row.day-1]=row.totalStruk===null?'':row.totalStruk}});
+        try{localStorage.setItem(KEY,JSON.stringify(store))}catch(error){}
+        renderMonth(true);elements.saveState.textContent='Tersimpan di D1';
+      }catch(error){console.warn('D1 tidak dapat dibaca, memakai data lokal.',error)}
+    }
+
+    function syncRemoteMonth(){
+      var key=monthKey(viewYear,viewMonth),data=ensureMonth(viewYear,viewMonth),days=data.salesNet.map(function(value,index){return{day:index+1,salesNet:value===''?null:value,totalStruk:data.totalStruk[index]===''?null:data.totalStruk[index]}});
+      apiFetch(API_BASE+'/api/month',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({month:key,targetSpd:data.targetSpd===''?0:data.targetSpd,targetAkm:data.targetAkm===''?0:data.targetAkm,days:days})}).then(function(response){if(!response.ok)throw new Error('HTTP '+response.status);elements.saveState.textContent='Tersimpan di D1';elements.saveState.classList.remove('saving')}).catch(function(error){console.warn('D1 tidak dapat disimpan.',error);elements.saveState.textContent='Tersimpan lokal (D1 gagal)';elements.saveState.classList.remove('saving')});
+    }
+
+    function scheduleRemoteSync(){clearTimeout(syncTimer);syncTimer=setTimeout(syncRemoteMonth,700)}
+
+    async function requestJson(path,options){
+      var response=await apiFetch(path,options||{});
+      var result=null;
+      try{result=await response.json()}catch(error){}
+      if(!response.ok){
+        var message=result&&typeof result.error==='string'?result.error:'Permintaan ke server gagal.';
+        throw new Error(message);
+      }
+      return result||{};
+    }
+
+    async function checkTelegramAvailability(){
+      if(location.protocol==='file:'){
+        telegramServerReady=false;
+        refreshTelegramControls();
+        setTelegramStatus('error','Khusus versi online','Telegram memerlukan server aman pada situs yang diterbitkan.');
+        return;
+      }
+      try{
+        var result=await requestJson('/api/telegram/status',{method:'GET',headers:{accept:'application/json'},credentials:'same-origin',cache:'no-store'});
+        telegramServerReady=Boolean(result.configured);
+        refreshTelegramControls();
+        if(!telegramServerReady){
+          setTelegramStatus('error','Token belum aktif','Tambahkan TELEGRAM_BOT_TOKEN di Environment Variables lalu terbitkan ulang.');
+        }else if(telegramState.chatId){
+          var destination=telegramState.chatName||'chat tersimpan';
+          setTelegramStatus('connected',telegramState.enabled?'Terhubung • otomatis aktif':'Terhubung • otomatis nonaktif','Tujuan: '+destination);
+        }else{
+          setTelegramStatus('ready','Bot siap dihubungkan','Kirim /start ke bot, lalu tekan Hubungkan Bot.');
+        }
+      }catch(error){
+        telegramServerReady=false;
+        refreshTelegramControls();
+        setTelegramStatus('error','Server tidak dapat diperiksa','Periksa koneksi internet lalu buka Pengaturan kembali.');
+      }
+    }
+
+    async function connectTelegram(){
+      if(!telegramServerReady)return;
+      elements.telegramConnect.disabled=true;
+      setTelegramMessage('','success');
+      setTelegramStatus('working','Menghubungkan…','Mencari pesan /start terbaru dan mengirim pesan uji.');
+      try{
+        var result=await requestJson('/api/telegram/connect',{
+          method:'POST',
+          headers:{'content-type':'application/json',accept:'application/json'},
+          credentials:'same-origin',
+          body:'{}'
+        });
+        var newChatId=String(result.chatId||'');
+        if(!/^-?[0-9]{1,20}$/.test(newChatId))throw new Error('Respons koneksi Telegram tidak valid.');
+        if(telegramState.chatId&&telegramState.chatId!==newChatId)telegramState.messages={};
+        telegramState.chatId=newChatId;
+        telegramState.chatName=typeof result.chatName==='string'?result.chatName.slice(0,80):'';
+        telegramState.botUsername=typeof result.botUsername==='string'?result.botUsername.slice(0,40):'';
+        telegramState.enabled=true;
+        saveTelegramState();
+        refreshTelegramControls();
+        var destination=telegramState.chatName||'Telegram Anda';
+        setTelegramStatus('connected','Terhubung • otomatis aktif','Tujuan: '+destination);
+        setTelegramMessage('Berhasil terhubung. Pesan uji sudah dikirim ke Telegram.','success');
+        showToast('Telegram berhasil dihubungkan');
+      }catch(error){
+        refreshTelegramControls();
+        setTelegramStatus('error','Belum terhubung','Kirim /start ke bot lalu coba lagi.');
+        setTelegramMessage(error.message,'error');
+      }
+    }
+
+    function telegramTaskKey(year,month,index){return monthKey(year,month)+'-'+String(index+1).padStart(2,'0')}
+
+    function toTelegramNumber(value){
+      return value===null||value===''||typeof value==='undefined'||!Number.isFinite(Number(value))?null:Number(value);
+    }
+
+    function buildTelegramPayload(task){
+      var data=readMonth(task.year,task.month);
+      if(!data)return null;
+      var rows=calculateMonth(task.year,task.month,data);
+      var row=rows[task.index];
+      if(!row)return null;
+      var previous=previousMonthOf(task.year,task.month);
+      var previousRows=calculateMonth(previous.year,previous.month,readMonth(previous.year,previous.month));
+      var old=task.index<previousRows.length?previousRows[task.index]:null;
+      var key=telegramTaskKey(task.year,task.month,task.index);
+      var storedMessageId=Number(telegramState.messages[key]);
+      return{
+        chatId:telegramState.chatId,
+        messageId:Number.isInteger(storedMessageId)&&storedMessageId>0?storedMessageId:null,
+        year:task.year,
+        month:task.month+1,
+        day:task.index+1,
+        salesNet:toTelegramNumber(data.salesNet[task.index]),
+        totalStruk:toTelegramNumber(data.totalStruk[task.index]),
+        targetSpd:toTelegramNumber(data.targetSpd),
+        targetAkm:toTelegramNumber(data.targetAkm),
+        akmSales:toTelegramNumber(row.akmSales),
+        spd:toTelegramNumber(row.spd),
+        achievement:toTelegramNumber(row.achievement),
+        akmStruk:toTelegramNumber(row.akmStruk),
+        std:toTelegramNumber(row.std),
+        apc:toTelegramNumber(row.apc),
+        growthSpd:toTelegramNumber(growth(row.spd,old?old.spd:null)),
+        growthStd:toTelegramNumber(growth(row.std,old?old.std:null)),
+        growthApc:toTelegramNumber(growth(row.apc,old?old.apc:null))
+      };
+    }
+
+    function enqueueTelegramTask(task){
+      var key=telegramTaskKey(task.year,task.month,task.index);
+      telegramQueue=telegramQueue.filter(function(item){return telegramTaskKey(item.year,item.month,item.index)!==key});
+      telegramQueue.push(task);
+      processTelegramQueue();
+    }
+
+    function queueTelegramNotification(year,month,index){
+      if(!telegramServerReady||!telegramState.chatId||!telegramState.enabled)return;
+      var task={year:year,month:month,index:index};
+      var key=telegramTaskKey(year,month,index);
+      delete telegramFailed[key];
+      clearTimeout(telegramTimers[key]);
+      telegramTimers[key]=setTimeout(function(){
+        delete telegramTimers[key];
+        enqueueTelegramTask(task);
+      },1800);
+    }
+
+    async function processTelegramQueue(){
+      if(telegramSending||telegramQueue.length===0)return;
+      if(!telegramServerReady||!telegramState.chatId||!telegramState.enabled){telegramQueue=[];return}
+      telegramSending=true;
+      var task=telegramQueue.shift();
+      var key=telegramTaskKey(task.year,task.month,task.index);
+      var payload=buildTelegramPayload(task);
+      if(!payload){telegramSending=false;setTimeout(processTelegramQueue,0);return}
+      setTelegramStatus('working','Mengirim ke Telegram…','Data hari '+(task.index+1)+' sedang diamankan.');
+      try{
+        var result=await requestJson('/api/telegram/send',{
+          method:'POST',
+          headers:{'content-type':'application/json',accept:'application/json'},
+          credentials:'same-origin',
+          body:JSON.stringify(payload)
+        });
+        var messageId=Number(result.messageId);
+        if(Number.isInteger(messageId)&&messageId>0){telegramState.messages[key]=messageId;saveTelegramState()}
+        delete telegramFailed[key];
+        var time=new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+        setTelegramStatus('connected','Terkirim • '+time,'Hari '+(task.index+1)+' diperbarui tanpa membuat pesan ganda.');
+      }catch(error){
+        telegramFailed[key]=task;
+        setTelegramStatus('error','Pengiriman tertunda','Data lokal tetap aman; akan dicoba lagi saat online atau saat data berubah.');
+        setTelegramMessage(error.message,'error');
+      }finally{
+        telegramSending=false;
+        if(telegramQueue.length)setTimeout(processTelegramQueue,0);
+      }
+    }
+
+    function retryFailedTelegram(){
+      if(!navigator.onLine||!telegramState.enabled)return;
+      Object.keys(telegramFailed).forEach(function(key){var task=telegramFailed[key];delete telegramFailed[key];enqueueTelegramTask(task)});
+    }
+
     function openSettingsMenu(){
       lastSettingsFocus=document.activeElement;
       elements.settingsOverlay.hidden=false;
       document.body.classList.add('settings-open');
       elements.settingsButton.setAttribute('aria-expanded','true');
+      if(!telegramServerReady&&location.protocol!=='file:')checkTelegramAvailability();
       requestAnimationFrame(function(){elements.closeSettings.focus()});
     }
 
@@ -792,41 +1052,140 @@
       return{valid:Number.isSafeInteger(parsed)&&parsed>=0,value:parsed};
     }
 
+    function backupValue(value){return value===''||value===null||typeof value==='undefined'?null:Number(value)}
+
+    function exportBackupJson(){
+      try{
+        ensureMonth(viewYear,viewMonth);
+        var months={};
+        Object.keys(store.months).sort().forEach(function(key){
+          var match=/^([0-9]{4})-(0[1-9]|1[0-2])$/.exec(key);
+          if(!match)return;
+          var year=Number(match[1]);
+          var month=Number(match[2])-1;
+          if(year<2000||year>2200)return;
+          var data=ensureMonth(year,month);
+          months[key]={
+            target_spd:backupValue(data.targetSpd),
+            target_akm:backupValue(data.targetAkm),
+            sales_net:data.salesNet.map(backupValue),
+            total_struk:data.totalStruk.map(backupValue)
+          };
+        });
+        var monthCount=Object.keys(months).length;
+        if(!monthCount)throw new Error('Belum ada data yang dapat dibackup.');
+        var backup={
+          format:'salesflow-backup',
+          version:1,
+          exported_at:new Date().toISOString(),
+          months:months
+        };
+        var blob=new Blob([JSON.stringify(backup,null,2)],{type:'application/json'});
+        var url=URL.createObjectURL(blob);
+        var link=document.createElement('a');
+        var date=new Date();
+        var stamp=String(date.getFullYear())+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');
+        link.href=url;
+        link.download='SalesFlow_Backup_'+stamp+'.json';
+        link.style.display='none';
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(function(){URL.revokeObjectURL(url)},1200);
+        setImportStatus(monthCount+' bulan berhasil dibackup ke file JSON.','success');
+        showToast('Backup JSON berhasil diunduh');
+      }catch(error){
+        setImportStatus(error.message||'Backup JSON gagal dibuat.','error');
+      }
+    }
+
+    function importCurrentMonthRows(parsed){
+      var count=dayCount(viewYear,viewMonth);
+      var updates={};
+      var invalidRows=0;
+      parsed.forEach(function(item){
+        if(!item||typeof item!=='object'||Array.isArray(item)){invalidRows+=1;return}
+        var no=Number(item.no);
+        var hasSales=Object.prototype.hasOwnProperty.call(item,'total_net');
+        var hasStruk=Object.prototype.hasOwnProperty.call(item,'total_struk');
+        if(!Number.isInteger(no)||no<1||no>count||(!hasSales&&!hasStruk)){invalidRows+=1;return}
+        var salesResult=hasSales?parseImportedValue(item.total_net):null;
+        var strukResult=hasStruk?parseImportedValue(item.total_struk):null;
+        if((salesResult&&!salesResult.valid)||(strukResult&&!strukResult.valid)){invalidRows+=1;return}
+        updates[no]={hasSales:hasSales,sales:hasSales?salesResult.value:'',hasStruk:hasStruk,struk:hasStruk?strukResult.value:''};
+      });
+      var days=Object.keys(updates);
+      if(days.length===0)throw new Error('Tidak ada baris valid yang dapat diimpor.');
+      var data=ensureMonth(viewYear,viewMonth);
+      days.forEach(function(day){
+        var index=Number(day)-1;
+        var update=updates[day];
+        if(update.hasSales)data.salesNet[index]=update.sales;
+        if(update.hasStruk)data.totalStruk[index]=update.struk;
+      });
+      return days.length+' hari berhasil diimpor'+(invalidRows?' • '+invalidRows+' baris dilewati':'')+'.';
+    }
+
+    function parseBackupArray(values,count,label){
+      if(!Array.isArray(values))throw new Error(label+' pada backup tidak valid.');
+      if(values.length>count)throw new Error(label+' melebihi jumlah hari dalam bulan.');
+      var result=[];
+      for(var index=0;index<count;index+=1){
+        var parsed=parseImportedValue(index<values.length?values[index]:null);
+        if(!parsed.valid)throw new Error(label+' hari '+(index+1)+' tidak valid.');
+        result.push(parsed.value);
+      }
+      return result;
+    }
+
+    function restoreFullBackup(parsed){
+      if(!parsed||typeof parsed!=='object'||Array.isArray(parsed)||parsed.format!=='salesflow-backup'||parsed.version!==1||!parsed.months||typeof parsed.months!=='object'||Array.isArray(parsed.months))throw new Error('Format backup SalesFlow tidak valid.');
+      var keys=Object.keys(parsed.months);
+      if(!keys.length)throw new Error('File backup tidak berisi data bulan.');
+      if(keys.length>2400)throw new Error('Jumlah bulan dalam backup terlalu banyak.');
+      var restored={};
+      keys.forEach(function(key){
+        var match=/^([0-9]{4})-(0[1-9]|1[0-2])$/.exec(key);
+        if(!match)throw new Error('Identitas bulan '+key+' tidak valid.');
+        var year=Number(match[1]);
+        var month=Number(match[2])-1;
+        if(year<2000||year>2200)throw new Error('Tahun backup berada di luar batas.');
+        var item=parsed.months[key];
+        if(!item||typeof item!=='object'||Array.isArray(item))throw new Error('Data bulan '+key+' tidak valid.');
+        var targetSpdSource=Object.prototype.hasOwnProperty.call(item,'target_spd')?item.target_spd:item.targetSpd;
+        var targetAkmSource=Object.prototype.hasOwnProperty.call(item,'target_akm')?item.target_akm:item.targetAkm;
+        var targetSpd=parseImportedValue(typeof targetSpdSource==='undefined'?null:targetSpdSource);
+        var targetAkm=parseImportedValue(typeof targetAkmSource==='undefined'?null:targetAkmSource);
+        if(!targetSpd.valid||!targetAkm.valid)throw new Error('Target bulan '+key+' tidak valid.');
+        var salesSource=Array.isArray(item.sales_net)?item.sales_net:item.salesNet;
+        var strukSource=Array.isArray(item.total_struk)?item.total_struk:item.totalStruk;
+        var count=dayCount(year,month);
+        restored[key]={
+          targetSpd:targetSpd.value,
+          targetAkm:targetAkm.value,
+          salesNet:parseBackupArray(salesSource,count,'Sales NET '+key),
+          totalStruk:parseBackupArray(strukSource,count,'Total Struk '+key)
+        };
+      });
+      if(!window.confirm('Pulihkan '+keys.length+' bulan dari backup? Data SalesFlow lokal saat ini akan diganti.'))return{cancelled:true,message:'Pemulihan backup dibatalkan.'};
+      store={version:1,months:restored};
+      return{cancelled:false,message:keys.length+' bulan berhasil dipulihkan dari backup.'};
+    }
+
     async function importJsonFile(file){
       if(!file)return;
       setImportStatus('Membaca dan memeriksa file…','success');
       try{
         if(file.size>2*1024*1024)throw new Error('Ukuran file melebihi batas 2 MB.');
         var parsed=JSON.parse(await file.text());
-        if(!Array.isArray(parsed))throw new Error('Format utama JSON harus berupa array.');
-        var count=dayCount(viewYear,viewMonth);
-        var updates={};
-        var invalidRows=0;
-        parsed.forEach(function(item){
-          if(!item||typeof item!=='object'||Array.isArray(item)){invalidRows+=1;return}
-          var no=Number(item.no);
-          var hasSales=Object.prototype.hasOwnProperty.call(item,'total_net');
-          var hasStruk=Object.prototype.hasOwnProperty.call(item,'total_struk');
-          if(!Number.isInteger(no)||no<1||no>count||(!hasSales&&!hasStruk)){invalidRows+=1;return}
-          var salesResult=hasSales?parseImportedValue(item.total_net):null;
-          var strukResult=hasStruk?parseImportedValue(item.total_struk):null;
-          if((salesResult&&!salesResult.valid)||(strukResult&&!strukResult.valid)){invalidRows+=1;return}
-          updates[no]={hasSales:hasSales,sales:hasSales?salesResult.value:'',hasStruk:hasStruk,struk:hasStruk?strukResult.value:''};
-        });
-        var days=Object.keys(updates);
-        if(days.length===0)throw new Error('Tidak ada baris valid yang dapat diimpor.');
-        var data=ensureMonth(viewYear,viewMonth);
-        days.forEach(function(day){
-          var index=Number(day)-1;
-          var update=updates[day];
-          if(update.hasSales)data.salesNet[index]=update.sales;
-          if(update.hasStruk)data.totalStruk[index]=update.struk;
-        });
+        var result;
+        if(Array.isArray(parsed))result={cancelled:false,message:importCurrentMonthRows(parsed)};
+        else result=restoreFullBackup(parsed);
+        if(result.cancelled){setImportStatus(result.message,'success');return}
         saveStore();
         renderMonth();
-        var message=days.length+' hari berhasil diimpor'+(invalidRows?' • '+invalidRows+' baris dilewati':'')+'.';
-        setImportStatus(message,'success');
-        showToast('Import JSON berhasil');
+        setImportStatus(result.message,'success');
+        showToast(Array.isArray(parsed)?'Import JSON berhasil':'Backup berhasil dipulihkan');
       }catch(error){
         setImportStatus(error instanceof SyntaxError?'File bukan JSON yang valid.':error.message,'error');
       }finally{
@@ -842,15 +1201,19 @@
       applyTheme(next,true);
       showToast(next==='dark'?'Mode Gelap aktif':'Mode Terang aktif');
     });
+    elements.exportButton.addEventListener('click',exportBackupJson);
     elements.importButton.addEventListener('click',function(){elements.jsonFileInput.click()});
-    function exportCsv(){
-      var data=ensureMonth(viewYear,viewMonth),lines=['day,sales_net,total_struk'];
-      for(var index=0;index<data.salesNet.length;index+=1)lines.push([index+1,data.salesNet[index]===''?'':data.salesNet[index],data.totalStruk[index]===''?'':data.totalStruk[index]].join(','));
-      var blob=new Blob([﻿+lines.join('\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
-      link.href=url;link.download='salesflow2-'+monthKey(viewYear,viewMonth)+'.csv';link.click();URL.revokeObjectURL(url);showToast('Ekspor CSV berhasil');
-    }
-    elements.exportButton.addEventListener('click',exportCsv);
     elements.jsonFileInput.addEventListener('change',function(event){importJsonFile(event.target.files&&event.target.files[0])});
+    elements.telegramConnect.addEventListener('click',connectTelegram);
+    elements.telegramAutoSend.addEventListener('change',function(){
+      if(!telegramState.chatId)return;
+      telegramState.enabled=elements.telegramAutoSend.checked;
+      saveTelegramState();
+      var destination=telegramState.chatName||'chat tersimpan';
+      setTelegramStatus('connected',telegramState.enabled?'Terhubung • otomatis aktif':'Terhubung • otomatis nonaktif','Tujuan: '+destination);
+      setTelegramMessage(telegramState.enabled?'Pengiriman otomatis diaktifkan.':'Pengiriman otomatis dinonaktifkan.','success');
+      if(telegramState.enabled)retryFailedTelegram();
+    });
     document.addEventListener('keydown',function(event){
       if(elements.settingsOverlay.hidden)return;
       if(event.key==='Escape'){event.preventDefault();closeSettingsMenu();return}
@@ -867,9 +1230,11 @@
     elements.dataViews.addEventListener('input',function(event){
       var input=event.target;
       if(!input.matches('.number-input'))return;
-      ensureMonth(viewYear,viewMonth)[input.dataset.field][Number(input.dataset.index)]=parseInput(input.value);
+      var index=Number(input.dataset.index);
+      ensureMonth(viewYear,viewMonth)[input.dataset.field][index]=parseInput(input.value);
       saveStore();
       paintCalculations();
+      queueTelegramNotification(viewYear,viewMonth,index);
     });
     elements.dataViews.addEventListener('keydown',function(event){
       var input=event.target;
@@ -895,8 +1260,12 @@
       if(event.key===KEY){store=loadStore();renderMonth()}
       else if(event.key===VIEW_KEY){viewMode=loadViewMode();renderMonth()}
       else if(event.key===THEME_KEY)applyTheme(loadThemeMode(),false);
+      else if(event.key===TELEGRAM_KEY){telegramState=loadTelegramState();refreshTelegramControls();checkTelegramAvailability()}
     });
+    window.addEventListener('online',retryFailedTelegram);
     renderMonth();
+    refreshTelegramControls();
+    checkTelegramAvailability();
   })();
   </script>
 </body>
