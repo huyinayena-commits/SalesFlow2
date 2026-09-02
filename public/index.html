@@ -122,10 +122,11 @@
     .horizontal-table tr.input-active td:first-child{border-left:3px solid var(--focus)}
     .horizontal-table tr.input-active .normal-cell{display:none}
     .horizontal-table tr.input-active .compact-input-cell{display:table-cell}
-    .horizontal-table tr.input-active .compact-input-cell{position:sticky;left:0;z-index:15;width:calc(100vw - 20px);max-width:520px}
+    .horizontal-table tr.input-active .compact-input-cell{position:sticky;left:0;z-index:15;width:calc(100vw - 20px);max-width:390px;box-shadow:0 5px 16px rgba(20,49,75,.16)}
     .horizontal-table .compact-input-cell{display:none;padding:6px 8px;background:var(--surface-2);text-align:left}
-    .horizontal-table .compact-input-grid{display:grid;grid-template-columns:48px minmax(116px,1fr) minmax(116px,1fr);align-items:center;gap:8px;width:100%;min-height:48px}
-    .horizontal-table .compact-day{font-size:14px;font-weight:900;text-align:center}
+    .horizontal-table .compact-input-grid{display:grid;grid-template-columns:52px minmax(112px,1fr) minmax(112px,1fr);align-items:center;gap:6px;width:100%;min-height:48px}
+    .horizontal-table .compact-day,.horizontal-table .compact-input-grid label{min-height:44px;padding:5px 6px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:0 2px 7px rgba(20,49,75,.08)}
+    .horizontal-table .compact-day{display:grid;place-items:center;font-size:14px;font-weight:900;text-align:center}
     .horizontal-table .compact-input-grid label{display:flex;flex-direction:column;gap:2px}
     .horizontal-table .compact-caption{color:var(--muted);font-size:8px;font-weight:850;text-transform:uppercase}
     .horizontal-table .compact-input{width:100%;height:42px;padding:0 8px;border:1px solid var(--line);border-radius:9px;outline:0;background:var(--surface);color:var(--ink);font-size:13px;font-weight:850;text-align:right}
@@ -177,15 +178,16 @@
     .metric-value.negative{padding:4px 6px;border-radius:7px;background:var(--negative-soft);color:var(--negative)}
     .metric-value.neutral{color:var(--muted)}
 
-    .targets-section{margin-top:18px;padding:15px 12px 14px;border:1px solid var(--line);border-radius:18px;background:var(--surface);box-shadow:var(--shadow)}
+    .targets-section{margin-top:10px;padding:10px 12px;border:1px solid var(--line);border-radius:15px;background:var(--surface);box-shadow:var(--shadow)}
+    .targets-section[hidden]{display:none}
     .targets-header{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-bottom:10px}
     .targets-header h2{margin:0;font-size:15px;font-weight:850}
     .targets-header p{margin:3px 0 0;color:var(--muted);font-size:10px}
     .target-month{color:var(--muted);font-size:10px;font-weight:750;white-space:nowrap}
-    .target-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-    .target-card{display:block;padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--surface-2)}
-    .target-card span{display:block;color:var(--muted);font-size:9px;font-weight:850;letter-spacing:.04em;text-transform:uppercase}
-    .target-input{width:100%;height:44px;margin-top:3px;padding:0;border:0;border-bottom:2px solid #ccd5e0;outline:0;background:transparent;color:var(--ink);font-size:17px;font-weight:900;text-align:right}
+    .target-grid{display:flex;align-items:center;gap:8px}
+    .target-card{display:flex;align-items:center;gap:6px;width:126px;padding:5px 7px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2)}
+    .target-card span{display:block;color:var(--muted);font-size:8px;font-weight:850;letter-spacing:.02em;text-transform:uppercase}
+    .target-input{width:80px;height:32px;margin:0;padding:0 4px;border:1px solid var(--line);border-radius:7px;outline:0;background:var(--surface);color:var(--ink);font-size:14px;font-weight:850;text-align:center}
     .target-input:focus{border-bottom-color:var(--focus)}
     .target-input::placeholder{color:#b9c1cc}
 
@@ -325,7 +327,7 @@
         <input class="month-picker" id="monthPicker" type="month" tabindex="-1">
       </header>
 
-      <section class="targets-section" aria-labelledby="targetsHeading">
+      <section class="targets-section" id="targetsPanel" aria-labelledby="targetsHeading" hidden>
         <div class="targets-header">
           <div><h2 id="targetsHeading">Target Bulan</h2><p>Dipakai untuk menghitung achievement</p></div>
           <span class="target-month" id="targetMonth">Bulan Tahun</span>
@@ -339,6 +341,9 @@
       <div class="list-heading">
         <div class="table-info"><p id="daysLabel">Belum ada perubahan tersimpan</p></div>
         <span class="save-state" id="saveState" role="status" aria-live="polite">Tersimpan</span>
+        <button class="settings-fab" id="targetsToggle" type="button" aria-label="Tampilkan Target Bulanan" aria-controls="targetsPanel" aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.1 12s3.6-6 9.9-6 9.9 6 9.9 6-3.6 6-9.9 6-9.9-6-9.9-6Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
+        </button>
         <button class="settings-fab" id="settingsButton" type="button" aria-label="Buka Pengaturan" aria-controls="settingsOverlay" aria-expanded="false">
           <span aria-hidden="true">⚙</span>
         </button>
@@ -501,6 +506,8 @@
       targetMonth:document.getElementById('targetMonth'),
       targetSpd:document.getElementById('targetSpd'),
       targetAkm:document.getElementById('targetAkm'),
+      targetsPanel:document.getElementById('targetsPanel'),
+      targetsToggle:document.getElementById('targetsToggle'),
       themeColor:document.getElementById('themeColor'),
       settingsButton:document.getElementById('settingsButton'),
       settingsOverlay:document.getElementById('settingsOverlay'),
@@ -1075,6 +1082,14 @@
       if(lastSettingsFocus&&typeof lastSettingsFocus.focus==='function')lastSettingsFocus.focus();
     }
 
+    function toggleTargets(){
+      var visible=elements.targetsPanel.hidden;
+      elements.targetsPanel.hidden=!visible;
+      elements.targetsToggle.setAttribute('aria-expanded',String(visible));
+      elements.targetsToggle.setAttribute('aria-label',visible?'Sembunyikan Target Bulanan':'Tampilkan Target Bulanan');
+      elements.targetsToggle.innerHTML=visible?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.1 12s3.6-6 9.9-6 9.9 6 9.9 6-3.6 6-9.9 6-9.9-6-9.9-6Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18"></path><path d="M10.6 6.1A10.8 10.8 0 0 1 12 6c6.3 0 9.9 6 9.9 6a17.8 17.8 0 0 1-3.3 3.9M6.2 6.2C3.6 8 2.1 12 2.1 12s3.6 6 9.9 6c1.6 0 3-.4 4.2-1"></path><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"></path></svg>';
+    }
+
     function setImportStatus(message,type){
       elements.importStatus.textContent=message;
       elements.importStatus.className='import-status'+(message?' visible '+type:'');
@@ -1233,6 +1248,7 @@
       }
     }
 
+    elements.targetsToggle.addEventListener('click',toggleTargets);
     elements.settingsButton.addEventListener('click',openSettingsMenu);
     elements.closeSettings.addEventListener('click',closeSettingsMenu);
     elements.settingsOverlay.addEventListener('click',function(event){if(event.target.hasAttribute('data-close-settings'))closeSettingsMenu()});
