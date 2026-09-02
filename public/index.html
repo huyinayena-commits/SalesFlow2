@@ -82,10 +82,11 @@
     .month-button:active{background:var(--track)}
     .month-picker{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
 
-    .list-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 4px 9px}
+    .list-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 4px 9px}
     .list-heading h1{margin:0;font-size:17px;font-weight:850;letter-spacing:-.02em}
-    .list-heading p{margin:3px 0 0;color:var(--muted);font-size:11px}
-    .save-state{flex:none;color:var(--positive);font-size:10px;font-weight:750}
+    .list-heading p{margin:0;color:var(--muted);font-size:11px;line-height:1.35}
+    .table-info{min-width:0;flex:1}
+    .save-state{display:none}
     .save-state.saving{color:#9a720d}
 
     .view-switch{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin:0;padding:3px;border:1px solid var(--line);border-radius:15px;background:var(--track)}
@@ -117,6 +118,18 @@
     .horizontal-table .apc-cell{background:var(--apc-cell)}
     .horizontal-table tr.today-row td{background-image:linear-gradient(rgba(244,211,109,.12),rgba(244,211,109,.12))}
     .horizontal-table tr.today-row .sticky-day{background:#f4d36d;color:#5a450c}
+    .horizontal-table tr.input-active td{background:var(--surface-2);border-bottom-color:var(--focus)}
+    .horizontal-table tr.input-active td:first-child{border-left:3px solid var(--focus)}
+    .horizontal-table tr.input-active .normal-cell{display:none}
+    .horizontal-table tr.input-active .compact-input-cell{display:table-cell}
+    .horizontal-table tr.input-active .compact-input-cell{position:sticky;left:0;z-index:15;width:calc(100vw - 20px);max-width:520px}
+    .horizontal-table .compact-input-cell{display:none;padding:6px 8px;background:var(--surface-2);text-align:left}
+    .horizontal-table .compact-input-grid{display:grid;grid-template-columns:48px minmax(116px,1fr) minmax(116px,1fr);align-items:center;gap:8px;width:100%;min-height:48px}
+    .horizontal-table .compact-day{font-size:14px;font-weight:900;text-align:center}
+    .horizontal-table .compact-input-grid label{display:flex;flex-direction:column;gap:2px}
+    .horizontal-table .compact-caption{color:var(--muted);font-size:8px;font-weight:850;text-transform:uppercase}
+    .horizontal-table .compact-input{width:100%;height:42px;padding:0 8px;border:1px solid var(--line);border-radius:9px;outline:0;background:var(--surface);color:var(--ink);font-size:13px;font-weight:850;text-align:right}
+    .horizontal-table .compact-input:focus{border-color:var(--focus);box-shadow:0 0 0 3px rgba(76,143,208,.16)}
     .horizontal-table .metric-value{display:block;max-width:none;font-size:11px;overflow:visible}
     .horizontal-table .metric-value.positive,.horizontal-table .metric-value.negative{display:inline-block;float:right}
     .horizontal-table .table-input{width:100%;height:42px;margin:0;padding:0 5px;border:1px solid transparent;border-radius:8px;outline:0;background:transparent;color:var(--ink);font-size:12px;font-weight:800;text-align:right}
@@ -176,7 +189,7 @@
     .target-input:focus{border-bottom-color:var(--focus)}
     .target-input::placeholder{color:#b9c1cc}
 
-    .settings-fab{position:fixed;right:max(16px,calc((100vw - 520px)/2 + 16px));bottom:calc(16px + env(safe-area-inset-bottom));z-index:70;display:grid;place-items:center;width:54px;height:54px;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:var(--blue);color:#fff;box-shadow:0 12px 28px rgba(20,49,75,.28);cursor:pointer}
+    .settings-fab{position:relative;right:auto;bottom:auto;z-index:1;display:grid;place-items:center;flex:none;width:46px;height:46px;border:1px solid rgba(255,255,255,.22);border-radius:14px;background:var(--blue);color:#fff;box-shadow:0 6px 16px rgba(20,49,75,.18);cursor:pointer}
     .settings-fab:active{transform:scale(.95)}
     .settings-fab svg{width:25px;height:25px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
     .settings-overlay{position:fixed;inset:0;z-index:100;display:flex;align-items:flex-end;justify-content:center;padding-top:env(safe-area-inset-top)}
@@ -300,7 +313,7 @@
 </head>
 <body>
   <main class="app">
-    <section class="table-section" aria-labelledby="tableHeading">
+    <section class="table-section" aria-labelledby="daysLabel">
       <header class="month-header">
         <button class="nav-button" id="previousMonth" type="button" aria-label="Bulan sebelumnya">&#8249;</button>
         <button class="month-button" id="monthButton" type="button" aria-label="Pilih bulan">
@@ -312,15 +325,29 @@
         <input class="month-picker" id="monthPicker" type="month" tabindex="-1">
       </header>
 
+      <section class="targets-section" aria-labelledby="targetsHeading">
+        <div class="targets-header">
+          <div><h2 id="targetsHeading">Target Bulan</h2><p>Dipakai untuk menghitung achievement</p></div>
+          <span class="target-month" id="targetMonth">Bulan Tahun</span>
+        </div>
+        <div class="target-grid">
+          <label class="target-card"><span>Target SPD</span><input class="target-input" id="targetSpd" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Target SPD"></label>
+          <label class="target-card"><span>Target AKM</span><input class="target-input" id="targetAkm" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Target AKM"></label>
+        </div>
+      </section>
+
       <div class="list-heading">
-        <div><h1 id="tableHeading">Keseluruhan Tabel</h1><p id="daysLabel">Data harian bulan berjalan</p></div>
+        <div class="table-info"><p id="daysLabel">Belum ada perubahan tersimpan</p></div>
         <span class="save-state" id="saveState" role="status" aria-live="polite">Tersimpan</span>
+        <button class="settings-fab" id="settingsButton" type="button" aria-label="Buka Pengaturan" aria-controls="settingsOverlay" aria-expanded="false">
+          <span aria-hidden="true">⚙</span>
+        </button>
       </div>
 
       <div id="dataViews">
         <div class="data-view" id="horizontalView">
           <div class="horizontal-shell">
-            <div class="horizontal-scroll" aria-label="Tabel horizontal, geser untuk melihat semua kolom" tabindex="0">
+            <div class="horizontal-scroll" aria-label="Tabel horizontal" tabindex="0">
               <table class="horizontal-table">
                 <colgroup><col style="width:48px"><col style="width:118px"><col style="width:118px"><col style="width:100px"><col style="width:92px"><col style="width:104px"><col style="width:94px"><col style="width:112px"><col style="width:112px"><col style="width:92px"><col style="width:100px"><col style="width:94px"><col style="width:98px"><col style="width:100px"><col style="width:98px"></colgroup>
                 <thead>
@@ -343,21 +370,8 @@
       </div>
     </section>
 
-    <section class="targets-section" aria-labelledby="targetsHeading">
-      <div class="targets-header">
-        <div><h2 id="targetsHeading">Target Bulan</h2><p>Dipakai untuk menghitung achievement</p></div>
-        <span class="target-month" id="targetMonth">Bulan Tahun</span>
-      </div>
-      <div class="target-grid">
-        <label class="target-card"><span>Target SPD</span><input class="target-input" id="targetSpd" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Target SPD"></label>
-        <label class="target-card"><span>Target AKM</span><input class="target-input" id="targetAkm" inputmode="numeric" autocomplete="off" placeholder="0" aria-label="Target AKM"></label>
-      </div>
-    </section>
   </main>
 
-  <button class="settings-fab" id="settingsButton" type="button" aria-label="Buka Pengaturan" aria-controls="settingsOverlay" aria-expanded="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path><path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.7 1.7 0 0 0 15 19.4a1.7 1.7 0 0 0-1 .6 1.7 1.7 0 0 0-.4 1.1V21a2 2 0 1 1-4 0v-.09A1.7 1.7 0 0 0 8.5 19.4a1.7 1.7 0 0 0-1.88.34l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-.6-1 1.7 1.7 0 0 0-1.1-.4H3a2 2 0 1 1 0-4h.09A1.7 1.7 0 0 0 4.6 8.5a1.7 1.7 0 0 0-.34-1.88l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.7 1.7 0 0 0 9 4.6a1.7 1.7 0 0 0 1-.6 1.7 1.7 0 0 0 .4-1.1V3a2 2 0 1 1 4 0v.09A1.7 1.7 0 0 0 15.5 4.6a1.7 1.7 0 0 0 1.88-.34l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.7 1.7 0 0 0 19.4 9c.14.37.36.7.65.96.3.25.67.4 1.06.44H21a2 2 0 1 1 0 4h-.09A1.7 1.7 0 0 0 19.4 15Z"></path></svg>
-  </button>
 
   <div class="settings-overlay" id="settingsOverlay" hidden>
     <div class="settings-backdrop" data-close-settings aria-hidden="true"></div>
@@ -457,6 +471,8 @@
     var currentMonthIndex=now.getMonth();
     var viewYear=currentYear;
     var viewMonth=currentMonthIndex;
+    var activeInputDay=null;
+    var lastSavedAt=null;
     var saveTimer=null;
     var syncTimer=null;
     var toastTimer=null;
@@ -527,6 +543,18 @@
       return{version:1,months:{}};
     }
 
+    function loadLastSaved(){try{return localStorage.getItem('sales-harian-last-saved-v1')||null}catch(error){return null}}
+    function saveLastSaved(value){try{localStorage.setItem('sales-harian-last-saved-v1',value)}catch(error){}}
+    function updateTableInfo(status){
+      var selectedDay=viewYear===currentYear&&viewMonth===currentMonthIndex?now.getDate():1;
+      var dateText=new Date(viewYear,viewMonth,selectedDay).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+      elements.daysLabel.textContent=dateText+' · '+dayCount(viewYear,viewMonth)+' hari · '+status;
+    }
+    function markSaved(){
+      var date=new Date();lastSavedAt=String(date.getHours()).padStart(2,'0')+'.'+String(date.getMinutes()).padStart(2,'0');
+      saveLastSaved(lastSavedAt);updateTableInfo('Terakhir tersimpan: '+lastSavedAt);
+    }
+
     function loadTelegramState(){
       var fallback={chatId:'',chatName:'',botUsername:'',enabled:false,messages:{}};
       try{
@@ -560,6 +588,7 @@
     }
 
     applyTheme(themeMode,false);
+    lastSavedAt=loadLastSaved();
 
     function saveStore(){
       try{
@@ -568,6 +597,7 @@
         elements.saveState.classList.add('saving');
         clearTimeout(saveTimer);
         saveTimer=setTimeout(function(){elements.saveState.textContent='Tersimpan';elements.saveState.classList.remove('saving')},450);
+        markSaved();
         scheduleRemoteSync();
       }catch(error){elements.saveState.textContent='Gagal tersimpan';elements.saveState.classList.remove('saving')}
     }
@@ -662,24 +692,25 @@
       var html='';
       for(var index=0;index<count;index+=1){
         var day=index+1;
-        var rowClass=isCurrent&&day===now.getDate()?' class="today-row"':'';
-        html+='<tr'+rowClass+' data-day-card="'+index+'">';
-        html+='<td class="sticky-day">'+day+'</td>';
-        html+='<td class="sales-cell"><input class="table-input number-input" data-field="salesNet" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.salesNet[index])+'" aria-label="Sales NET hari '+day+'"></td>';
-        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="akmSales">—</strong></td>';
-        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="spd">—</strong></td>';
-        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="achievement">—</strong></td>';
-        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="spdPast">—</strong></td>';
-        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="growthSpd">—</strong></td>';
-        html+='<td class="struk-cell"><input class="table-input number-input" data-field="totalStruk" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.totalStruk[index])+'" aria-label="Total Struk hari '+day+'"></td>';
-        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="akmStruk">—</strong></td>';
-        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="std">—</strong></td>';
-        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="stdPast">—</strong></td>';
-        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="growthStd">—</strong></td>';
-        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="apc">—</strong></td>';
-        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="apcPast">—</strong></td>';
-        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="growthApc">—</strong></td>';
-        html+='</tr>';
+        var rowClass=(isCurrent&&day===now.getDate()?' today-row':'')+(activeInputDay===index?' input-active':'');
+        var rowOpen='<tr class="'+rowClass.trim()+'" data-day-card="'+index+'">';
+        html+=rowOpen;
+        html+='<td class="normal-cell sticky-day">'+day+'</td>';
+        html+='<td class="normal-cell sales-cell"><input class="table-input number-input" data-field="salesNet" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.salesNet[index])+'" aria-label="Sales NET hari '+day+'"></td>';
+        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="akmSales">—</strong></td>';
+        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="spd">—</strong></td>';
+        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="achievement">—</strong></td>';
+        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="spdPast">—</strong></td>';
+        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="growthSpd">—</strong></td>';
+        html+='<td class="normal-cell struk-cell"><input class="table-input number-input" data-field="totalStruk" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.totalStruk[index])+'" aria-label="Total Struk hari '+day+'"></td>';
+        html+='<td class="normal-cell struk-cell"><strong class="metric-value empty" data-column="akmStruk">—</strong></td>';
+        html+='<td class="normal-cell struk-cell"><strong class="metric-value empty" data-column="std">—</strong></td>';
+        html+='<td class="normal-cell struk-cell"><strong class="metric-value empty" data-column="stdPast">—</strong></td>';
+        html+='<td class="normal-cell struk-cell"><strong class="metric-value empty" data-column="growthStd">—</strong></td>';
+        html+='<td class="normal-cell apc-cell"><strong class="metric-value empty" data-column="apc">—</strong></td>';
+        html+='<td class="normal-cell apc-cell"><strong class="metric-value empty" data-column="apcPast">—</strong></td>';
+        html+='<td class="normal-cell apc-cell"><strong class="metric-value empty" data-column="growthApc">—</strong></td>';
+        html+='<td class="compact-input-cell" colspan="15"><div class="compact-input-grid"><span class="compact-day">'+day+'</span><label><span class="compact-caption">Sales NET</span><input class="compact-input number-input" data-field="salesNet" data-index="'+index+'" inputmode="numeric" autocomplete="off" value="'+formatInput(data.salesNet[index])+'" aria-label="Sales NET hari '+day+'"></label><label><span class="compact-caption">Total Struk</span><input class="compact-input number-input" data-field="totalStruk" data-index="'+index+'" inputmode="numeric" autocomplete="off" value="'+formatInput(data.totalStruk[index])+'" aria-label="Total Struk hari '+day+'"></label></div></td></tr>';
       }
       elements.horizontalRows.innerHTML=html;
     }
@@ -688,6 +719,7 @@
 
     function renderData(data){
       var horizontal=viewMode==='horizontal';
+      if(!horizontal)activeInputDay=null;
       elements.horizontalView.hidden=!horizontal;
       elements.verticalView.hidden=horizontal;
       elements.horizontalToggle.classList.toggle('active',horizontal);
@@ -695,6 +727,13 @@
       elements.horizontalToggle.setAttribute('aria-pressed',String(horizontal));
       elements.verticalToggle.setAttribute('aria-pressed',String(!horizontal));
       if(horizontal){elements.dayList.innerHTML='';buildHorizontalTable(data)}else{elements.horizontalRows.innerHTML='';buildCards(data)}
+    }
+
+    function setActiveInputDay(index,focusInput){
+      if(viewMode!=='horizontal')return;
+      activeInputDay=index;
+      Array.prototype.forEach.call(elements.horizontalRows.querySelectorAll('tr[data-day-card]'),function(row){row.classList.toggle('input-active',Number(row.dataset.dayCard)===index)});
+      if(focusInput){requestAnimationFrame(function(){var input=elements.horizontalRows.querySelector('tr[data-day-card="'+index+'"] .compact-input[data-field="salesNet"]');if(input)input.focus()})}
     }
 
     function setValue(index,column,value,type){
@@ -734,12 +773,13 @@
     }
 
     function renderMonth(skipRemote){
+      activeInputDay=null;
       var data=ensureMonth(viewYear,viewMonth);
       var count=dayCount(viewYear,viewMonth);
       var label=names[viewMonth]+' '+viewYear;
       elements.monthPicker.value=monthKey(viewYear,viewMonth);
       elements.monthTitle.textContent=label;
-      elements.daysLabel.textContent=count+' hari • '+(viewMode==='horizontal'?'geser tabel untuk melihat kolom':'tampilan kartu harian');
+      updateTableInfo(lastSavedAt?'Terakhir tersimpan: '+lastSavedAt:'Belum ada perubahan tersimpan');
       elements.targetMonth.textContent=label;
       elements.importMonth.textContent=label;
       elements.targetSpd.value=formatInput(data.targetSpd);
@@ -1223,6 +1263,19 @@
       var first=focusable[0],last=focusable[focusable.length-1];
       if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
       else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
+    });
+
+    elements.horizontalRows.addEventListener('click',function(event){
+      var row=event.target.closest('tr[data-day-card]');
+      if(!row)return;
+      setActiveInputDay(Number(row.dataset.dayCard),!event.target.matches('.compact-input'));
+    });
+    document.addEventListener('click',function(event){
+      if(viewMode!=='horizontal'||activeInputDay===null)return;
+      var activeRow=elements.horizontalRows.querySelector('tr[data-day-card="'+activeInputDay+'"]');
+      if(activeRow&&activeRow.contains(event.target))return;
+      activeInputDay=null;
+      if(activeRow)activeRow.classList.remove('input-active');
     });
 
     elements.dataViews.addEventListener('focusin',function(event){if(event.target.matches('.number-input'))focusNumeric(event)});
