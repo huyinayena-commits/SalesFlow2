@@ -93,6 +93,7 @@ Terimakasih
     if(spd===''&&std===''&&apc==='')return{spd:'',std:'',apc:''};
     return{spd:spd===''?'':spd+'_',std:std===''?'':std+'_',apc:apc||''};
   }
+  function growthText(current,previous){if(current===null||previous===null||previous===0)return'';var value=(current/previous-1)*100;return(value>=0?'+':'')+value.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
   function rowsFor(year,month,data){
     var count=daysIn(year,month),sales=0,struk=0,rows=[];
     data=data||{};
@@ -115,7 +116,9 @@ Terimakasih
     var d=last?triple(metric(last.spd),metric(last.std),metric(last.apc)):triple('','','');values.D_SPD=d.spd;values.D_STD=d.std;values.D_APC=d.apc;
     values.E_TARGET_AKM=money(data.targetAkm);values.F_ACH=last&&data.targetSpd?metric(last.spd/number(data.targetSpd)*100):'';values.F_TARGET_SPD=money(data.targetSpd);
     var g=previousLast?triple(metric(previousLast.spd),metric(previousLast.std),metric(previousLast.apc)):triple('','','');values.G_SPD=g.spd;values.G_STD=g.std;values.G_APC=g.apc;
+    values.H_SPD=last&&previousLast?growthText(last.spd,previousLast.spd):'';values.H_STD=last&&previousLast?growthText(last.std,previousLast.std):'';values.H_APC=last&&previousLast?growthText(last.apc,previousLast.apc):'';
     values.M_SPD=yearAgoLast?triple(metric(yearAgoLast.spd),metric(yearAgoLast.std),metric(yearAgoLast.apc)).spd:'';values.M_STD=yearAgoLast?triple(metric(yearAgoLast.spd),metric(yearAgoLast.std),metric(yearAgoLast.apc)).std:'';values.M_APC=yearAgoLast?triple(metric(yearAgoLast.spd),metric(yearAgoLast.std),metric(yearAgoLast.apc)).apc:'';
+    values.N_SPD=last&&yearAgoLast?growthText(last.spd,yearAgoLast.spd):'';values.N_STD=last&&yearAgoLast?growthText(last.std,yearAgoLast.std):'';values.N_APC=last&&yearAgoLast?growthText(last.apc,yearAgoLast.apc):'';
     return Object.assign(values,input||{});
   }
   function formatValue(key,value){
