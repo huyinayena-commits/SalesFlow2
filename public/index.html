@@ -118,19 +118,6 @@
     .horizontal-table .apc-cell{background:var(--apc-cell)}
     .horizontal-table tr.today-row td{background-image:linear-gradient(rgba(244,211,109,.12),rgba(244,211,109,.12))}
     .horizontal-table tr.today-row .sticky-day{background:#f4d36d;color:#5a450c}
-    .horizontal-table tr.input-active td{background:var(--surface-2);border-bottom-color:var(--focus)}
-    .horizontal-table tr.input-active td:first-child{border-left:3px solid var(--focus)}
-    .horizontal-table tr.input-active .normal-cell{display:none}
-    .horizontal-table tr.input-active .compact-input-cell{display:table-cell}
-    .horizontal-table tr.input-active .compact-input-cell{position:sticky;left:0;z-index:15;width:calc(100vw - 20px);max-width:390px;box-shadow:0 5px 16px rgba(20,49,75,.16)}
-    .horizontal-table .compact-input-cell{display:none;padding:6px 8px;background:var(--surface-2);text-align:left}
-    .horizontal-table .compact-input-grid{display:grid;grid-template-columns:52px minmax(112px,1fr) minmax(112px,1fr);align-items:center;gap:6px;width:100%;min-height:48px}
-    .horizontal-table .compact-day,.horizontal-table .compact-input-grid label{min-height:44px;padding:5px 6px;border:1px solid var(--line);border-radius:10px;background:var(--surface);box-shadow:0 2px 7px rgba(20,49,75,.08)}
-    .horizontal-table .compact-day{display:grid;place-items:center;font-size:14px;font-weight:900;text-align:center}
-    .horizontal-table .compact-input-grid label{display:flex;flex-direction:column;gap:2px}
-    .horizontal-table .compact-caption{color:var(--muted);font-size:8px;font-weight:850;text-transform:uppercase}
-    .horizontal-table .compact-input{width:100%;height:42px;padding:0 8px;border:1px solid var(--line);border-radius:9px;outline:0;background:var(--surface);color:var(--ink);font-size:13px;font-weight:850;text-align:right}
-    .horizontal-table .compact-input:focus{border-color:var(--focus);box-shadow:0 0 0 3px rgba(76,143,208,.16)}
     .horizontal-table .metric-value{display:block;max-width:none;font-size:11px;overflow:visible}
     .horizontal-table .metric-value.positive,.horizontal-table .metric-value.negative{display:inline-block;float:right}
     .horizontal-table .table-input{width:100%;height:42px;margin:0;padding:0 5px;border:1px solid transparent;border-radius:8px;outline:0;background:transparent;color:var(--ink);font-size:12px;font-weight:800;text-align:right}
@@ -476,7 +463,6 @@
     var currentMonthIndex=now.getMonth();
     var viewYear=currentYear;
     var viewMonth=currentMonthIndex;
-    var activeInputDay=null;
     var lastSavedAt=null;
     var saveTimer=null;
     var syncTimer=null;
@@ -699,25 +685,24 @@
       var html='';
       for(var index=0;index<count;index+=1){
         var day=index+1;
-        var rowClass=(isCurrent&&day===now.getDate()?' today-row':'')+(activeInputDay===index?' input-active':'');
-        var rowOpen='<tr class="'+rowClass.trim()+'" data-day-card="'+index+'">';
-        html+=rowOpen;
-        html+='<td class="normal-cell sticky-day">'+day+'</td>';
-        html+='<td class="normal-cell sales-cell"><input class="table-input number-input" data-field="salesNet" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.salesNet[index])+'" aria-label="Sales NET hari '+day+'"></td>';
-        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="akmSales">—</strong></td>';
-        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="spd">—</strong></td>';
-        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="achievement">—</strong></td>';
-        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="spdPast">—</strong></td>';
-        html+='<td class="normal-cell sales-cell"><strong class="metric-value empty" data-column="growthSpd">—</strong></td>';
-        html+='<td class="normal-cell struk-cell"><input class="table-input number-input" data-field="totalStruk" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.totalStruk[index])+'" aria-label="Total Struk hari '+day+'"></td>';
-        html+='<td class="normal-cell struk-cell"><strong class="metric-value empty" data-column="akmStruk">—</strong></td>';
-        html+='<td class="normal-cell struk-cell"><strong class="metric-value empty" data-column="std">—</strong></td>';
-        html+='<td class="normal-cell struk-cell"><strong class="metric-value empty" data-column="stdPast">—</strong></td>';
-        html+='<td class="normal-cell struk-cell"><strong class="metric-value empty" data-column="growthStd">—</strong></td>';
-        html+='<td class="normal-cell apc-cell"><strong class="metric-value empty" data-column="apc">—</strong></td>';
-        html+='<td class="normal-cell apc-cell"><strong class="metric-value empty" data-column="apcPast">—</strong></td>';
-        html+='<td class="normal-cell apc-cell"><strong class="metric-value empty" data-column="growthApc">—</strong></td>';
-        html+='<td class="compact-input-cell" colspan="15"><div class="compact-input-grid"><span class="compact-day">'+day+'</span><label><span class="compact-caption">Sales NET</span><input class="compact-input number-input" data-field="salesNet" data-index="'+index+'" inputmode="numeric" autocomplete="off" value="'+formatInput(data.salesNet[index])+'" aria-label="Sales NET hari '+day+'"></label><label><span class="compact-caption">Total Struk</span><input class="compact-input number-input" data-field="totalStruk" data-index="'+index+'" inputmode="numeric" autocomplete="off" value="'+formatInput(data.totalStruk[index])+'" aria-label="Total Struk hari '+day+'"></label></div></td></tr>';
+        var rowClass=isCurrent&&day===now.getDate()?' class="today-row"':'';
+        html+='<tr'+rowClass+' data-day-card="'+index+'">';
+        html+='<td class="sticky-day">'+day+'</td>';
+        html+='<td class="sales-cell"><input class="table-input number-input" data-field="salesNet" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.salesNet[index])+'" aria-label="Sales NET hari '+day+'"></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="akmSales">—</strong></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="spd">—</strong></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="achievement">—</strong></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="spdPast">—</strong></td>';
+        html+='<td class="sales-cell"><strong class="metric-value empty" data-column="growthSpd">—</strong></td>';
+        html+='<td class="struk-cell"><input class="table-input number-input" data-field="totalStruk" data-index="'+index+'" inputmode="numeric" autocomplete="off" placeholder="0" value="'+formatInput(data.totalStruk[index])+'" aria-label="Total Struk hari '+day+'"></td>';
+        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="akmStruk">—</strong></td>';
+        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="std">—</strong></td>';
+        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="stdPast">—</strong></td>';
+        html+='<td class="struk-cell"><strong class="metric-value empty" data-column="growthStd">—</strong></td>';
+        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="apc">—</strong></td>';
+        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="apcPast">—</strong></td>';
+        html+='<td class="apc-cell"><strong class="metric-value empty" data-column="growthApc">—</strong></td>';
+        html+='</tr>';
       }
       elements.horizontalRows.innerHTML=html;
     }
@@ -726,7 +711,6 @@
 
     function renderData(data){
       var horizontal=viewMode==='horizontal';
-      if(!horizontal)activeInputDay=null;
       elements.horizontalView.hidden=!horizontal;
       elements.verticalView.hidden=horizontal;
       elements.horizontalToggle.classList.toggle('active',horizontal);
@@ -734,13 +718,6 @@
       elements.horizontalToggle.setAttribute('aria-pressed',String(horizontal));
       elements.verticalToggle.setAttribute('aria-pressed',String(!horizontal));
       if(horizontal){elements.dayList.innerHTML='';buildHorizontalTable(data)}else{elements.horizontalRows.innerHTML='';buildCards(data)}
-    }
-
-    function setActiveInputDay(index,focusInput){
-      if(viewMode!=='horizontal')return;
-      activeInputDay=index;
-      Array.prototype.forEach.call(elements.horizontalRows.querySelectorAll('tr[data-day-card]'),function(row){row.classList.toggle('input-active',Number(row.dataset.dayCard)===index)});
-      if(focusInput){requestAnimationFrame(function(){var input=elements.horizontalRows.querySelector('tr[data-day-card="'+index+'"] .compact-input[data-field="salesNet"]');if(input)input.focus()})}
     }
 
     function setValue(index,column,value,type){
@@ -780,7 +757,6 @@
     }
 
     function renderMonth(skipRemote){
-      activeInputDay=null;
       var data=ensureMonth(viewYear,viewMonth);
       var count=dayCount(viewYear,viewMonth);
       var label=names[viewMonth]+' '+viewYear;
@@ -1279,19 +1255,6 @@
       var first=focusable[0],last=focusable[focusable.length-1];
       if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
       else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus()}
-    });
-
-    elements.horizontalRows.addEventListener('click',function(event){
-      var row=event.target.closest('tr[data-day-card]');
-      if(!row)return;
-      setActiveInputDay(Number(row.dataset.dayCard),!event.target.matches('.compact-input'));
-    });
-    document.addEventListener('click',function(event){
-      if(viewMode!=='horizontal'||activeInputDay===null)return;
-      var activeRow=elements.horizontalRows.querySelector('tr[data-day-card="'+activeInputDay+'"]');
-      if(activeRow&&activeRow.contains(event.target))return;
-      activeInputDay=null;
-      if(activeRow)activeRow.classList.remove('input-active');
     });
 
     elements.dataViews.addEventListener('focusin',function(event){if(event.target.matches('.number-input'))focusNumeric(event)});
