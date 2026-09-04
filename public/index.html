@@ -629,10 +629,10 @@
         if(hasSales)sales+=salesValue;
         if(hasStruk)struk+=strukValue;
         var akmSales=hasSales?sales:null;
-        var spd=hasSales?sales/day:null;
+        var spd=akmSales!==null?akmSales/day:null;
         var achievement=spd!==null&&target!==''&&target>0?spd/target*100:null;
         var akmStruk=hasStruk?struk:null;
-        var std=hasStruk?Math.floor(struk/day):null;
+        var std=akmStruk!==null?akmStruk/day:null;
         var apc=spd!==null&&std!==null&&std>0?spd/std:null;
         rows.push({akmSales:akmSales,spd:spd,achievement:achievement,akmStruk:akmStruk,std:std,apc:apc});
       }
