@@ -632,7 +632,7 @@
         var spd=akmSales!==null?akmSales/day:null;
         var achievement=spd!==null&&target!==''&&target>0?spd/target*100:null;
         var akmStruk=hasStruk?struk:null;
-        var std=akmStruk!==null?akmStruk/day:null;
+        var std=akmStruk!==null?Math.floor(akmStruk/day):null;
         var apc=spd!==null&&std!==null&&std>0?spd/std:null;
         rows.push({akmSales:akmSales,spd:spd,achievement:achievement,akmStruk:akmStruk,std:std,apc:apc});
       }
@@ -647,6 +647,12 @@
     }
 
     function formatNumber(value){return value===null||value===''||typeof value==='undefined'||!Number.isFinite(Number(value))?'—':Math.round(Number(value)).toLocaleString('id-ID')}
+    function formatDecimal(value){
+      if(value===null||value===''||typeof value==='undefined'||!Number.isFinite(Number(value)))return'—';
+      var text=String(Number(value));
+      var parts=text.split('.');
+      return Number(parts[0]).toLocaleString('id-ID')+(parts[1]?','+parts[1]:'');
+    }
     function formatInput(value){return value===''||value===null||typeof value==='undefined'?'':Number(value).toLocaleString('id-ID')}
     function formatPercent(value){return value===null||!Number.isFinite(value)?'—':value.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
     function growth(current,previous){return current===null||previous===null||!Number.isFinite(current)||!Number.isFinite(previous)||previous===0?null:(current/previous-1)*100}
@@ -726,7 +732,7 @@
       var cell=card.querySelector('[data-column="'+column+'"]');
       if(!cell)return;
       cell.classList.remove('empty','positive','negative','neutral');
-      cell.textContent=type==='percent'||type==='growth'?formatPercent(value):formatNumber(value);
+      cell.textContent=type==='percent'||type==='growth'?formatPercent(value):type==='decimal'?formatDecimal(value):formatNumber(value);
       if(value===null||!Number.isFinite(Number(value)))cell.classList.add('empty');
       if(type==='growth')cell.classList.add(growthClass(value));
     }
@@ -742,15 +748,15 @@
         var oldStd=old?old.std:null;
         var oldApc=old?old.apc:null;
         setValue(index,'akmSales',row.akmSales,'number');
-        setValue(index,'spd',row.spd,'number');
+        setValue(index,'spd',row.spd,'decimal');
         setValue(index,'achievement',row.achievement,'percent');
         setValue(index,'spdPast',oldSpd,'number');
         setValue(index,'growthSpd',growth(row.spd,oldSpd),'growth');
         setValue(index,'akmStruk',row.akmStruk,'number');
-        setValue(index,'std',row.std,'number');
+        setValue(index,'std',row.std,'decimal');
         setValue(index,'stdPast',oldStd,'number');
         setValue(index,'growthStd',growth(row.std,oldStd),'growth');
-        setValue(index,'apc',row.apc,'number');
+        setValue(index,'apc',row.apc,'decimal');
         setValue(index,'apcPast',oldApc,'number');
         setValue(index,'growthApc',growth(row.apc,oldApc),'growth');
       });

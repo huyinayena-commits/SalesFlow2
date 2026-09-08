@@ -93,11 +93,16 @@ Terimakasih
     var n=number(value);return n===null?'':Math.round(n).toLocaleString('id-ID');
   }
   function metric(value){return value===null||!Number.isFinite(value)?'':Math.round(value).toLocaleString('id-ID')}
+  function metricDecimal(value){
+    if(value===null||!Number.isFinite(value))return'';
+    var text=String(Number(value)),parts=text.split('.');
+    return Number(parts[0]).toLocaleString('id-ID')+(parts[1]?','+parts[1]:'');
+  }
   function triple(spd,std,apc){
     if(spd===''&&std===''&&apc==='')return{spd:'',std:'',apc:''};
     return{spd:spd===''?'':spd+'_',std:std===''?'':std+'_',apc:apc||''};
   }
-  function growthText(current,previous){if(current===null||previous===null||previous===0)return'';var value=(current/previous-1)*100;return(value>=0?'+':'')+value.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
+  function growthText(current,previous){if(current===null||previous===null||previous===0)return'';var value=Math.trunc((current/previous-1)*100*10)/10;return(value>=0?'+':'')+value.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
   function rowsFor(year,month,data){
     var count=daysIn(year,month),sales=0,struk=0,rows=[];
     data=data||{};
@@ -105,7 +110,7 @@ Terimakasih
       var salesValue=number(data.salesNet&&data.salesNet[i]),strukValue=number(data.totalStruk&&data.totalStruk[i]);
       if(salesValue!==null)sales+=salesValue;
       if(strukValue!==null)struk+=strukValue;
-      var hasSales=salesValue!==null,hasStruk=strukValue!==null,akmSales=hasSales?sales:null,akmStruk=hasStruk?struk:null,spd=akmSales!==null?akmSales/(i+1):null,std=akmStruk!==null?akmStruk/(i+1):null;
+      var hasSales=salesValue!==null,hasStruk=strukValue!==null,akmSales=hasSales?sales:null,akmStruk=hasStruk?struk:null,spd=akmSales!==null?akmSales/(i+1):null,std=akmStruk!==null?Math.floor(akmStruk/(i+1)):null;
       rows.push({sales:salesValue,struk:strukValue,akmSales:hasSales?sales:null,akmStruk:hasStruk?struk:null,spd:spd,std:std,apc:spd!==null&&std!==null&&std>0?spd/std:null});
     }
     return rows;
@@ -113,22 +118,22 @@ Terimakasih
   function lastRow(rows){for(var i=rows.length-1;i>=0;i-=1)if(rows[i].sales!==null||rows[i].struk!==null)return rows[i];return null}
   function buildValues(input){
     var now=new Date(),year=now.getFullYear(),month=now.getMonth(),data=getLocal().months[keyFor(now)]||{},current=rowsFor(year,month,data),last=lastRow(current),values={TOKO:getStoreName(),TANGGAL:now.getDate()+' '+MONTH_NAMES[month]+' '+now.getFullYear()};
-    for(var i=0;i<31;i+=1){var row=current[i];values['A_'+(i+1)]=row&&(row.sales!==null||row.struk!==null)?[money(row.sales),row.struk===null?'':metric(row.struk),metric(row.apc)].join('_'):''}
+    for(var i=0;i<31;i+=1){var row=current[i];values['A_'+(i+1)]=row&&(row.sales!==null||row.struk!==null)?[money(row.sales),row.struk===null?'':metric(row.struk),metricDecimal(row.apc)].join('_'):''}
     var previousDate=new Date(year,month-1,1),previousData=getLocal().months[keyFor(previousDate)]||{},previous=rowsFor(previousDate.getFullYear(),previousDate.getMonth(),previousData),previousLast=lastRow(previous);
     var yearAgoDate=new Date(year-1,month,1),yearAgoData=getLocal().months[keyFor(yearAgoDate)]||{},yearAgo=rowsFor(yearAgoDate.getFullYear(),yearAgoDate.getMonth(),yearAgoData),yearAgoLast=lastRow(yearAgo);
     values.B_AKM_SALES=last?money(last.akmSales):'';values.C_AKM_STRUK=last?metric(last.akmStruk):'';
-    var d=last?triple(metric(last.spd),metric(last.std),metric(last.apc)):triple('','','');values.D_SPD=d.spd;values.D_STD=d.std;values.D_APC=d.apc;
+    var d=last?triple(metricDecimal(last.spd),metricDecimal(last.std),metricDecimal(last.apc)):triple('','','');values.D_SPD=d.spd;values.D_STD=d.std;values.D_APC=d.apc;
     values.E_TARGET_AKM=money(data.targetAkm);values.F_ACH=last&&data.targetSpd?metric(last.spd/number(data.targetSpd)*100):'';values.F_TARGET_SPD=money(data.targetSpd);
-    var g=previousLast?triple(metric(previousLast.spd),metric(previousLast.std),metric(previousLast.apc)):triple('','','');values.G_SPD=g.spd;values.G_STD=g.std;values.G_APC=g.apc;
+    var g=previousLast?triple(metricDecimal(previousLast.spd),metricDecimal(previousLast.std),metricDecimal(previousLast.apc)):triple('','','');values.G_SPD=g.spd;values.G_STD=g.std;values.G_APC=g.apc;
     values.H_SPD=last&&previousLast?growthText(last.spd,previousLast.spd):'';values.H_STD=last&&previousLast?growthText(last.std,previousLast.std):'';values.H_APC=last&&previousLast?growthText(last.apc,previousLast.apc):'';
-    values.M_SPD=yearAgoLast?triple(metric(yearAgoLast.spd),metric(yearAgoLast.std),metric(yearAgoLast.apc)).spd:'';values.M_STD=yearAgoLast?triple(metric(yearAgoLast.spd),metric(yearAgoLast.std),metric(yearAgoLast.apc)).std:'';values.M_APC=yearAgoLast?triple(metric(yearAgoLast.spd),metric(yearAgoLast.std),metric(yearAgoLast.apc)).apc:'';
+    values.M_SPD=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).spd:'';values.M_STD=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).std:'';values.M_APC=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).apc:'';
     values.N_SPD=last&&yearAgoLast?growthText(last.spd,yearAgoLast.spd):'';values.N_STD=last&&yearAgoLast?growthText(last.std,yearAgoLast.std):'';values.N_APC=last&&yearAgoLast?growthText(last.apc,yearAgoLast.apc):'';
     return Object.assign(values,input||{});
   }
   function formatValue(key,value){
     if(value===null||typeof value==='undefined')return'';
     var text=String(value);if(!text)return'';
-    if(/^A_[0-9]+$/.test(key)&&text.indexOf('_')>=0)return text.split('_').map(function(part,index){return index===0||index===2?money(part)||part:part}).join('_');
+    if(/^A_[0-9]+$/.test(key)&&text.indexOf('_')>=0)return text;
     return moneyKeys[key]&&text.indexOf('_')<0?money(text)||text:text;
   }
   function render(input){
