@@ -95,14 +95,13 @@ Terimakasih
   function metric(value){return value===null||!Number.isFinite(value)?'':Math.round(value).toLocaleString('id-ID')}
   function metricDecimal(value){
     if(value===null||!Number.isFinite(value))return'';
-    var text=String(Number(value)),parts=text.split('.');
-    return Number(parts[0]).toLocaleString('id-ID')+(parts[1]?','+parts[1]:'');
+    return Math.floor(Number(value)).toLocaleString('id-ID');
   }
   function triple(spd,std,apc){
     if(spd===''&&std===''&&apc==='')return{spd:'',std:'',apc:''};
     return{spd:spd===''?'':spd+'_',std:std===''?'':std+'_',apc:apc||''};
   }
-  function growthText(current,previous){if(current===null||previous===null||previous===0)return'';var value=Math.trunc((current/previous-1)*100*10)/10;return(value>=0?'+':'')+value.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
+  function growthText(current,previous){if(current===null||previous===null||previous===0)return'';var value=Math.floor((current/previous-1)*100);return(value>=0?'+':'')+value.toLocaleString('id-ID')+'%'}
   function rowsFor(year,month,data){
     var count=daysIn(year,month),sales=0,struk=0,rows=[];
     data=data||{};

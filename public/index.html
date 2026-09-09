@@ -649,12 +649,11 @@
     function formatNumber(value){return value===null||value===''||typeof value==='undefined'||!Number.isFinite(Number(value))?'—':Math.round(Number(value)).toLocaleString('id-ID')}
     function formatDecimal(value){
       if(value===null||value===''||typeof value==='undefined'||!Number.isFinite(Number(value)))return'—';
-      var text=String(Number(value));
-      var parts=text.split('.');
-      return Number(parts[0]).toLocaleString('id-ID')+(parts[1]?','+parts[1]:'');
+      return Math.floor(Number(value)).toLocaleString('id-ID');
     }
     function formatInput(value){return value===''||value===null||typeof value==='undefined'?'':Number(value).toLocaleString('id-ID')}
     function formatPercent(value){return value===null||!Number.isFinite(value)?'—':value.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
+    function formatGrowth(value){return value===null||!Number.isFinite(value)?'—':Math.floor(value).toLocaleString('id-ID')+'%'}
     function growth(current,previous){return current===null||previous===null||!Number.isFinite(current)||!Number.isFinite(previous)||previous===0?null:(current/previous-1)*100}
     function growthClass(value){return value===null||!Number.isFinite(value)?'empty':value>.0001?'positive':value<-.0001?'negative':'neutral'}
 
@@ -732,7 +731,7 @@
       var cell=card.querySelector('[data-column="'+column+'"]');
       if(!cell)return;
       cell.classList.remove('empty','positive','negative','neutral');
-      cell.textContent=type==='percent'||type==='growth'?formatPercent(value):type==='decimal'?formatDecimal(value):formatNumber(value);
+      cell.textContent=type==='growth'?formatGrowth(value):type==='percent'?formatPercent(value):type==='decimal'?formatDecimal(value):formatNumber(value);
       if(value===null||!Number.isFinite(Number(value)))cell.classList.add('empty');
       if(type==='growth')cell.classList.add(growthClass(value));
     }
