@@ -129,7 +129,7 @@ Terimakasih
     var yearAgoDate=comparableDate(year-1,month,now.getDate()),yearAgoData=getLocal().months[keyFor(yearAgoDate)]||{},yearAgo=rowsFor(yearAgoDate.getFullYear(),yearAgoDate.getMonth(),yearAgoData),yearAgoLast=yearAgo[Math.min(now.getDate(),yearAgo.length)-1]||null;
     values.B_AKM_SALES=last?money(last.akmSales):'';values.C_AKM_STRUK=last?metric(last.akmStruk):'';
     var d=last?triple(metricDecimal(last.spd),metricDecimal(last.std),metricDecimal(last.apc)):triple('','','');values.D_SPD=d.spd;values.D_STD=d.std;values.D_APC=d.apc;
-    values.E_TARGET_AKM=money(data.targetAkm);values.F_ACH=last&&data.targetSpd?metric(last.spd/number(data.targetSpd)*100):'';values.F_TARGET_SPD=money(data.targetSpd);
+    values.E_TARGET_AKM=money(data.targetAkm);values.F_ACH=last&&data.targetSpd?String(Math.floor(last.spd/number(data.targetSpd)*100)):'';values.F_TARGET_SPD=money(data.targetSpd);
     var g=previousLast?triple(metricDecimal(previousLast.spd),metricDecimal(previousLast.std),metricDecimal(previousLast.apc)):triple('','','');values.G_SPD=g.spd;values.G_STD=g.std;values.G_APC=g.apc;
     values.H_SPD=last&&previousLast?growthText(last.spd,previousLast.spd):'';values.H_STD=last&&previousLast?growthText(last.std,previousLast.std):'';values.H_APC=last&&previousLast?growthText(last.apc,previousLast.apc):'';
     values.M_SPD=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).spd:'';values.M_STD=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).std:'';values.M_APC=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).apc:'';
