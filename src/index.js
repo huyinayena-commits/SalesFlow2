@@ -45,6 +45,34 @@ async function readJson(request) {
   }
 }
 
+async function getSettings(env) {
+  await env.DB.prepare(
+    `CREATE TABLE IF NOT EXISTS app_settings (
+      setting_key TEXT PRIMARY KEY,
+      setting_value TEXT NOT NULL DEFAULT '',
+      updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+    )`,
+  ).run();
+  const row = await env.DB.prepare(
+    "SELECT setting_value FROM app_settings WHERE setting_key = 'store_name'",
+  ).first();
+  return { storeName: row?.setting_value ?? "" };
+}
+
+async function saveSettings(env, body) {
+  if (typeof body.storeName !== "string" || body.storeName.length > 100) {
+    return error("storeName harus berupa teks maksimal 100 karakter.");
+  }
+  await env.DB.prepare(
+    `INSERT INTO app_settings (setting_key, setting_value)
+     VALUES ('store_name', ?)
+     ON CONFLICT(setting_key) DO UPDATE SET
+       setting_value = excluded.setting_value,
+       updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now')`,
+  ).bind(body.storeName).run();
+  return json(await getSettings(env));
+}
+
 async function getMonth(env, month) {
   const target = await env.DB.prepare(
     "SELECT month, target_spd, target_akm, updated_at FROM month_targets WHERE month = ?",
@@ -124,6 +152,16 @@ export default {
         const month = url.searchParams.get("month");
         if (!month || !isMonth(month)) return error("Query month harus berformat YYYY-MM.");
         return json(await getMonth(env, month));
+      }
+
+      if (url.pathname === "/api/settings" && request.method === "GET") {
+        return json(await getSettings(env));
+      }
+
+      if (url.pathname === "/api/settings" && ["POST", "PUT"].includes(request.method)) {
+        const body = await readJson(request);
+        if (!body) return error("Data pengaturan tidak valid.");
+        return saveSettings(env, body);
       }
 
       if (url.pathname === "/api/month" && ["POST", "PUT"].includes(request.method)) {
