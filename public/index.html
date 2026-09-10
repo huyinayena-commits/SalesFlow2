@@ -63,6 +63,20 @@
       --shadow:0 10px 28px rgba(0,0,0,.28);
     }
 
+    html[data-skin="monochrome"]{
+      --bg:#f4f4f4;--surface:#ffffff;--surface-2:#fafafa;--ink:#111111;--muted:#686868;--line:#d7d7d7;
+      --blue:#111111;--blue-soft:#ededed;--green:#333333;--green-soft:#f0f0f0;--orange:#555555;--orange-soft:#f2f2f2;
+      --track:#e8e8e8;--day-bg:#eeeeee;--sales-cell:#ffffff;--struk-cell:#ffffff;--apc-cell:#ffffff;--focus:#555555;--shadow:none;
+    }
+    html[data-theme="dark"][data-skin="monochrome"]{
+      color-scheme:dark;--bg:#111111;--surface:#191919;--surface-2:#202020;--ink:#f1f1f1;--muted:#a7a7a7;--line:#3a3a3a;
+      --blue:#f1f1f1;--blue-soft:#2b2b2b;--green:#cfcfcf;--green-soft:#292929;--orange:#bdbdbd;--orange-soft:#292929;
+      --track:#303030;--day-bg:#292929;--sales-cell:#1c1c1c;--struk-cell:#1c1c1c;--apc-cell:#1c1c1c;--focus:#dddddd;--shadow:none;
+    }
+    html[data-skin="monochrome"] .day-header{background:var(--surface)}
+    html[data-skin="monochrome"] .settings-panel,html[data-skin="monochrome"] .horizontal-shell,html[data-skin="monochrome"] .day-card,html[data-skin="monochrome"] .targets-section{box-shadow:none}
+    html[data-skin="monochrome"] .group-sales,html[data-skin="monochrome"] .group-struk,html[data-skin="monochrome"] .group-apc{color:#fff;background:var(--blue)}
+
     *{box-sizing:border-box;min-width:0}
     html,body{width:100%;max-width:100%;margin:0;overflow-x:clip;background:var(--bg)}
     body{min-height:100vh;min-height:100dvh;color:var(--ink);font-family:Roboto,Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
@@ -215,6 +229,7 @@
     .theme-toggle .moon-icon{display:none}
     html[data-theme="dark"] .theme-toggle .sun-icon{display:none}
     html[data-theme="dark"] .theme-toggle .moon-icon{display:block}
+    .theme-select{width:100%;height:42px;margin-top:10px;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-size:12px;font-weight:800}
     .import-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px;padding:9px 10px;border:1px solid var(--line);border-radius:13px;background:var(--surface)}
     .import-row span{color:var(--muted);font-size:10px;font-weight:700}
     .import-row strong{font-size:11px;font-weight:850;text-align:right}
@@ -407,7 +422,7 @@
         <section class="setting-card" aria-labelledby="themeTitle">
           <div class="theme-row">
             <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg></span>
-            <div class="theme-copy"><strong id="themeTitle">Tema 1 — SalesFlow Klasik</strong><span id="themeLabel">Mode Terang</span></div>
+            <div class="theme-copy"><strong id="themeTitle">Tema 1 — SalesFlow Klasik</strong><span id="themeLabel">Mode Terang</span><select class="theme-select" id="themeVariant" aria-label="Pilih tema"><option value="classic">Tema 1 — SalesFlow Klasik</option><option value="monochrome">Tema 2 — Monochrome</option></select></div>
             <button class="icon-button theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan Mode Gelap">
               <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
               <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>
@@ -469,9 +484,11 @@
     var KEY='sales-harian-data-v1';
     var VIEW_KEY='sales-harian-view-v1';
     var THEME_KEY='sales-harian-theme-v1';
+    var THEME_VARIANT_KEY='sales-harian-theme-variant-v1';
     var AUTH_KEY='salesflow2-api-password';
     var TELEGRAM_KEY='sales-harian-telegram-v1';
     var themeMode=loadThemeMode();
+    var themeVariant=loadThemeVariant();
     document.documentElement.setAttribute('data-theme',themeMode);
     document.documentElement.style.colorScheme=themeMode;
     var now=new Date();
@@ -516,7 +533,9 @@
       settingsPanel:document.getElementById('settingsPanel'),
       closeSettings:document.getElementById('closeSettings'),
       themeToggle:document.getElementById('themeToggle'),
+      themeTitle:document.getElementById('themeTitle'),
       themeLabel:document.getElementById('themeLabel'),
+      themeVariant:document.getElementById('themeVariant'),
       exportButton:document.getElementById('exportButton'),
       importButton:document.getElementById('importButton'),
       jsonFileInput:document.getElementById('jsonFileInput'),
@@ -541,6 +560,10 @@
 
     function loadThemeMode(){
       try{return localStorage.getItem(THEME_KEY)==='dark'?'dark':'light'}catch(error){return'light'}
+    }
+
+    function loadThemeVariant(){
+      try{return localStorage.getItem(THEME_VARIANT_KEY)==='monochrome'?'monochrome':'classic'}catch(error){return'classic'}
     }
 
     function loadViewMode(){
@@ -592,13 +615,23 @@
       document.documentElement.setAttribute('data-theme',themeMode);
       document.documentElement.style.colorScheme=themeMode;
       elements.themeColor.setAttribute('content',themeMode==='dark'?'#0d131b':'#f4f6f9');
-      elements.themeLabel.textContent=themeMode==='dark'?'Mode Gelap':'Mode Terang';
+      elements.themeLabel.textContent=(themeVariant==='monochrome'?'Tema 2 — Monochrome · ':'Tema 1 — SalesFlow Klasik · ')+(themeMode==='dark'?'Mode Gelap':'Mode Terang');
       var nextTheme=themeMode==='dark'?'Terang':'Gelap';
       elements.themeToggle.setAttribute('aria-label','Aktifkan Mode '+nextTheme);
       elements.themeToggle.setAttribute('title','Aktifkan Mode '+nextTheme);
       if(persist){try{localStorage.setItem(THEME_KEY,themeMode)}catch(error){}}
     }
 
+    function applyThemeVariant(variant,persist){
+      themeVariant=variant==='monochrome'?'monochrome':'classic';
+      document.documentElement.setAttribute('data-skin',themeVariant);
+      elements.themeVariant.value=themeVariant;
+      elements.themeTitle.textContent=themeVariant==='monochrome'?'Tema 2 — Monochrome':'Tema 1 — SalesFlow Klasik';
+      applyTheme(themeMode,false);
+      if(persist){try{localStorage.setItem(THEME_VARIANT_KEY,themeVariant)}catch(error){}}
+    }
+
+    applyThemeVariant(themeVariant,false);
     applyTheme(themeMode,false);
     lastSavedAt=loadLastSaved();
 
@@ -1258,6 +1291,7 @@
       applyTheme(next,true);
       showToast(next==='dark'?'Mode Gelap aktif':'Mode Terang aktif');
     });
+    elements.themeVariant.addEventListener('change',function(){applyThemeVariant(elements.themeVariant.value,true);showToast(themeVariant==='monochrome'?'Tema 2 — Monochrome aktif':'Tema 1 — SalesFlow Klasik aktif')});
     elements.exportButton.addEventListener('click',exportBackupJson);
     elements.importButton.addEventListener('click',function(){elements.jsonFileInput.click()});
     elements.jsonFileInput.addEventListener('change',function(event){importJsonFile(event.target.files&&event.target.files[0])});
@@ -1317,6 +1351,7 @@
       if(event.key===KEY){store=loadStore();renderMonth()}
       else if(event.key===VIEW_KEY){viewMode=loadViewMode();renderMonth()}
       else if(event.key===THEME_KEY)applyTheme(loadThemeMode(),false);
+      else if(event.key===THEME_VARIANT_KEY)applyThemeVariant(loadThemeVariant(),false);
       else if(event.key===TELEGRAM_KEY){telegramState=loadTelegramState();refreshTelegramControls();checkTelegramAvailability()}
     });
     window.addEventListener('online',retryFailedTelegram);
