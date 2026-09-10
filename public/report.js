@@ -157,5 +157,6 @@ Terimakasih
   var reportDateInput=document.getElementById('reportDate'),initialReportDate=getReportDate();reportDateInput.value=initialReportDate.getFullYear()+'-'+String(initialReportDate.getMonth()+1).padStart(2,'0')+'-'+String(initialReportDate.getDate()).padStart(2,'0');reportDateInput.max=new Date().toISOString().slice(0,10);reportDateInput.addEventListener('change',function(){if(!reportDateInput.value)return;var parts=reportDateInput.value.split('-').map(Number),date=new Date(parts[0],parts[1]-1,parts[2]);setReportDate(date);render();loadRemote()});
   document.getElementById('reportCopy').addEventListener('click',async function(){try{await navigator.clipboard.writeText(reportPre.textContent);alert('Laporan berhasil disalin.')}catch(error){var area=document.createElement('textarea');area.value=reportPre.textContent;document.body.appendChild(area);area.select();document.execCommand('copy');area.remove();alert('Laporan berhasil disalin.')}});
   document.getElementById('reportJsonApply').addEventListener('click',function(){var text=document.getElementById('reportJson').value,data={};try{if(text)data=JSON.parse(text);render(data)}catch(error){alert('JSON tidak valid.')}});
+  window.addEventListener('salesflow-auth-changed',loadRemote);
   render();loadRemote();
 })();

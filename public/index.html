@@ -200,6 +200,13 @@
     .setting-card-title{flex:1}
     .setting-card-title h3{margin:0;font-size:14px;font-weight:850}
     .setting-card-title p{margin:3px 0 0;color:var(--muted);font-size:10px;line-height:1.35}
+    .auth-input-row{display:flex;gap:8px;align-items:center}
+    .auth-input{flex:1;min-width:0;height:44px;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-size:13px}
+    .auth-input:focus{border-color:var(--focus);outline:2px solid rgba(76,143,208,.18)}
+    .auth-save{min-height:44px;padding:0 13px;border:0;border-radius:10px;background:var(--blue);color:#fff;font-size:11px;font-weight:850;cursor:pointer}
+    .auth-status{margin:8px 1px 0;color:var(--muted);font-size:10px;line-height:1.4}
+    .auth-status.success{color:var(--positive)}
+    .auth-status.error{color:var(--negative)}
     .theme-row{display:flex;align-items:center;gap:12px}
     .theme-copy{flex:1}
     .theme-copy strong{display:block;font-size:13px;font-weight:850}
@@ -388,6 +395,15 @@
           </div>
         </section>
 
+        <section class="setting-card" aria-labelledby="authTitle">
+          <div class="setting-card-header">
+            <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v2"></path></svg></span>
+            <div class="setting-card-title"><h3 id="authTitle">Kunci Aplikasi</h3><p>Masukkan APP_PASSWORD untuk mengakses dan menyinkronkan data D1.</p></div>
+          </div>
+          <div class="auth-input-row"><input class="auth-input" id="authPasswordInput" type="password" autocomplete="current-password" placeholder="APP_PASSWORD" aria-label="Kunci aplikasi"><button class="auth-save" id="authPasswordSave" type="button">Simpan &amp; Cek</button></div>
+          <p class="auth-status" id="authPasswordStatus">Belum terhubung ke server.</p>
+        </section>
+
         <section class="setting-card" aria-labelledby="themeTitle">
           <div class="theme-row">
             <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg></span>
@@ -513,6 +529,9 @@
       telegramConnectLabel:document.getElementById('telegramConnectLabel'),
       telegramAutoSend:document.getElementById('telegramAutoSend'),
       telegramMessage:document.getElementById('telegramMessage'),
+      authPasswordInput:document.getElementById('authPasswordInput'),
+      authPasswordSave:document.getElementById('authPasswordSave'),
+      authPasswordStatus:document.getElementById('authPasswordStatus'),
       toast:document.getElementById('toast')
     };
     var store=loadStore();
@@ -854,14 +873,14 @@
     async function apiFetch(path,options){
       var request=Object.assign({},options||{},{headers:apiHeaders(options)}),response=await fetch(path,request);
       if(response.status===401){
-        var password=window.prompt('Masukkan password aplikasi:');
-        if(!password)throw new Error('Password diperlukan.');
-        try{localStorage.setItem(AUTH_KEY,password)}catch(error){}
-        request.headers=apiHeaders(options);
-        response=await fetch(path,request);
+        setAuthStatus('Kunci tidak valid atau belum dimasukkan. Buka Settings untuk mengatur kunci.','error');
       }
       return response;
     }
+
+    function setAuthStatus(message,type){elements.authPasswordStatus.textContent=message;elements.authPasswordStatus.className='auth-status'+(type?' '+type:'')}
+    function loadAuthSetting(){try{elements.authPasswordInput.value=localStorage.getItem(AUTH_KEY)||''}catch(error){}if(elements.authPasswordInput.value)setAuthStatus('Kunci tersimpan di perangkat.','success')}
+    async function saveAuthSetting(){var password=elements.authPasswordInput.value;if(!password){try{localStorage.removeItem(AUTH_KEY)}catch(error){}setAuthStatus('Kunci dihapus dari perangkat.','');return}try{localStorage.setItem(AUTH_KEY,password)}catch(error){}elements.authPasswordSave.disabled=true;setAuthStatus('Memeriksa kunci ke server…','');try{var response=await fetch(API_BASE+'/api/month?month='+encodeURIComponent(monthKey(viewYear,viewMonth)),{headers:apiHeaders(),cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);setAuthStatus('Kunci valid. Terhubung ke server D1.','success');window.dispatchEvent(new Event('salesflow-auth-changed'));loadRemoteMonth(viewYear,viewMonth)}catch(error){setAuthStatus('Kunci tidak valid atau server belum tersedia.','error')}finally{elements.authPasswordSave.disabled=false}}
 
     async function loadRemoteMonth(year,month){
       var key=monthKey(year,month);
@@ -1232,6 +1251,7 @@
     elements.targetsToggle.addEventListener('click',toggleTargets);
     elements.settingsButton.addEventListener('click',openSettingsMenu);
     elements.closeSettings.addEventListener('click',closeSettingsMenu);
+    elements.authPasswordSave.addEventListener('click',saveAuthSetting);
     elements.settingsOverlay.addEventListener('click',function(event){if(event.target.hasAttribute('data-close-settings'))closeSettingsMenu()});
     elements.themeToggle.addEventListener('click',function(){
       var next=themeMode==='dark'?'light':'dark';
@@ -1301,6 +1321,7 @@
     });
     window.addEventListener('online',retryFailedTelegram);
     renderMonth();
+    loadAuthSetting();
     refreshTelegramControls();
     checkTelegramAvailability();
   })();
