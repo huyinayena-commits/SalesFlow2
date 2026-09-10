@@ -108,7 +108,7 @@ Terimakasih
     if(spd===''&&std===''&&apc==='')return{spd:'',std:'',apc:''};
     return{spd:spd===''?'':spd+'_',std:std===''?'':std+'_',apc:apc||''};
   }
-  function growthText(current,previous){if(current===null||previous===null||previous===0)return'';var value=Math.floor((current/previous-1)*100);return(value>=0?'+':'')+value.toLocaleString('id-ID')+'%'}
+  function growthText(current,previous){if(current===null||previous===null||previous===0)return'';var value=(current/previous-1)*100;return(value>=0?'+':'')+value.toLocaleString('id-ID',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'}
   function rowsFor(year,month,data){
     var count=daysIn(year,month),sales=0,struk=0,rows=[];
     data=data||{};

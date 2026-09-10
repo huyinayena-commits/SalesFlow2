@@ -653,7 +653,7 @@
     }
     function formatInput(value){return value===''||value===null||typeof value==='undefined'?'':Number(value).toLocaleString('id-ID')}
     function formatPercent(value){return value===null||!Number.isFinite(value)?'—':value.toLocaleString('id-ID',{minimumFractionDigits:1,maximumFractionDigits:1})+'%'}
-    function formatGrowth(value){return value===null||!Number.isFinite(value)?'—':Math.floor(value).toLocaleString('id-ID')+'%'}
+    function formatGrowth(value){return value===null||!Number.isFinite(value)?'—':value.toLocaleString('id-ID',{minimumFractionDigits:2,maximumFractionDigits:2})+'%'}
     function growth(current,previous){return current===null||previous===null||!Number.isFinite(current)||!Number.isFinite(previous)||previous===0?null:(current/previous-1)*100}
     function growthClass(value){return value===null||!Number.isFinite(value)?'empty':value>.0001?'positive':value<-.0001?'negative':'neutral'}
 
