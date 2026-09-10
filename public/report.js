@@ -4,8 +4,8 @@
   var DATA_KEY='sales-harian-data-v1';
   var AUTH_KEY='salesflow2-api-password';
   var STORE_NAME_KEY='salesflow2-report-store-name-v1';
-  var REPORT_DATE_KEY='salesflow2-report-date-v1';
   var storeSaveTimer=null;
+  var reportDateSession=new Date();
   var API_BASE=window.location.origin;
   var MONTH_NAMES=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   var TEMPLATE=String.raw`Toko : {{TOKO}}
@@ -88,8 +88,7 @@ Terimakasih
   }
   function getStoreName(){try{return localStorage.getItem(STORE_NAME_KEY)||''}catch(error){return''}}
   function setStoreName(value){try{localStorage.setItem(STORE_NAME_KEY,value)}catch(error){}}
-  function getReportDate(){try{var saved=localStorage.getItem(REPORT_DATE_KEY);if(saved&&/^\d{4}-\d{2}-\d{2}$/.test(saved)){var parts=saved.split('-').map(Number),date=new Date(parts[0],parts[1]-1,parts[2]);if(date.getFullYear()===parts[0]&&date.getMonth()===parts[1]-1&&date.getDate()===parts[2])return date}}catch(error){}return new Date()}
-  function setReportDate(date){var value=date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')+'-'+String(date.getDate()).padStart(2,'0');try{localStorage.setItem(REPORT_DATE_KEY,value)}catch(error){}}
+  function getReportDate(){return reportDateSession}
   function authHeaders(){var headers={'accept':'application/json'};try{var password=localStorage.getItem(AUTH_KEY);if(password)headers.Authorization='Bearer '+password}catch(error){}return headers}
   function saveStoreNameRemote(value){clearTimeout(storeSaveTimer);storeSaveTimer=setTimeout(function(){fetch(API_BASE+'/api/settings',{method:'PUT',headers:Object.assign({'content-type':'application/json'},authHeaders()),body:JSON.stringify({storeName:value})}).catch(function(error){console.warn('Nama toko tidak dapat disimpan ke server.',error)})},500)}
   function keyFor(date){return date.getFullYear()+'-'+String(date.getMonth()+1).padStart(2,'0')}
@@ -154,7 +153,8 @@ Terimakasih
   var settingsBody=document.querySelector('.settings-body');
   if(settingsBody){var storeCard=document.createElement('section');storeCard.className='setting-card report-store-setting';storeCard.innerHTML='<div class="setting-card-title"><h3>Nama Toko Laporan</h3><p>Nama ini mengisi bagian Toko pada template laporan.</p></div><input id="reportStoreName" type="text" maxlength="100" placeholder="Nama toko" autocomplete="organization">';settingsBody.insertBefore(storeCard,settingsBody.firstChild);var storeInput=storeCard.querySelector('#reportStoreName');storeInput.value=getStoreName();storeInput.addEventListener('input',function(){setStoreName(storeInput.value);saveStoreNameRemote(storeInput.value);render()})}
   var reportPre=document.getElementById('reportOutput');
-  var reportDateInput=document.getElementById('reportDate'),initialReportDate=getReportDate();reportDateInput.value=initialReportDate.getFullYear()+'-'+String(initialReportDate.getMonth()+1).padStart(2,'0')+'-'+String(initialReportDate.getDate()).padStart(2,'0');reportDateInput.max=new Date().toISOString().slice(0,10);reportDateInput.addEventListener('change',function(){if(!reportDateInput.value)return;var parts=reportDateInput.value.split('-').map(Number),date=new Date(parts[0],parts[1]-1,parts[2]);setReportDate(date);render();loadRemote()});
+  var reportDateInput=document.getElementById('reportDate'),initialReportDate=getReportDate();reportDateInput.value=initialReportDate.getFullYear()+'-'+String(initialReportDate.getMonth()+1).padStart(2,'0')+'-'+String(initialReportDate.getDate()).padStart(2,'0');reportDateInput.max=initialReportDate.getFullYear()+'-'+String(initialReportDate.getMonth()+1).padStart(2,'0')+'-'+String(initialReportDate.getDate()).padStart(2,'0');reportDateInput.addEventListener('change',function(){if(!reportDateInput.value)return;var parts=reportDateInput.value.split('-').map(Number),date=new Date(parts[0],parts[1]-1,parts[2]);reportDateSession=date;render();loadRemote()});
+  setInterval(function(){var today=new Date(),current=getReportDate();if(today.toDateString()===current.toDateString())return;reportDateSession=today;var value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');reportDateInput.value=value;reportDateInput.max=value;render();loadRemote()},30000);
   document.getElementById('reportCopy').addEventListener('click',async function(){try{await navigator.clipboard.writeText(reportPre.textContent);alert('Laporan berhasil disalin.')}catch(error){var area=document.createElement('textarea');area.value=reportPre.textContent;document.body.appendChild(area);area.select();document.execCommand('copy');area.remove();alert('Laporan berhasil disalin.')}});
   document.getElementById('reportJsonApply').addEventListener('click',function(){var text=document.getElementById('reportJson').value,data={};try{if(text)data=JSON.parse(text);render(data)}catch(error){alert('JSON tidak valid.')}});
   window.addEventListener('salesflow-auth-changed',loadRemote);
