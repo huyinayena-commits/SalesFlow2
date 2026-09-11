@@ -52,6 +52,18 @@ html[data-skin="monochrome"] .metric-label em {color:var(--muted)}
 html[data-skin="monochrome"] :is(.setting-card-title p,.theme-copy span,.settings-title-wrap p,.auth-status,.import-help,.telegram-help,.telegram-message) {font-size:12px;line-height:1.5}
 html[data-skin="monochrome"] .auth-status {overflow-wrap:anywhere}
 html[data-skin="monochrome"] .list-heading p {font-size:12px;line-height:1.5}
+/* Make the operational state easy to scan without adding a new UI layer. */
+html[data-skin="monochrome"] .list-heading {padding:11px 4px 10px;align-items:flex-start}
+html[data-skin="monochrome"] .table-info p {
+  display:inline-block;padding:6px 8px;border:1px solid var(--line);border-radius:7px;background:var(--surface-2);
+}
+html[data-skin="monochrome"] .targets-section {background:var(--surface);border-color:var(--line)}
+html[data-skin="monochrome"] .target-card {background:var(--surface);border-color:var(--line)}
+html[data-skin="monochrome"] .target-card span {color:var(--muted)}
+html[data-skin="monochrome"] .metrics-section {border-radius:10px;background:var(--surface-2)}
+html[data-skin="monochrome"] .section-label::before {background:var(--ink)}
+html[data-skin="monochrome"] .horizontal-table .group-head th {background:var(--mono-action);color:var(--mono-action-text)}
+html[data-skin="monochrome"] .horizontal-table .column-head th {font-size:9px;letter-spacing:.045em}
 html[data-skin="monochrome"] :is(.auth-input,.theme-select,.report-store-setting input) {min-height:44px}
 html[data-skin="monochrome"] .theme-select {text-overflow:ellipsis}
 html[data-skin="monochrome"] .report-card h2 {font-size:18px;line-height:1.35;letter-spacing:-.02em}
@@ -71,4 +83,8 @@ html[data-skin="monochrome"] :is(button,input,select):focus-visible {outline:2px
 }
 @media (prefers-reduced-motion:reduce) {
   html[data-skin="monochrome"] :is(button,.settings-panel,.switch-track,.switch-track::after) {animation:none;transition:none}
+}
+@media (max-width:350px) {
+  html[data-skin="monochrome"] .list-heading {gap:8px}
+  html[data-skin="monochrome"] .table-info p {padding:5px 7px}
 }
