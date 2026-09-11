@@ -356,6 +356,15 @@
     }
 
     @keyframes sheet-in{from{transform:translateY(24px);opacity:.72}to{transform:translateY(0);opacity:1}}
+    /* Skin overrides after base rules, including dark-mode rules. */
+    html[data-skin="monochrome"] .month-header{background:var(--surface);backdrop-filter:none;-webkit-backdrop-filter:none}
+    html[data-skin="monochrome"] .settings-backdrop{backdrop-filter:none;-webkit-backdrop-filter:none}
+    html[data-skin="monochrome"] .input-box.sales-input,html[data-skin="monochrome"] .input-box.struk-input,html[data-skin="monochrome"] .metric-item{background:var(--surface);border-color:var(--line)}
+    html[data-skin="monochrome"] .day-header{background:var(--surface)}
+    html[data-skin="monochrome"] .horizontal-table .group-head th{background:#222;color:#fff}
+    html[data-skin="monochrome"] .metric-value.empty,html[data-skin="monochrome"] input::placeholder{color:var(--muted)}
+    html[data-skin="monochrome"] :is(button,input,select):focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+    html[data-theme="dark"][data-skin="monochrome"] .horizontal-table tr.today-row .sticky-day{background:#f1f1f1;color:#111}
   </style>
 </head>
 <body>
@@ -676,9 +685,7 @@
         localStorage.setItem(KEY,JSON.stringify(store));
         elements.saveState.textContent='Menyimpan…';
         elements.saveState.classList.add('saving');
-        clearTimeout(saveTimer);
-        saveTimer=setTimeout(function(){elements.saveState.textContent='Tersimpan';elements.saveState.classList.remove('saving')},450);
-        markSaved();
+        updateTableInfo('Tersimpan di perangkat · Menunggu sinkronisasi');
         scheduleRemoteSync();
       }catch(error){elements.saveState.textContent='Gagal tersimpan';elements.saveState.classList.remove('saving')}
     }
@@ -949,27 +956,65 @@
 
     function setAuthStatus(message,type){elements.authPasswordStatus.textContent=message;elements.authPasswordStatus.className='auth-status'+(type?' '+type:'')}
     function loadAuthSetting(){try{elements.authPasswordInput.value=localStorage.getItem(AUTH_KEY)||''}catch(error){}if(elements.authPasswordInput.value)setAuthStatus('Kunci tersimpan di perangkat.','success')}
-    async function saveAuthSetting(){var password=elements.authPasswordInput.value;if(!password){try{localStorage.removeItem(AUTH_KEY)}catch(error){}setAuthStatus('Kunci dihapus dari perangkat.','');return}try{localStorage.setItem(AUTH_KEY,password)}catch(error){}elements.authPasswordSave.disabled=true;setAuthStatus('Memeriksa kunci ke server…','');try{var response=await fetch(API_BASE+'/api/month?month='+encodeURIComponent(monthKey(viewYear,viewMonth)),{headers:apiHeaders(),cache:'no-store'});if(!response.ok)throw new Error('HTTP '+response.status);setAuthStatus('Kunci valid. Terhubung ke server D1.','success');window.dispatchEvent(new Event('salesflow-auth-changed'));loadRemoteMonth(viewYear,viewMonth)}catch(error){setAuthStatus('Kunci tidak valid atau server belum tersedia.','error')}finally{elements.authPasswordSave.disabled=false}}
+    function connectionError(status){return status===401?'Kunci tidak valid.':status===503?'Kunci server belum dikonfigurasi.':status>=500?'Server atau database bermasalah.':'Permintaan gagal (HTTP '+status+').'}
+    async function saveAuthSetting(){
+      var password=elements.authPasswordInput.value;
+      if(!password){localStorage.removeItem(AUTH_KEY);setAuthStatus('Kunci dihapus dari perangkat.','');return}
+      elements.authPasswordSave.disabled=true;setAuthStatus('Memeriksa kunci ke server…','');
+      try{
+        var response=await fetch(API_BASE+'/api/month?month='+encodeURIComponent(monthKey(viewYear,viewMonth)),{headers:{Authorization:'Bearer '+password},cache:'no-store'});
+        if(!response.ok){setAuthStatus(connectionError(response.status),'error');return}
+        localStorage.setItem(AUTH_KEY,password);
+        setAuthStatus('Kunci valid. Terhubung ke server D1.','success');
+        await syncRemoteMonth();await loadRemoteMonth(viewYear,viewMonth);
+        window.dispatchEvent(new Event('salesflow-auth-changed'));
+      }catch(error){setAuthStatus('Koneksi atau penyimpanan perangkat gagal. Kunci sebelumnya tetap dipertahankan jika validasi belum berhasil.','error')}
+      finally{elements.authPasswordSave.disabled=false}
+    }
 
     async function loadRemoteMonth(year,month){
       var key=monthKey(year,month);
       try{
+        if(pendingMonths()[key])return;
+        var before=JSON.stringify(store.months[key]);
         var response=await apiFetch(API_BASE+'/api/month?month='+encodeURIComponent(key),{cache:'no-store'});
-        if(!response.ok)throw new Error('HTTP '+response.status);
-        var remote=await response.json(),data=ensureMonth(year,month);
+        if(!response.ok)throw new Error(connectionError(response.status));
+        var remote=await response.json();
+        if(pendingMonths()[key]||before!==JSON.stringify(store.months[key]))return;
+        var data=ensureMonth(year,month);
         data.targetSpd=remote.targetSpd||'';data.targetAkm=remote.targetAkm||'';
         (remote.days||[]).forEach(function(row){if(Number.isInteger(row.day)&&row.day>=1&&row.day<=data.salesNet.length){data.salesNet[row.day-1]=row.salesNet===null?'':row.salesNet;data.totalStruk[row.day-1]=row.totalStruk===null?'':row.totalStruk}});
         try{localStorage.setItem(KEY,JSON.stringify(store))}catch(error){}
-        renderMonth(true);elements.saveState.textContent='Tersimpan di D1';
-      }catch(error){console.warn('D1 tidak dapat dibaca, memakai data lokal.',error)}
+        if(key===monthKey(viewYear,viewMonth)){renderMonth(true);updateTableInfo('Data dimuat dari server')}
+        window.dispatchEvent(new Event('salesflow-data-changed'));
+      }catch(error){updateTableInfo('Data lokal · '+error.message)}
     }
 
-    function syncRemoteMonth(){
-      var key=monthKey(viewYear,viewMonth),data=ensureMonth(viewYear,viewMonth),days=data.salesNet.map(function(value,index){return{day:index+1,salesNet:value===''?null:value,totalStruk:data.totalStruk[index]===''?null:data.totalStruk[index]}});
-      apiFetch(API_BASE+'/api/month',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({month:key,targetSpd:data.targetSpd===''?0:data.targetSpd,targetAkm:data.targetAkm===''?0:data.targetAkm,days:days})}).then(function(response){if(!response.ok)throw new Error('HTTP '+response.status);elements.saveState.textContent='Tersimpan di D1';elements.saveState.classList.remove('saving')}).catch(function(error){console.warn('D1 tidak dapat disimpan.',error);elements.saveState.textContent='Tersimpan lokal (D1 gagal)';elements.saveState.classList.remove('saving')});
+    var PENDING_KEY='salesflow2-pending-months-v1',syncRunning=false;
+    function pendingMonths(){try{return JSON.parse(localStorage.getItem(PENDING_KEY))||{}}catch(error){return{}}}
+    async function syncRemoteMonth(){
+      if(syncRunning||!navigator.onLine||!apiHeaders().Authorization)return;
+      syncRunning=true;
+      try{
+        var pending=pendingMonths();
+        for(var key of Object.keys(pending)){
+          var snapshot=pending[key],data=snapshot.data;
+          var days=data.salesNet.map(function(value,index){return{day:index+1,salesNet:value===''?null:value,totalStruk:data.totalStruk[index]===''?null:data.totalStruk[index]}});
+          var response=await apiFetch(API_BASE+'/api/month',{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({month:key,targetSpd:data.targetSpd===''?0:data.targetSpd,targetAkm:data.targetAkm===''?0:data.targetAkm,days:days})});
+          if(!response.ok)throw new Error(connectionError(response.status));
+          var latest=pendingMonths();
+          if(latest[key]&&latest[key].id===snapshot.id){delete latest[key];localStorage.setItem(PENDING_KEY,JSON.stringify(latest));if(key===monthKey(viewYear,viewMonth)){markSaved();updateTableInfo('Tersinkron ke server · '+lastSavedAt)}}
+        }
+      }catch(error){updateTableInfo('Tersimpan di perangkat · Sinkronisasi gagal: '+error.message)}
+      finally{syncRunning=false;elements.saveState.classList.remove('saving')}
     }
-
-    function scheduleRemoteSync(){clearTimeout(syncTimer);syncTimer=setTimeout(syncRemoteMonth,700)}
+    function scheduleRemoteSync(){
+      var pending=pendingMonths(),key=monthKey(viewYear,viewMonth);
+      pending[key]={id:crypto.randomUUID(),data:JSON.parse(JSON.stringify(ensureMonth(viewYear,viewMonth)))};
+      localStorage.setItem(PENDING_KEY,JSON.stringify(pending));
+      window.dispatchEvent(new Event('salesflow-data-changed'));
+      clearTimeout(syncTimer);syncTimer=setTimeout(syncRemoteMonth,700);
+    }
 
     async function requestJson(path,options){
       var response=await apiFetch(path,options||{});
@@ -1345,7 +1390,7 @@
       if(elements.settingsOverlay.hidden)return;
       if(event.key==='Escape'){event.preventDefault();closeSettingsMenu();return}
       if(event.key!=='Tab')return;
-      var focusable=Array.prototype.slice.call(elements.settingsPanel.querySelectorAll('button:not([disabled]),input:not([disabled]):not([tabindex="-1"])'));
+      var focusable=Array.prototype.slice.call(elements.settingsPanel.querySelectorAll('button:not([disabled]),input:not([disabled]):not([tabindex="-1"]),select:not([disabled])'));
       if(!focusable.length)return;
       var first=focusable[0],last=focusable[focusable.length-1];
       if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus()}
@@ -1391,6 +1436,9 @@
       else if(event.key===TELEGRAM_KEY){telegramState=loadTelegramState();refreshTelegramControls();checkTelegramAvailability()}
     });
     window.addEventListener('online',retryFailedTelegram);
+    window.addEventListener('online',syncRemoteMonth);
+    setInterval(syncRemoteMonth,15000);
+    syncRemoteMonth();
     renderMonth();
     loadAuthSetting();
     refreshTelegramControls();
