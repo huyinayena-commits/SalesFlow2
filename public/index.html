@@ -550,6 +550,7 @@
     var telegramSending=false;
     var telegramServerReady=false;
     var lastSettingsFocus=null;
+    var autoTodayScroll=true;
     var names=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     var elements={
       previousMonth:document.getElementById('previousMonth'),
@@ -560,6 +561,7 @@
       daysLabel:document.getElementById('daysLabel'),
       dataViews:document.getElementById('dataViews'),
       horizontalView:document.getElementById('horizontalView'),
+      horizontalScroll:document.querySelector('.horizontal-scroll'),
       verticalView:document.getElementById('verticalView'),
       horizontalRows:document.getElementById('horizontalRows'),
       dayList:document.getElementById('dayList'),
@@ -819,6 +821,19 @@
       if(horizontal){elements.dayList.innerHTML='';buildHorizontalTable(data)}else{elements.horizontalRows.innerHTML='';buildCards(data)}
     }
 
+    function scrollToTodayOnOpen(){
+      if(!autoTodayScroll||viewYear!==currentYear||viewMonth!==currentMonthIndex)return;
+      requestAnimationFrame(function(){
+        if(!autoTodayScroll)return;
+        var target=viewMode==='horizontal'?elements.horizontalRows.querySelector('.today-row'):elements.dayList.querySelector('.day-card.today');
+        if(!target)return;
+        if(viewMode==='horizontal'){
+          var scroller=elements.horizontalScroll;
+          scroller.scrollTop=Math.max(0,target.offsetTop-(scroller.clientHeight-target.offsetHeight)/2);
+        }else target.scrollIntoView({block:'start',behavior:'auto'});
+      });
+    }
+
     function setValue(index,column,value,type){
       var card=activeRoot().querySelector('[data-day-card="'+index+'"]');
       if(!card)return;
@@ -869,6 +884,7 @@
       elements.nextMonth.disabled=viewYear===currentYear&&viewMonth===currentMonthIndex;
       renderData(data);
       paintCalculations();
+      scrollToTodayOnOpen();
       if(!skipRemote)loadRemoteMonth(viewYear,viewMonth);
     }
 
@@ -1439,6 +1455,7 @@
     setInterval(syncRemoteMonth,15000);
     syncRemoteMonth();
     renderMonth();
+    setTimeout(function(){autoTodayScroll=false},2500);
     loadAuthSetting();
     refreshTelegramControls();
     checkTelegramAvailability();
