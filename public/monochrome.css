@@ -1,0 +1,74 @@
+/* Tema 2 only. Geometry, table columns and application behavior stay in index.html. */
+html[data-skin="monochrome"] {
+  --mono-action: #171717;
+  --mono-action-text: #ffffff;
+  --mono-action-hover: #383838;
+  --mono-row: #f7f7f7;
+  --mono-hover: #ededed;
+  --mono-active: #e5e5e5;
+  --mono-input-border: #858585;
+}
+html[data-skin="monochrome"][data-theme="dark"] {
+  --mono-action: #ededed;
+  --mono-action-text: #171717;
+  --mono-action-hover: #d0d0d0;
+  --mono-row: #212121;
+  --mono-hover: #2c2c2c;
+  --mono-active: #363636;
+  --mono-input-border: #858585;
+}
+
+/* Flat surfaces with a consistent, quiet outline. */
+html[data-skin="monochrome"] :is(.horizontal-shell,.day-card,.targets-section,.report-card) {border-radius:12px;box-shadow:none}
+html[data-skin="monochrome"] :is(.nav-button,.settings-fab,.icon-button,.view-switch,.view-button,.auth-save,.export-button,.import-button,.telegram-button,.report-actions button) {border-radius:8px;box-shadow:none}
+html[data-skin="monochrome"] .month-header {background:var(--surface);border-bottom-color:var(--line)}
+html[data-skin="monochrome"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button,.view-button.active) {
+  background:var(--mono-action);color:var(--mono-action-text);border-color:var(--mono-action);
+}
+/* Match the more specific earlier dark-mode rules and report stylesheet. */
+html[data-skin="monochrome"][data-theme="dark"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button) {
+  background:var(--mono-action);color:var(--mono-action-text);border-color:var(--mono-action);
+}
+html[data-skin="monochrome"] #targetsToggle[aria-expanded="true"] {background:var(--surface);color:var(--ink);border-color:var(--ink)}
+html[data-skin="monochrome"] button:disabled {opacity:.5;cursor:not-allowed}
+
+/* Follow a day across the table without changing its size or column order. */
+html[data-skin="monochrome"] .horizontal-scroll {scrollbar-color:var(--muted) var(--surface-2)}
+html[data-skin="monochrome"] .horizontal-table tbody tr:nth-child(even):not(.today-row) td {background:var(--mono-row)}
+html[data-skin="monochrome"] .horizontal-table tbody tr:focus-within td {background:var(--mono-active)}
+html[data-skin="monochrome"] .horizontal-table tbody tr:focus-within .sticky-day {background:var(--mono-action);color:var(--mono-action-text)}
+html[data-skin="monochrome"] .horizontal-table :is(th,td):nth-child(7),
+html[data-skin="monochrome"] .horizontal-table :is(th,td):nth-child(12) {border-right-color:var(--muted)}
+html[data-skin="monochrome"] .horizontal-table .table-input {
+  background:var(--surface);border-color:var(--mono-input-border);border-radius:6px;color:var(--ink);
+}
+html[data-skin="monochrome"] .horizontal-table .table-input:focus {
+  background:var(--surface);border-color:var(--ink);outline:2px solid var(--focus);outline-offset:-2px;box-shadow:none;
+}
+html[data-skin="monochrome"] :is(.target-input,.auth-input,.theme-select,.report-store-setting input) {border-color:var(--mono-input-border);border-radius:6px}
+html[data-skin="monochrome"] .metric-label em {color:var(--muted)}
+
+/* Readable settings copy and native form controls on small screens. */
+html[data-skin="monochrome"] :is(.setting-card-title p,.theme-copy span,.settings-title-wrap p,.auth-status,.import-help,.telegram-help,.telegram-message) {font-size:12px;line-height:1.5}
+html[data-skin="monochrome"] .auth-status {overflow-wrap:anywhere}
+html[data-skin="monochrome"] .list-heading p {font-size:12px;line-height:1.5}
+html[data-skin="monochrome"] :is(.auth-input,.theme-select,.report-store-setting input) {min-height:44px}
+html[data-skin="monochrome"] .theme-select {text-overflow:ellipsis}
+html[data-skin="monochrome"] .report-card h2 {font-size:18px;line-height:1.35;letter-spacing:-.02em}
+html[data-skin="monochrome"] .report-actions label {flex-wrap:wrap;font-size:13px;color:var(--muted)}
+html[data-skin="monochrome"] #reportDate {
+  min-height:44px;max-width:100%;padding:8px 10px;border:1px solid var(--mono-input-border);border-radius:6px;
+  background:var(--surface);color:var(--ink);font:inherit;font-weight:650;
+}
+html[data-skin="monochrome"] .report-output {border-radius:8px;color:var(--ink);tab-size:4}
+html[data-skin="monochrome"] :is(button,input,select):focus-visible {outline:2px solid var(--focus);outline-offset:2px}
+
+/* Hover is restricted to pointer devices to avoid sticky hover on Android. */
+@media (hover:hover) and (pointer:fine) {
+  html[data-skin="monochrome"] :is(.nav-button,.month-button,.icon-button,.import-button,.view-button:not(.active)):hover:not(:disabled) {background:var(--mono-hover);color:var(--ink)}
+  html[data-skin="monochrome"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button,.view-button.active):hover:not(:disabled) {background:var(--mono-action-hover);color:var(--mono-action-text)}
+  html[data-skin="monochrome"] .horizontal-table tbody tr:not(.today-row):not(:focus-within):hover td {background:var(--mono-hover)}
+}
+@media (prefers-reduced-motion:reduce) {
+  html[data-skin="monochrome"] :is(button,.settings-panel,.switch-track,.switch-track::after) {animation:none;transition:none}
+}
