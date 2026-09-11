@@ -6,6 +6,12 @@
   var STORE_NAME_KEY='salesflow2-report-store-name-v1';
   var storeSaveTimer=null;
   var reportDateSession=new Date();
+  var calendarDay=reportDateSession.toDateString(),reportRemoteMonths={};
+  function reportMonth(key){
+    var local=getLocal().months[key];
+    try{if((JSON.parse(localStorage.getItem('salesflow2-pending-months-v1'))||{})[key])return local||{}}catch(error){}
+    return reportRemoteMonths[key]||local||{};
+  }
   var API_BASE=window.location.origin;
   var MONTH_NAMES=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
   var TEMPLATE=String.raw`Toko : {{TOKO}}
@@ -122,17 +128,16 @@ Terimakasih
   }
   function lastRow(rows){for(var i=rows.length-1;i>=0;i-=1)if(rows[i].sales!==null||rows[i].struk!==null)return rows[i];return null}
   function buildValues(input){
-    var now=getReportDate(),year=now.getFullYear(),month=now.getMonth(),data=getLocal().months[keyFor(now)]||{},current=rowsFor(year,month,data),last=current[now.getDate()-1]||null,values={TOKO:getStoreName(),TANGGAL:now.getDate()+' '+MONTH_NAMES[month]+' '+now.getFullYear()};
+    var now=getReportDate(),year=now.getFullYear(),month=now.getMonth(),data=reportMonth(keyFor(now)),current=rowsFor(year,month,data),last=current[now.getDate()-1]||null,values={TOKO:getStoreName(),TANGGAL:now.getDate()+' '+MONTH_NAMES[month]+' '+now.getFullYear()};
     for(var i=0;i<31;i+=1){var row=current[i];values['A_'+(i+1)]=row&&(row.sales!==null||row.struk!==null)?[money(row.sales),row.struk===null?'':metric(row.struk),metricDecimal(row.apc)].join('_'):''}
-    var previousDate=comparableDate(year,month-1,now.getDate()),previousData=getLocal().months[keyFor(previousDate)]||{},previous=rowsFor(previousDate.getFullYear(),previousDate.getMonth(),previousData),previousLast=previous[Math.min(now.getDate(),previous.length)-1]||null;
-    var yearAgoDate=comparableDate(year-1,month,now.getDate()),yearAgoData=getLocal().months[keyFor(yearAgoDate)]||{},yearAgo=rowsFor(yearAgoDate.getFullYear(),yearAgoDate.getMonth(),yearAgoData),yearAgoLast=yearAgo[Math.min(now.getDate(),yearAgo.length)-1]||null;
+    var previousDate=comparableDate(year,month-1,now.getDate()),previousData=reportMonth(keyFor(previousDate)),previous=rowsFor(previousDate.getFullYear(),previousDate.getMonth(),previousData),previousLast=previous[Math.min(now.getDate(),previous.length)-1]||null;
     values.B_AKM_SALES=last?money(last.akmSales):'';values.C_AKM_STRUK=last?metric(last.akmStruk):'';
     var d=last?triple(metricDecimal(last.spd),metricDecimal(last.std),metricDecimal(last.apc)):triple('','','');values.D_SPD=d.spd;values.D_STD=d.std;values.D_APC=d.apc;
     values.E_TARGET_AKM=money(data.targetAkm);values.F_ACH=last&&data.targetSpd?String(Math.floor(last.spd/number(data.targetSpd)*100)):'';values.F_TARGET_SPD=money(data.targetSpd);
     var g=previousLast?triple(metricDecimal(previousLast.spd),metricDecimal(previousLast.std),metricDecimal(previousLast.apc)):triple('','','');values.G_SPD=g.spd;values.G_STD=g.std;values.G_APC=g.apc;
     values.H_SPD=last&&previousLast?growthText(last.spd,previousLast.spd):'';values.H_STD=last&&previousLast?growthText(last.std,previousLast.std):'';values.H_APC=last&&previousLast?growthText(last.apc,previousLast.apc):'';
-    values.M_SPD=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).spd:'';values.M_STD=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).std:'';values.M_APC=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)).apc:'';
-    values.N_SPD=last&&yearAgoLast?growthText(last.spd,yearAgoLast.spd):'';values.N_STD=last&&yearAgoLast?growthText(last.std,yearAgoLast.std):'';values.N_APC=last&&yearAgoLast?growthText(last.apc,yearAgoLast.apc):'';
+    values.M_SPD=values.M_STD=values.M_APC='';
+    values.N_SPD=values.N_STD=values.N_APC='';
     return Object.assign(values,input||{});
   }
   function formatValue(key,value){
@@ -146,7 +151,20 @@ Terimakasih
     reportPre.textContent=output;
   }
   async function loadRemote(){
-    try{var now=getReportDate(),responses=await Promise.all([fetch(API_BASE+'/api/month?month='+keyFor(now),{headers:authHeaders(),cache:'no-store'}),fetch(API_BASE+'/api/settings',{headers:authHeaders(),cache:'no-store'})]),response=responses[0],settingsResponse=responses[1];if(response.ok){var remote=await response.json(),store=getLocal(),key=keyFor(now),data=store.months[key]||{salesNet:[],totalStruk:[]};data.targetSpd=remote.targetSpd;data.targetAkm=remote.targetAkm;(remote.days||[]).forEach(function(row){data.salesNet[row.day-1]=row.salesNet===null?'':row.salesNet;data.totalStruk[row.day-1]=row.totalStruk===null?'':row.totalStruk});store.months[key]=data;try{localStorage.setItem(DATA_KEY,JSON.stringify(store))}catch(error){}}if(settingsResponse.ok){var settings=await settingsResponse.json();setStoreName(settings.storeName||'');var input=document.getElementById('reportStoreName');if(input)input.value=getStoreName()}render()}catch(error){}}
+    var date=getReportDate(),keys=[keyFor(date),keyFor(new Date(date.getFullYear(),date.getMonth()-1,1))];
+    await Promise.allSettled(keys.map(async function(key){
+      var response=await fetch(API_BASE+'/api/month?month='+key,{headers:authHeaders(),cache:'no-store'});
+      if(!response.ok)return;
+      var remote=await response.json(),data={targetSpd:remote.targetSpd,targetAkm:remote.targetAkm,salesNet:[],totalStruk:[]};
+      (remote.days||[]).forEach(function(row){data.salesNet[row.day-1]=row.salesNet;data.totalStruk[row.day-1]=row.totalStruk});
+      reportRemoteMonths[key]=data;
+    }));
+    try{
+      var before=getStoreName(),response=await fetch(API_BASE+'/api/settings',{headers:authHeaders(),cache:'no-store'});
+      if(response.ok){var settings=await response.json();if(getStoreName()===before&&settings.storeName){setStoreName(settings.storeName);var input=document.getElementById('reportStoreName');if(input)input.value=settings.storeName}}
+    }catch(error){}
+    render();
+  }
 
   var style=document.createElement('style');style.textContent='.report-card{margin:18px auto;max-width:900px;padding:16px;border:1px solid var(--line,#d8dee8);border-radius:18px;background:var(--surface,#fff)}.report-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.report-actions button{min-height:44px;padding:8px 14px;border:0;border-radius:12px;background:var(--blue,#1769aa);color:#fff;font-weight:800;cursor:pointer}.report-json{width:100%;min-height:80px;margin:0 0 10px;padding:10px;border:1px solid var(--line,#d8dee8);border-radius:10px;font:12px monospace}.report-output{overflow:auto;margin:0;padding:14px;border:1px solid var(--line,#d8dee8);border-radius:12px;background:var(--surface-2,#f7f9fb);white-space:pre-wrap;overflow-wrap:normal;font:13px/1.45 ui-monospace,SFMono-Regular,Consolas,monospace}.report-store-setting input{width:100%;height:40px;margin-top:10px;padding:0 10px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--ink);font-size:13px}html[data-skin="monochrome"] .report-actions button{background:#111;color:#fff}html[data-theme="dark"][data-skin="monochrome"] .report-actions button{background:#f1f1f1;color:#111}';document.head.appendChild(style);
   var card=document.createElement('section');card.className='report-card';card.innerHTML='<h2>Template Laporan Sales</h2><div class="report-actions"><label style="display:flex;align-items:center;gap:8px;font-weight:800">Tanggal laporan <input type="date" id="reportDate" min="2000-01-01"></label><button type="button" id="reportCopy">Copy Laporan</button></div><pre class="report-output" id="reportOutput"></pre>';var main=document.querySelector('main');if(main)main.appendChild(card);
@@ -154,7 +172,11 @@ Terimakasih
   if(settingsBody){var storeCard=document.createElement('section');storeCard.className='setting-card report-store-setting';storeCard.innerHTML='<div class="setting-card-title"><h3>Nama Toko Laporan</h3><p>Nama ini mengisi bagian Toko pada template laporan.</p></div><input id="reportStoreName" type="text" maxlength="100" placeholder="Nama toko" autocomplete="organization">';settingsBody.insertBefore(storeCard,settingsBody.firstChild);var storeInput=storeCard.querySelector('#reportStoreName');storeInput.value=getStoreName();storeInput.addEventListener('input',function(){setStoreName(storeInput.value);saveStoreNameRemote(storeInput.value);render()})}
   var reportPre=document.getElementById('reportOutput');
   var reportDateInput=document.getElementById('reportDate'),initialReportDate=getReportDate();reportDateInput.value=initialReportDate.getFullYear()+'-'+String(initialReportDate.getMonth()+1).padStart(2,'0')+'-'+String(initialReportDate.getDate()).padStart(2,'0');reportDateInput.max=initialReportDate.getFullYear()+'-'+String(initialReportDate.getMonth()+1).padStart(2,'0')+'-'+String(initialReportDate.getDate()).padStart(2,'0');reportDateInput.addEventListener('change',function(){if(!reportDateInput.value)return;var parts=reportDateInput.value.split('-').map(Number),date=new Date(parts[0],parts[1]-1,parts[2]);reportDateSession=date;render();loadRemote()});
-  setInterval(function(){var today=new Date(),current=getReportDate();if(today.toDateString()===current.toDateString())return;reportDateSession=today;var value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');reportDateInput.value=value;reportDateInput.max=value;render();loadRemote()},30000);
+  function checkCalendarDay(){var today=new Date();if(today.toDateString()===calendarDay)return;calendarDay=today.toDateString();reportDateSession=today;var value=today.getFullYear()+'-'+String(today.getMonth()+1).padStart(2,'0')+'-'+String(today.getDate()).padStart(2,'0');reportDateInput.value=value;reportDateInput.max=value;render();loadRemote()}
+  setInterval(checkCalendarDay,30000);
+  window.addEventListener('focus',checkCalendarDay);
+  document.addEventListener('visibilitychange',checkCalendarDay);
+  window.addEventListener('salesflow-data-changed',function(){reportRemoteMonths={};render()});
   document.getElementById('reportCopy').addEventListener('click',async function(){try{await navigator.clipboard.writeText(reportPre.textContent);alert('Laporan berhasil disalin.')}catch(error){var area=document.createElement('textarea');area.value=reportPre.textContent;document.body.appendChild(area);area.select();document.execCommand('copy');area.remove();alert('Laporan berhasil disalin.')}});
   window.addEventListener('salesflow-auth-changed',loadRemote);
   render();loadRemote();
