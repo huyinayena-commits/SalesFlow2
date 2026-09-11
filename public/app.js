@@ -137,7 +137,7 @@
       document.documentElement.setAttribute('data-theme',themeMode);
       document.documentElement.style.colorScheme=themeMode;
       elements.themeColor.setAttribute('content',themeVariant==='midnight-indigo'?(themeMode==='dark'?'#0b1020':'#f4f6ff'):(themeMode==='dark'?'#0d131b':'#f4f6f9'));
-      elements.themeLabel.textContent=(themeVariant==='monochrome'?'Tema 2 — Monochrome · ':themeVariant==='midnight-indigo'?'Tema 3 — Midnight Indigo · ':'Tema 1 — SalesFlow Klasik · ')+(themeMode==='dark'?'Mode Gelap':'Mode Terang');
+      elements.themeLabel.textContent=(themeVariant==='monochrome'?'Tema 2 — Monochrome · ':themeVariant==='midnight-indigo'?'Tema 3 — Studio Cobalt · ':'Tema 1 — SalesFlow Klasik · ')+(themeMode==='dark'?'Mode Gelap':'Mode Terang');
       var nextTheme=themeMode==='dark'?'Terang':'Gelap';
       elements.themeToggle.setAttribute('aria-label','Aktifkan Mode '+nextTheme);
       elements.themeToggle.setAttribute('title','Aktifkan Mode '+nextTheme);
@@ -148,7 +148,7 @@
       themeVariant=variant==='monochrome'||variant==='midnight-indigo'?variant:'classic';
       document.documentElement.setAttribute('data-skin',themeVariant);
       elements.themeVariant.value=themeVariant;
-      elements.themeTitle.textContent=themeVariant==='monochrome'?'Tema 2 — Monochrome':themeVariant==='midnight-indigo'?'Tema 3 — Midnight Indigo':'Tema 1 — SalesFlow Klasik';
+      elements.themeTitle.textContent=themeVariant==='monochrome'?'Tema 2 — Monochrome':themeVariant==='midnight-indigo'?'Tema 3 — Studio Cobalt':'Tema 1 — SalesFlow Klasik';
       applyTheme(themeMode,false);
       if(persist){try{localStorage.setItem(THEME_VARIANT_KEY,themeVariant)}catch(error){}}
     }
@@ -863,7 +863,7 @@
       applyTheme(next,true);
       showToast(next==='dark'?'Mode Gelap aktif':'Mode Terang aktif');
     });
-    elements.themeVariant.addEventListener('change',function(){applyThemeVariant(elements.themeVariant.value,true);showToast(themeVariant==='monochrome'?'Tema 2 — Monochrome aktif':themeVariant==='midnight-indigo'?'Tema 3 — Midnight Indigo aktif':'Tema 1 — SalesFlow Klasik aktif')});
+    elements.themeVariant.addEventListener('change',function(){applyThemeVariant(elements.themeVariant.value,true);showToast(themeVariant==='monochrome'?'Tema 2 — Monochrome aktif':themeVariant==='midnight-indigo'?'Tema 3 — Studio Cobalt aktif':'Tema 1 — SalesFlow Klasik aktif')});
     elements.exportButton.addEventListener('click',exportBackupJson);
     elements.importButton.addEventListener('click',function(){elements.jsonFileInput.click()});
     elements.jsonFileInput.addEventListener('change',function(event){importJsonFile(event.target.files&&event.target.files[0])});
