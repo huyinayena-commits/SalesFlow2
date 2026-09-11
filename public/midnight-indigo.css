@@ -1,0 +1,35 @@
+/* Tema 3: visual only. Dashboard geometry and application behavior remain unchanged. */
+html[data-skin="midnight-indigo"] {
+  --bg:#f4f6ff;--surface:#ffffff;--surface-2:#f7f8ff;--ink:#17224b;--muted:#68718d;--line:#dbe0f2;
+  --blue:#4056b8;--blue-soft:#e9edff;--green:#247565;--green-soft:#e5f4ee;--orange:#a85b22;--orange-soft:#fff0e4;
+  --focus:#596fd5;--track:#e9edfb;--day-bg:#e8ecfb;--sales-cell:#fbfcff;--struk-cell:#fbfefc;--apc-cell:#fffdfa;
+  --shadow:0 10px 28px rgba(35,48,105,.10);
+}
+html[data-skin="midnight-indigo"][data-theme="dark"] {
+  color-scheme:dark;--bg:#0b1020;--surface:#121a31;--surface-2:#18213d;--ink:#edf1ff;--muted:#aeb8d6;--line:#2b385d;
+  --blue:#91a4ff;--blue-soft:#1d2b59;--green:#75c8ad;--green-soft:#173b37;--orange:#ffc08e;--orange-soft:#422c20;
+  --focus:#aab8ff;--track:#202b4b;--day-bg:#202b4b;--sales-cell:#101a33;--struk-cell:#112821;--apc-cell:#2c211a;
+  --shadow:0 12px 30px rgba(0,0,0,.28);
+}
+html[data-skin="midnight-indigo"] .month-header {background:color-mix(in srgb,var(--surface) 94%,transparent);border-bottom-color:var(--line)}
+html[data-skin="midnight-indigo"] .settings-fab,
+html[data-skin="midnight-indigo"] .auth-save,
+html[data-skin="midnight-indigo"] .export-button,
+html[data-skin="midnight-indigo"] .telegram-button,
+html[data-skin="midnight-indigo"] .report-actions button,
+html[data-skin="midnight-indigo"] .view-button.active {background:var(--blue);color:#fff;border-color:var(--blue)}
+html[data-skin="midnight-indigo"] .horizontal-table .group-sales {background:#4056b8}
+html[data-skin="midnight-indigo"] .horizontal-table .group-struk {background:#247565}
+html[data-skin="midnight-indigo"] .horizontal-table .group-apc {background:#a85b22}
+html[data-skin="midnight-indigo"][data-theme="dark"] .horizontal-table .group-sales {background:#5269ca}
+html[data-skin="midnight-indigo"][data-theme="dark"] .horizontal-table .group-struk {background:#2d816e}
+html[data-skin="midnight-indigo"][data-theme="dark"] .horizontal-table .group-apc {background:#9d5b2c}
+html[data-skin="midnight-indigo"] .horizontal-table tr.today-row td {background-image:linear-gradient(rgba(89,111,213,.12),rgba(89,111,213,.12))}
+html[data-skin="midnight-indigo"] .horizontal-table tr.today-row .sticky-day,
+html[data-skin="midnight-indigo"] .today .day-number,
+html[data-skin="midnight-indigo"] .today .today-chip {background:var(--blue);color:#fff}
+html[data-skin="midnight-indigo"] :is(.target-input,.auth-input,.theme-select,.report-store-setting input,.horizontal-table .table-input):focus {border-color:var(--focus);box-shadow:0 0 0 3px color-mix(in srgb,var(--focus) 22%,transparent)}
+@media (hover:hover) and (pointer:fine) {
+  html[data-skin="midnight-indigo"] :is(.nav-button,.month-button,.icon-button,.import-button,.view-button:not(.active)):hover:not(:disabled) {background:var(--track);color:var(--blue)}
+  html[data-skin="midnight-indigo"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button,.view-button.active):hover:not(:disabled) {filter:brightness(.93)}
+}
