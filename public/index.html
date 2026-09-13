@@ -367,6 +367,7 @@
     html[data-theme="dark"][data-skin="monochrome"] .horizontal-table tr.today-row .sticky-day{background:#f1f1f1;color:#111}
   </style>
   <link rel="stylesheet" href="/monochrome.css">
+  <link rel="stylesheet" href="/ledger.css">
 </head>
 <body>
   <main class="app">
@@ -400,7 +401,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.1 12s3.6-6 9.9-6 9.9 6 9.9 6-3.6 6-9.9 6-9.9-6-9.9-6Z"></path><circle cx="12" cy="12" r="2.5"></circle></svg>
         </button>
         <button class="settings-fab" id="settingsButton" type="button" aria-label="Buka Pengaturan" aria-controls="settingsOverlay" aria-expanded="false">
-          <span aria-hidden="true">⚙</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>
         </button>
       </div>
 
@@ -468,7 +469,7 @@
         <section class="setting-card" aria-labelledby="themeTitle">
           <div class="theme-row">
             <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg></span>
-            <div class="theme-copy"><strong id="themeTitle">Tema 1 — SalesFlow Klasik</strong><span id="themeLabel">Mode Terang</span><select class="theme-select" id="themeVariant" aria-label="Pilih tema"><option value="classic">Tema 1 — SalesFlow Klasik</option><option value="monochrome">Tema 2 — Monochrome</option></select></div>
+            <div class="theme-copy"><strong id="themeTitle">Tema 1 — SalesFlow Klasik</strong><span id="themeLabel">Mode Terang</span><select class="theme-select" id="themeVariant" aria-label="Pilih tema"><option value="classic">Tema 1 — SalesFlow Klasik</option><option value="monochrome">Tema 2 — Monochrome</option><option value="ledger">Tema 3 — Ledger</option></select></div>
             <button class="icon-button theme-toggle" id="themeToggle" type="button" aria-label="Aktifkan Mode Gelap">
               <svg class="sun-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.66 6.34l1.41-1.41"></path></svg>
               <svg class="moon-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"></path></svg>

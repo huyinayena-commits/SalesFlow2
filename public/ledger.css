@@ -1,0 +1,53 @@
+/* Tema 3: a warm, ruled sales ledger. Layout and application behavior stay shared. */
+html[data-skin="ledger"] {
+  --bg:#eeeadd;--surface:#fbf8ef;--surface-2:#f3efe3;--ink:#1d2923;--muted:#5f6d65;--line:#c9c2b2;
+  --blue:#2f6b55;--blue-soft:#dfe9e2;--green:#3e6b59;--green-soft:#e3ebe5;--orange:#5f705f;--orange-soft:#e7ebe1;
+  --positive:#276247;--positive-soft:#dceae0;--negative:#a23e35;--negative-soft:#f3dfd9;--focus:#245e49;
+  --track:#e4dfd2;--day-bg:#e9e4d7;--sales-cell:#fbf8ef;--struk-cell:#f7f4ea;--apc-cell:#f2efe4;
+  --scrim:rgba(19,29,24,.62);--shadow:none;--ledger-action:#295f4c;--ledger-action-text:#fffdf5;--ledger-rule:#8e9a91;
+}
+html[data-theme="dark"][data-skin="ledger"] {
+  --bg:#151b18;--surface:#1d2521;--surface-2:#232d28;--ink:#f1eee4;--muted:#b3bcb5;--line:#435048;
+  --blue:#86b49d;--blue-soft:#263a31;--green:#9bbdaa;--green-soft:#293a32;--orange:#a9b89d;--orange-soft:#303a2f;
+  --positive:#8bc3a4;--positive-soft:#223b2f;--negative:#ef9b8e;--negative-soft:#492d29;--focus:#a8d1bd;
+  --track:#2b3530;--day-bg:#27312c;--sales-cell:#1d2521;--struk-cell:#202923;--apc-cell:#232b24;
+  --scrim:rgba(5,9,7,.76);--ledger-action:#86b49d;--ledger-action-text:#142019;--ledger-rule:#69776e;
+}
+
+html[data-skin="ledger"] body {font-family:Roboto,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.004em}
+html[data-skin="ledger"] :is(.horizontal-shell,.day-card,.targets-section,.report-card,.setting-card) {border-radius:5px;box-shadow:none}
+html[data-skin="ledger"] :is(.nav-button,.settings-fab,.icon-button,.view-switch,.view-button,.target-card,.input-box,.metric-item,.auth-save,.export-button,.import-button,.telegram-button,.report-actions button) {border-radius:4px;box-shadow:none}
+html[data-skin="ledger"] .month-header {background:color-mix(in srgb,var(--bg) 94%,transparent);border-bottom:2px solid var(--ink)}
+html[data-skin="ledger"] .month-button small,
+html[data-skin="ledger"] :is(.section-label,.target-card span,.horizontal-table .group-head th) {letter-spacing:.12em}
+html[data-skin="ledger"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button,.view-button.active) {background:var(--ledger-action);border-color:var(--ledger-action);color:var(--ledger-action-text)}
+html[data-skin="ledger"] .setting-card-icon {border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--blue)}
+html[data-skin="ledger"] .list-heading {align-items:flex-start;border-bottom:1px solid var(--ledger-rule);padding:12px 4px}
+html[data-skin="ledger"] .table-info p {margin:0;color:var(--ink);font-size:12px;font-weight:700;line-height:1.5}
+
+html[data-skin="ledger"] .horizontal-table .group-head th {background:var(--ledger-action);color:var(--ledger-action-text)}
+html[data-skin="ledger"] .horizontal-table .column-head th {background:var(--surface-2);border-bottom:2px solid var(--ledger-rule)}
+html[data-skin="ledger"] .horizontal-table :is(th,td):nth-child(7),
+html[data-skin="ledger"] .horizontal-table :is(th,td):nth-child(12) {border-right:2px solid var(--ledger-rule)}
+html[data-skin="ledger"] .horizontal-table tbody tr:nth-child(even):not(.today-row) td {background:var(--surface-2)}
+html[data-skin="ledger"] .horizontal-table tr.today-row td {background-image:none;background-color:var(--blue-soft)}
+html[data-skin="ledger"] .horizontal-table tr.today-row .sticky-day {background:var(--ledger-action);color:var(--ledger-action-text)}
+html[data-skin="ledger"] .horizontal-table .table-input {border:1px solid var(--ledger-rule);border-radius:2px;background:var(--surface);color:var(--ink)}
+html[data-skin="ledger"] .horizontal-table .table-input:focus {border-color:var(--focus);outline:2px solid var(--focus);outline-offset:-2px;box-shadow:none}
+
+html[data-skin="ledger"] .day-card {border-top:3px solid var(--ledger-action)}
+html[data-skin="ledger"] .day-header {background:var(--surface);border-bottom:1px solid var(--ledger-rule)}
+html[data-skin="ledger"] .day-number {border-radius:3px;background:var(--ledger-action);color:var(--ledger-action-text)}
+html[data-skin="ledger"] .today .today-chip {border:1px solid var(--ledger-action);border-radius:3px;background:transparent;color:var(--blue)}
+html[data-skin="ledger"] .metrics-section {border-radius:3px;background:var(--surface-2);border-color:var(--line)}
+html[data-skin="ledger"] .metric-item {background:var(--surface);border-color:var(--line)}
+html[data-skin="ledger"] .section-label::before {border-radius:0;background:var(--ledger-action)}
+html[data-skin="ledger"] :is(.target-input,.auth-input,.theme-select,.report-store-setting input,#reportDate) {min-height:44px;border-color:var(--ledger-rule);border-radius:3px;background:var(--surface);color:var(--ink)}
+html[data-skin="ledger"] :is(button,input,select):focus-visible {outline:2px solid var(--focus);outline-offset:2px}
+
+@media (hover:hover) and (pointer:fine) {
+  html[data-skin="ledger"] :is(button,.view-button,.theme-select):hover:not(:disabled) {filter:brightness(.94)}
+}
+@media (prefers-reduced-motion:reduce) {
+  html[data-skin="ledger"] :is(button,.settings-panel,.switch-track,.switch-track::after) {animation:none;transition:none}
+}

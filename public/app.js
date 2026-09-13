@@ -5,6 +5,8 @@
     var VIEW_KEY='sales-harian-view-v1';
     var THEME_KEY='sales-harian-theme-v1';
     var THEME_VARIANT_KEY='sales-harian-theme-variant-v1';
+    var THEME_NAMES={classic:'Tema 1 — SalesFlow Klasik',monochrome:'Tema 2 — Monochrome',ledger:'Tema 3 — Ledger'};
+    var THEME_COLORS={classic:['#f4f6f9','#0d131b'],monochrome:['#f4f4f4','#111111'],ledger:['#eeeadd','#151b18']};
     var AUTH_KEY='salesflow2-api-password';
     var TELEGRAM_KEY='sales-harian-telegram-v1';
     var themeMode=loadThemeMode();
@@ -85,7 +87,7 @@
     }
 
     function loadThemeVariant(){
-      try{return localStorage.getItem(THEME_VARIANT_KEY)==='monochrome'?'monochrome':'classic'}catch(error){return'classic'}
+      try{var variant=localStorage.getItem(THEME_VARIANT_KEY);return THEME_NAMES[variant]?variant:'classic'}catch(error){return'classic'}
     }
 
     function loadViewMode(){
@@ -136,8 +138,8 @@
       themeMode=mode==='dark'?'dark':'light';
       document.documentElement.setAttribute('data-theme',themeMode);
       document.documentElement.style.colorScheme=themeMode;
-      elements.themeColor.setAttribute('content',themeMode==='dark'?'#0d131b':'#f4f6f9');
-      elements.themeLabel.textContent=(themeVariant==='monochrome'?'Tema 2 — Monochrome · ':'Tema 1 — SalesFlow Klasik · ')+(themeMode==='dark'?'Mode Gelap':'Mode Terang');
+      elements.themeColor.setAttribute('content',THEME_COLORS[themeVariant][themeMode==='dark'?1:0]);
+      elements.themeLabel.textContent=THEME_NAMES[themeVariant]+' · '+(themeMode==='dark'?'Mode Gelap':'Mode Terang');
       var nextTheme=themeMode==='dark'?'Terang':'Gelap';
       elements.themeToggle.setAttribute('aria-label','Aktifkan Mode '+nextTheme);
       elements.themeToggle.setAttribute('title','Aktifkan Mode '+nextTheme);
@@ -145,10 +147,10 @@
     }
 
     function applyThemeVariant(variant,persist){
-      themeVariant=variant==='monochrome'?'monochrome':'classic';
+      themeVariant=THEME_NAMES[variant]?variant:'classic';
       document.documentElement.setAttribute('data-skin',themeVariant);
       elements.themeVariant.value=themeVariant;
-      elements.themeTitle.textContent=themeVariant==='monochrome'?'Tema 2 — Monochrome':'Tema 1 — SalesFlow Klasik';
+      elements.themeTitle.textContent=THEME_NAMES[themeVariant];
       applyTheme(themeMode,false);
       if(persist){try{localStorage.setItem(THEME_VARIANT_KEY,themeVariant)}catch(error){}}
     }
@@ -863,7 +865,7 @@
       applyTheme(next,true);
       showToast(next==='dark'?'Mode Gelap aktif':'Mode Terang aktif');
     });
-    elements.themeVariant.addEventListener('change',function(){applyThemeVariant(elements.themeVariant.value,true);showToast(themeVariant==='monochrome'?'Tema 2 — Monochrome aktif':'Tema 1 — SalesFlow Klasik aktif')});
+    elements.themeVariant.addEventListener('change',function(){applyThemeVariant(elements.themeVariant.value,true);showToast(THEME_NAMES[themeVariant]+' aktif')});
     elements.exportButton.addEventListener('click',exportBackupJson);
     elements.importButton.addEventListener('click',function(){elements.jsonFileInput.click()});
     elements.jsonFileInput.addEventListener('change',function(event){importJsonFile(event.target.files&&event.target.files[0])});
