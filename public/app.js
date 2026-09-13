@@ -5,8 +5,8 @@
     var VIEW_KEY='sales-harian-view-v1';
     var THEME_KEY='sales-harian-theme-v1';
     var THEME_VARIANT_KEY='sales-harian-theme-variant-v1';
-    var THEME_NAMES={classic:'Tema 1 — SalesFlow Klasik',monochrome:'Tema 2 — Monochrome',ledger:'Tema 3 — Ledger'};
-    var THEME_COLORS={classic:['#f4f6f9','#0d131b'],monochrome:['#f4f4f4','#111111'],ledger:['#eeeadd','#151b18']};
+    var THEME_NAMES={classic:'Tema 1 — SalesFlow Klasik',monochrome:'Tema 2 — Monochrome',ledger:'Tema 3 — Command Ledger'};
+    var THEME_COLORS={classic:['#f4f6f9','#0d131b'],monochrome:['#f4f4f4','#111111'],ledger:['#e9e5da','#121815']};
     var AUTH_KEY='salesflow2-api-password';
     var TELEGRAM_KEY='sales-harian-telegram-v1';
     var themeMode=loadThemeMode();

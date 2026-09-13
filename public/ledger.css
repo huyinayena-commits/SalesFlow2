@@ -1,52 +1,152 @@
-/* Tema 3: a warm, ruled sales ledger. Layout and application behavior stay shared. */
+/* Tema 3: Command Ledger. Same data, genuinely different information architecture. */
 html[data-skin="ledger"] {
-  --bg:#eeeadd;--surface:#fbf8ef;--surface-2:#f3efe3;--ink:#1d2923;--muted:#5f6d65;--line:#c9c2b2;
-  --blue:#2f6b55;--blue-soft:#dfe9e2;--green:#3e6b59;--green-soft:#e3ebe5;--orange:#5f705f;--orange-soft:#e7ebe1;
-  --positive:#276247;--positive-soft:#dceae0;--negative:#a23e35;--negative-soft:#f3dfd9;--focus:#245e49;
-  --track:#e4dfd2;--day-bg:#e9e4d7;--sales-cell:#fbf8ef;--struk-cell:#f7f4ea;--apc-cell:#f2efe4;
-  --scrim:rgba(19,29,24,.62);--shadow:none;--ledger-action:#295f4c;--ledger-action-text:#fffdf5;--ledger-rule:#8e9a91;
+  --bg:#e9e5da;--surface:#f8f5ec;--surface-2:#efebe0;--ink:#17231e;--muted:#59665f;--line:#bbb6aa;
+  --blue:#2d6752;--blue-soft:#dae7df;--green:#3d6958;--green-soft:#e0e9e2;--orange:#5b6d5c;--orange-soft:#e5e8dd;
+  --positive:#236044;--positive-soft:#d8e8dd;--negative:#993d35;--negative-soft:#f0ddd7;--focus:#1e6148;
+  --track:#ddd8cc;--day-bg:#e5e0d4;--sales-cell:#f8f5ec;--struk-cell:#f4f1e8;--apc-cell:#eeece2;
+  --scrim:rgba(14,24,19,.68);--shadow:none;--ledger-action:#235c47;--ledger-action-text:#fffdf5;--ledger-rule:#7d8982;
 }
 html[data-theme="dark"][data-skin="ledger"] {
-  --bg:#151b18;--surface:#1d2521;--surface-2:#232d28;--ink:#f1eee4;--muted:#b3bcb5;--line:#435048;
-  --blue:#86b49d;--blue-soft:#263a31;--green:#9bbdaa;--green-soft:#293a32;--orange:#a9b89d;--orange-soft:#303a2f;
-  --positive:#8bc3a4;--positive-soft:#223b2f;--negative:#ef9b8e;--negative-soft:#492d29;--focus:#a8d1bd;
-  --track:#2b3530;--day-bg:#27312c;--sales-cell:#1d2521;--struk-cell:#202923;--apc-cell:#232b24;
-  --scrim:rgba(5,9,7,.76);--ledger-action:#86b49d;--ledger-action-text:#142019;--ledger-rule:#69776e;
+  --bg:#121815;--surface:#1a231f;--surface-2:#222c27;--ink:#f0ede3;--muted:#b0b9b2;--line:#46534c;
+  --blue:#82b49c;--blue-soft:#243930;--green:#98bba8;--green-soft:#293a32;--orange:#a9b89f;--orange-soft:#303a31;
+  --positive:#8bc3a4;--positive-soft:#20392d;--negative:#ef9b8e;--negative-soft:#472b27;--focus:#a7d2bd;
+  --track:#29332e;--day-bg:#252f2a;--sales-cell:#1a231f;--struk-cell:#1d2722;--apc-cell:#202920;
+  --scrim:rgba(3,8,5,.8);--ledger-action:#86b49d;--ledger-action-text:#112019;--ledger-rule:#6d7b73;
 }
 
-html[data-skin="ledger"] body {font-family:Roboto,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;letter-spacing:.004em}
-html[data-skin="ledger"] :is(.horizontal-shell,.day-card,.targets-section,.report-card,.setting-card) {border-radius:5px;box-shadow:none}
-html[data-skin="ledger"] :is(.nav-button,.settings-fab,.icon-button,.view-switch,.view-button,.target-card,.input-box,.metric-item,.auth-save,.export-button,.import-button,.telegram-button,.report-actions button) {border-radius:4px;box-shadow:none}
-html[data-skin="ledger"] .month-header {background:color-mix(in srgb,var(--bg) 94%,transparent);border-bottom:2px solid var(--ink)}
-html[data-skin="ledger"] .month-button small,
-html[data-skin="ledger"] :is(.section-label,.target-card span,.horizontal-table .group-head th) {letter-spacing:.12em}
+html[data-skin="ledger"] body {
+  font-family:Roboto,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  letter-spacing:.004em;
+  background-color:var(--bg);
+  background-image:linear-gradient(to right,color-mix(in srgb,var(--line) 26%,transparent) 1px,transparent 1px);
+  background-size:32px 100%;
+}
+html[data-skin="ledger"] .app {max-width:none;padding-inline:12px}
+html[data-skin="ledger"] :is(.horizontal-shell,.day-card,.targets-section,.report-card,.setting-card) {border-radius:0;box-shadow:none}
+html[data-skin="ledger"] :is(.nav-button,.settings-fab,.icon-button,.view-switch,.view-button,.target-card,.input-box,.metric-item,.auth-save,.export-button,.import-button,.telegram-button,.report-actions button) {border-radius:2px;box-shadow:none}
 html[data-skin="ledger"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button,.view-button.active) {background:var(--ledger-action);border-color:var(--ledger-action);color:var(--ledger-action-text)}
-html[data-skin="ledger"] .setting-card-icon {border:1px solid var(--line);border-radius:4px;background:var(--surface);color:var(--blue)}
-html[data-skin="ledger"] .list-heading {align-items:flex-start;border-bottom:1px solid var(--ledger-rule);padding:12px 4px}
-html[data-skin="ledger"] .table-info p {margin:0;color:var(--ink);font-size:12px;font-weight:700;line-height:1.5}
 
-html[data-skin="ledger"] .horizontal-table .group-head th {background:var(--ledger-action);color:var(--ledger-action-text)}
-html[data-skin="ledger"] .horizontal-table .column-head th {background:var(--surface-2);border-bottom:2px solid var(--ledger-rule)}
+/* Masthead: navigation reads as an operational toolbar, not a floating mobile card. */
+html[data-skin="ledger"] .month-header {
+  top:0;
+  grid-template-columns:52px minmax(0,1fr) 52px;
+  min-height:calc(78px + env(safe-area-inset-top));
+  padding:calc(12px + env(safe-area-inset-top)) 0 10px;
+  border-bottom:2px solid var(--ink);
+  background:color-mix(in srgb,var(--bg) 94%,transparent);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+}
+html[data-skin="ledger"] .nav-button {width:52px;border:1px solid var(--ink);background:transparent;color:var(--ink)}
+html[data-skin="ledger"] .month-button {align-items:flex-start;padding-inline:12px}
+html[data-skin="ledger"] .month-button small {color:var(--blue);font-size:9px;letter-spacing:.18em}
+html[data-skin="ledger"] .month-button strong {font-size:22px;font-weight:950;letter-spacing:-.04em}
+
+/* Target strip and status rail. */
+html[data-skin="ledger"] .targets-section {margin-top:12px;padding:0;border:2px solid var(--ink);background:var(--surface)}
+html[data-skin="ledger"] .targets-section[hidden] {display:none}
+html[data-skin="ledger"] .targets-header {align-items:center;margin:0;padding:12px;border-bottom:1px solid var(--ledger-rule)}
+html[data-skin="ledger"] .targets-header h2 {font-size:18px;letter-spacing:-.035em}
+html[data-skin="ledger"] .target-grid {display:grid;grid-template-columns:1fr 1fr;gap:0}
+html[data-skin="ledger"] .target-card {width:auto;padding:9px 12px;border:0;background:transparent}
+html[data-skin="ledger"] .target-card + .target-card {border-left:1px solid var(--ledger-rule)}
+html[data-skin="ledger"] .target-card span {font-size:9px;letter-spacing:.12em}
+html[data-skin="ledger"] .target-input {width:100%;height:38px;border:0;border-bottom:2px solid var(--ink);border-radius:0;background:transparent;text-align:right}
+
+html[data-skin="ledger"] .list-heading {
+  align-items:center;
+  min-height:66px;
+  margin-top:12px;
+  padding:9px 10px;
+  border:2px solid var(--ink);
+  background:var(--ink);
+}
+html[data-skin="ledger"] .table-info p {margin:0;color:var(--ledger-action-text);font-size:12px;font-weight:750;line-height:1.45}
+html[data-skin="ledger"] .settings-fab {width:46px;height:46px;border:1px solid color-mix(in srgb,var(--ledger-action-text) 48%,transparent)}
+
+/* Dense horizontal workstation. Strong rules replace floating cards. */
+html[data-skin="ledger"] .horizontal-shell {margin-top:10px;border:2px solid var(--ink);background:var(--surface)}
+html[data-skin="ledger"] .horizontal-scroll {max-height:74svh;scrollbar-color:var(--ledger-action) var(--surface-2)}
+html[data-skin="ledger"] .horizontal-table {font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+html[data-skin="ledger"] .horizontal-table :is(th,td) {height:42px;border-color:var(--line)}
+html[data-skin="ledger"] .horizontal-table .group-head th {height:34px;background:var(--ledger-action);color:var(--ledger-action-text);font-family:Roboto,ui-sans-serif,system-ui,sans-serif;letter-spacing:.15em}
+html[data-skin="ledger"] .horizontal-table .column-head th {height:52px;border-bottom:2px solid var(--ink);background:var(--surface-2);font-size:9px;letter-spacing:.055em}
 html[data-skin="ledger"] .horizontal-table :is(th,td):nth-child(7),
 html[data-skin="ledger"] .horizontal-table :is(th,td):nth-child(12) {border-right:2px solid var(--ledger-rule)}
 html[data-skin="ledger"] .horizontal-table tbody tr:nth-child(even):not(.today-row) td {background:var(--surface-2)}
+html[data-skin="ledger"] .horizontal-table tbody tr:focus-within td {background:var(--blue-soft)}
 html[data-skin="ledger"] .horizontal-table tr.today-row td {background-image:none;background-color:var(--blue-soft)}
 html[data-skin="ledger"] .horizontal-table tr.today-row .sticky-day {background:var(--ledger-action);color:var(--ledger-action-text)}
-html[data-skin="ledger"] .horizontal-table .table-input {border:1px solid var(--ledger-rule);border-radius:2px;background:var(--surface);color:var(--ink)}
+html[data-skin="ledger"] .horizontal-table .table-input {border:1px solid var(--ledger-rule);border-radius:0;background:var(--surface);color:var(--ink);font-family:inherit}
 html[data-skin="ledger"] .horizontal-table .table-input:focus {border-color:var(--focus);outline:2px solid var(--focus);outline-offset:-2px;box-shadow:none}
 
-html[data-skin="ledger"] .day-card {border-top:3px solid var(--ledger-action)}
-html[data-skin="ledger"] .day-header {background:var(--surface);border-bottom:1px solid var(--ledger-rule)}
-html[data-skin="ledger"] .day-number {border-radius:3px;background:var(--ledger-action);color:var(--ledger-action-text)}
-html[data-skin="ledger"] .today .today-chip {border:1px solid var(--ledger-action);border-radius:3px;background:transparent;color:var(--blue)}
-html[data-skin="ledger"] .metrics-section {border-radius:3px;background:var(--surface-2);border-color:var(--line)}
-html[data-skin="ledger"] .metric-item {background:var(--surface);border-color:var(--line)}
-html[data-skin="ledger"] .section-label::before {border-radius:0;background:var(--ledger-action)}
-html[data-skin="ledger"] :is(.target-input,.auth-input,.theme-select,.report-store-setting input,#reportDate) {min-height:44px;border-color:var(--ledger-rule);border-radius:3px;background:var(--surface);color:var(--ink)}
+/* Mobile records: the date is a mast, metrics become ruled rows. */
+html[data-skin="ledger"] .day-list {gap:14px;margin-top:10px}
+html[data-skin="ledger"] .day-card {border:2px solid var(--ink);border-top:6px solid var(--ledger-action);background:var(--surface)}
+html[data-skin="ledger"] .day-header {min-height:68px;border-bottom:1px solid var(--ink);background:transparent}
+html[data-skin="ledger"] .day-number {width:48px;height:48px;border-radius:0;background:var(--ledger-action);color:var(--ledger-action-text)}
+html[data-skin="ledger"] .day-date strong {font-size:15px;letter-spacing:-.025em}
+html[data-skin="ledger"] .today .today-chip {border:1px solid var(--ledger-action);border-radius:0;background:transparent;color:var(--blue)}
+html[data-skin="ledger"] .input-grid {gap:0;padding:0;border-bottom:1px solid var(--ink)}
+html[data-skin="ledger"] .input-box {padding:10px 12px;border:0;background:var(--surface)}
+html[data-skin="ledger"] .input-box + .input-box {border-left:1px solid var(--ledger-rule)}
+html[data-skin="ledger"] .input-box span {letter-spacing:.1em}
+html[data-skin="ledger"] .number-input {font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+html[data-skin="ledger"] .metrics-section {margin:0;padding:10px 12px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
+html[data-skin="ledger"] .metrics-section:last-child {border-bottom:0}
+html[data-skin="ledger"] .section-label {margin-bottom:6px;letter-spacing:.14em}
+html[data-skin="ledger"] .section-label::before {width:12px;height:3px;border-radius:0;background:var(--ledger-action)}
+html[data-skin="ledger"] .metric-grid {gap:0}
+html[data-skin="ledger"] .metric-item {min-height:40px;padding:7px 8px;border-width:1px 0 0;border-radius:0;background:transparent}
+html[data-skin="ledger"] .metric-item:nth-child(even) {border-left:1px solid var(--line)}
+html[data-skin="ledger"] .metric-value {font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
+html[data-skin="ledger"] .metric-value:is(.positive,.negative) {border-radius:1px}
+
+/* Settings is a right-side command drawer on wide screens. */
+html[data-skin="ledger"] .settings-backdrop {backdrop-filter:none;-webkit-backdrop-filter:none}
+html[data-skin="ledger"] .settings-panel {border-radius:0;background:var(--surface)}
+html[data-skin="ledger"] .settings-header {border-bottom:2px solid var(--ink)}
+html[data-skin="ledger"] .sheet-handle {border-radius:0;background:var(--ledger-rule)}
+html[data-skin="ledger"] .setting-card {border-width:1px 0 0;background:transparent}
+html[data-skin="ledger"] .setting-card-icon {border:1px solid var(--line);border-radius:2px;background:var(--surface-2);color:var(--blue)}
+html[data-skin="ledger"] :is(.target-input,.auth-input,.theme-select,.report-store-setting input,#reportDate) {min-height:44px;border-color:var(--ledger-rule);border-radius:1px;background:var(--surface);color:var(--ink)}
 html[data-skin="ledger"] :is(button,input,select):focus-visible {outline:2px solid var(--focus);outline-offset:2px}
 
+@media (min-width:720px) {
+  html[data-skin="ledger"] .app {padding-inline:24px}
+  html[data-skin="ledger"] .targets-section {display:grid;grid-template-columns:minmax(260px,1fr) minmax(360px,1fr)}
+  html[data-skin="ledger"] .targets-header {border-right:1px solid var(--ledger-rule);border-bottom:0}
+  html[data-skin="ledger"] .day-list {grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+}
+
+@media (min-width:1180px) {
+  html[data-skin="ledger"] .app {max-width:1440px;padding-inline:28px}
+  html[data-skin="ledger"] .month-header {grid-template-columns:64px minmax(0,1fr) 64px;padding-left:190px}
+  html[data-skin="ledger"] .month-header::before {content:"SF / DAILY OPERATIONS";position:absolute;left:0;bottom:19px;width:170px;color:var(--blue);font-size:10px;font-weight:900;letter-spacing:.16em}
+  html[data-skin="ledger"] .nav-button {width:64px}
+  html[data-skin="ledger"] .month-button strong {font-size:28px}
+  html[data-skin="ledger"] .day-list {grid-template-columns:1fr}
+  html[data-skin="ledger"] .day-card {display:grid;grid-template-columns:150px 210px repeat(3,minmax(0,1fr));border-top-width:2px}
+  html[data-skin="ledger"] .day-header {grid-row:1;flex-direction:column;align-items:flex-start;justify-content:center;border-right:1px solid var(--ink);border-bottom:0}
+  html[data-skin="ledger"] .day-number {width:100%;height:auto;align-items:flex-start;background:transparent;color:var(--ink)}
+  html[data-skin="ledger"] .day-number span {color:var(--muted)}
+  html[data-skin="ledger"] .day-number strong {font-size:34px;letter-spacing:-.05em}
+  html[data-skin="ledger"] .today .day-number {background:transparent;color:var(--blue)}
+  html[data-skin="ledger"] .day-date {margin-top:10px}
+  html[data-skin="ledger"] .input-grid {grid-template-columns:1fr;grid-row:1;border-right:1px solid var(--ink);border-bottom:0}
+  html[data-skin="ledger"] .input-box {display:flex;flex-direction:column;justify-content:center}
+  html[data-skin="ledger"] .input-box + .input-box {border-top:1px solid var(--line);border-left:0}
+  html[data-skin="ledger"] .metrics-section {grid-row:1;padding:12px;border-right:1px solid var(--line);border-bottom:0}
+  html[data-skin="ledger"] .metrics-section:last-child {border-right:0}
+  html[data-skin="ledger"] .settings-overlay {align-items:stretch;justify-content:flex-end}
+  html[data-skin="ledger"] .settings-panel {max-width:480px;max-height:100dvh;border:0;border-left:2px solid var(--ink)}
+  html[data-skin="ledger"] .sheet-handle {display:none}
+}
+
 @media (hover:hover) and (pointer:fine) {
-  html[data-skin="ledger"] :is(button,.view-button,.theme-select):hover:not(:disabled) {filter:brightness(.94)}
+  html[data-skin="ledger"] :is(.nav-button,.month-button,.icon-button,.import-button,.view-button:not(.active)):hover:not(:disabled) {background:var(--track);color:var(--blue)}
+  html[data-skin="ledger"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button,.view-button.active):hover:not(:disabled) {filter:brightness(.9)}
+  html[data-skin="ledger"] .horizontal-table tbody tr:not(.today-row):not(:focus-within):hover td {background:var(--blue-soft)}
 }
 @media (prefers-reduced-motion:reduce) {
   html[data-skin="ledger"] :is(button,.settings-panel,.switch-track,.switch-track::after) {animation:none;transition:none}
