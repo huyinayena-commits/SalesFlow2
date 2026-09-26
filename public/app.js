@@ -75,6 +75,9 @@
       authPasswordInput:document.getElementById('authPasswordInput'),
       authPasswordSave:document.getElementById('authPasswordSave'),
       authPasswordStatus:document.getElementById('authPasswordStatus'),
+      adminLogin:document.getElementById('adminLogin'),
+      adminLogout:document.getElementById('adminLogout'),
+      adminAuthStatus:document.getElementById('adminAuthStatus'),
       toast:document.getElementById('toast')
     };
     var store=loadStore();
@@ -440,7 +443,7 @@
     }
 
     async function apiFetch(path,options){
-      var request=Object.assign({},options||{},{headers:apiHeaders(options)}),response=await fetch(path,request);
+      var request=Object.assign({credentials:'same-origin'},options||{},{headers:apiHeaders(options)}),response=await fetch(path,request);
       if(response.status===401){
         setAuthStatus('Kunci tidak valid atau belum dimasukkan. Buka Settings untuk mengatur kunci.','error');
       }
@@ -448,6 +451,27 @@
     }
 
     function setAuthStatus(message,type){elements.authPasswordStatus.textContent=message;elements.authPasswordStatus.className='auth-status'+(type?' '+type:'')}
+    async function refreshAdminAuth(){
+      try{
+        var response=await fetch(API_BASE+'/api/auth/me',{credentials:'same-origin',cache:'no-store'}),result=await response.json();
+        var active=Boolean(response.ok&&result.admin);
+        elements.adminLogin.hidden=active;
+        elements.adminLogout.hidden=!active;
+        elements.adminAuthStatus.textContent=active?'Session admin aktif.':'Admin memakai login Google terpisah.';
+        elements.adminAuthStatus.className='auth-status'+(active?' success':'');
+      }catch(error){
+        elements.adminLogin.hidden=false;elements.adminLogout.hidden=true;
+        elements.adminAuthStatus.textContent='Login admin belum dapat diperiksa.';
+        elements.adminAuthStatus.className='auth-status error';
+      }
+    }
+    function loginAdmin(){
+      if(location.protocol==='file:'){elements.adminAuthStatus.textContent='Login Google memerlukan situs online HTTPS.';elements.adminAuthStatus.className='auth-status error';return}
+      location.href='/auth/google';
+    }
+    async function logoutAdmin(){
+      try{await fetch(API_BASE+'/auth/logout',{method:'POST',credentials:'same-origin'});await refreshAdminAuth();window.dispatchEvent(new Event('salesflow-auth-changed'));loadRemoteMonth(viewYear,viewMonth)}catch(error){elements.adminAuthStatus.textContent='Logout admin gagal.';elements.adminAuthStatus.className='auth-status error'}
+    }
     function loadAuthSetting(){try{elements.authPasswordInput.value=localStorage.getItem(AUTH_KEY)||''}catch(error){}if(elements.authPasswordInput.value)setAuthStatus('Kunci tersimpan di perangkat.','success')}
     function connectionError(status){return status===401?'Kunci tidak valid.':status===503?'Kunci server belum dikonfigurasi.':status>=500?'Server atau database bermasalah.':'Permintaan gagal (HTTP '+status+').'}
     async function saveAuthSetting(){
@@ -859,6 +883,8 @@
     elements.settingsButton.addEventListener('click',openSettingsMenu);
     elements.closeSettings.addEventListener('click',closeSettingsMenu);
     elements.authPasswordSave.addEventListener('click',saveAuthSetting);
+    elements.adminLogin.addEventListener('click',loginAdmin);
+    elements.adminLogout.addEventListener('click',logoutAdmin);
     elements.settingsOverlay.addEventListener('click',function(event){if(event.target.hasAttribute('data-close-settings'))closeSettingsMenu()});
     elements.themeToggle.addEventListener('click',function(){
       var next=themeMode==='dark'?'light':'dark';
@@ -935,6 +961,7 @@
     renderMonth();
     setTimeout(function(){autoTodayScroll=false},2500);
     loadAuthSetting();
+    refreshAdminAuth();
     refreshTelegramControls();
     checkTelegramAvailability();
   })();
