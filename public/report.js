@@ -122,7 +122,7 @@ Terimakasih
       if(salesValue!==null)sales+=salesValue;
       if(strukValue!==null)struk+=strukValue;
       var hasSales=salesValue!==null,hasStruk=strukValue!==null,akmSales=hasSales?sales:null,akmStruk=hasStruk?struk:null,spd=akmSales!==null?akmSales/(i+1):null,std=akmStruk!==null?Math.floor(akmStruk/(i+1)):null;
-      rows.push({sales:salesValue,struk:strukValue,akmSales:hasSales?sales:null,akmStruk:hasStruk?struk:null,spd:spd,std:std,apc:spd!==null&&std!==null&&std>0?spd/std:null});
+      rows.push({sales:salesValue,struk:strukValue,akmSales:hasSales?sales:null,akmStruk:hasStruk?struk:null,spd:spd,std:std,apc:hasSales&&hasStruk&&strukValue>0?salesValue/strukValue:null});
     }
     return rows;
   }
