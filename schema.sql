@@ -26,3 +26,13 @@ CREATE TABLE IF NOT EXISTS daily_sales (
 );
 
 CREATE INDEX IF NOT EXISTS idx_daily_sales_month ON daily_sales(month);
+
+CREATE TABLE IF NOT EXISTS changelogs (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  published_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+  updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_changelogs_published_at ON changelogs(published_at DESC);

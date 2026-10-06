@@ -9,6 +9,7 @@
     var THEME_COLORS={classic:['#f4f6f9','#0d131b'],monochrome:['#f4f4f4','#111111'],ledger:['#e9e5da','#121815']};
     var AUTH_KEY='salesflow2-api-password';
     var TELEGRAM_KEY='sales-harian-telegram-v1';
+    var CHANGELOG_VIEWED_KEY='salesflow2-changelog-viewed-v1';
     var themeMode=loadThemeMode();
     var themeVariant=loadThemeVariant();
     document.documentElement.setAttribute('data-theme',themeMode);
@@ -72,6 +73,22 @@
       telegramConnectLabel:document.getElementById('telegramConnectLabel'),
       telegramAutoSend:document.getElementById('telegramAutoSend'),
       telegramMessage:document.getElementById('telegramMessage'),
+      adminOnlyTelegram:document.getElementById('adminOnlyTelegram'),
+      adminOnlyBackup:document.getElementById('adminOnlyBackup'),
+      adminOnlyChangelog:document.getElementById('adminOnlyChangelog'),
+      changelogForm:document.getElementById('changelogForm'),
+      changelogTitleInput:document.getElementById('changelogTitleInput'),
+      changelogContentInput:document.getElementById('changelogContentInput'),
+      changelogSaveButton:document.getElementById('changelogSaveButton'),
+      adminChangelogList:document.getElementById('adminChangelogList'),
+      openChangelogHistory:document.getElementById('openChangelogHistory'),
+      changelogOverlay:document.getElementById('changelogOverlay'),
+      changelogSlide:document.getElementById('changelogSlide'),
+      changelogProgress:document.getElementById('changelogProgress'),
+      previousChangelog:document.getElementById('previousChangelog'),
+      nextChangelog:document.getElementById('nextChangelog'),
+      understandChangelog:document.getElementById('understandChangelog'),
+      closeChangelog:document.getElementById('closeChangelog'),
       authPasswordInput:document.getElementById('authPasswordInput'),
       authPasswordSave:document.getElementById('authPasswordSave'),
       authPasswordStatus:document.getElementById('authPasswordStatus'),
@@ -83,6 +100,10 @@
     var store=loadStore();
     var viewMode=loadViewMode();
     var telegramState=loadTelegramState();
+    var adminMode=false;
+    var changelogItems=[];
+    var changelogIndex=0;
+    var changelogAuto=false;
     elements.monthPicker.max=monthKey(currentYear,currentMonthIndex);
 
     function loadThemeMode(){
@@ -451,15 +472,25 @@
     }
 
     function setAuthStatus(message,type){elements.authPasswordStatus.textContent=message;elements.authPasswordStatus.className='auth-status'+(type?' '+type:'')}
+    function setAdminOnlyVisibility(active){
+      adminMode=Boolean(active);
+      elements.adminOnlyTelegram.hidden=!adminMode;
+      elements.adminOnlyBackup.hidden=!adminMode;
+      elements.adminOnlyChangelog.hidden=!adminMode;
+      if(adminMode)loadChangelogItems();
+    }
     async function refreshAdminAuth(){
       try{
         var response=await fetch(API_BASE+'/api/auth/me',{credentials:'same-origin',cache:'no-store'}),result=await response.json();
         var active=Boolean(response.ok&&result.admin);
+        setAdminOnlyVisibility(active);
         elements.adminLogin.hidden=active;
         elements.adminLogout.hidden=!active;
         elements.adminAuthStatus.textContent=active?'Session admin aktif.':'Admin memakai login Google terpisah.';
         elements.adminAuthStatus.className='auth-status'+(active?' success':'');
+        if(active&&!telegramServerReady)checkTelegramAvailability();
       }catch(error){
+        setAdminOnlyVisibility(false);
         elements.adminLogin.hidden=false;elements.adminLogout.hidden=true;
         elements.adminAuthStatus.textContent='Login admin belum dapat diperiksa.';
         elements.adminAuthStatus.className='auth-status error';
@@ -544,7 +575,46 @@
       return result||{};
     }
 
+    function escapeHtml(value){return String(value===null||typeof value==='undefined'?'':value).replace(/[&<>'"]/g,function(character){return{'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','\"':'&quot;'}[character]})}
+    function viewedChangelogIds(){try{var value=JSON.parse(localStorage.getItem(CHANGELOG_VIEWED_KEY));return Array.isArray(value)?value.map(String):[]}catch(error){return[]}}
+    function markChangelogViewed(items){try{var ids=viewedChangelogIds();items.forEach(function(item){if(ids.indexOf(String(item.id))<0)ids.push(String(item.id))});localStorage.setItem(CHANGELOG_VIEWED_KEY,JSON.stringify(ids.slice(-300)))}catch(error){}}
+    function changelogDate(value){var date=new Date(value);return Number.isNaN(date.getTime())?'':date.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}
+    function renderChangelogSlide(){
+      var item=changelogItems[changelogIndex];
+      if(!item){elements.changelogSlide.innerHTML='<div class="changelog-empty">Belum ada perubahan yang diterbitkan.</div>';elements.changelogProgress.textContent='';elements.previousChangelog.disabled=true;elements.nextChangelog.disabled=true;elements.understandChangelog.hidden=true;return}
+      if(changelogAuto)markChangelogViewed([item]);
+      elements.changelogSlide.innerHTML='<h3>'+escapeHtml(item.title)+'</h3><time>'+escapeHtml(changelogDate(item.publishedAt))+'</time><div class="changelog-content">'+escapeHtml(item.content)+'</div>';
+      elements.changelogProgress.textContent=(changelogIndex+1)+' dari '+changelogItems.length;
+      elements.previousChangelog.disabled=changelogIndex===0;
+      var last=changelogIndex===changelogItems.length-1;
+      elements.nextChangelog.hidden=last;elements.nextChangelog.disabled=false;elements.understandChangelog.hidden=!last;
+    }
+    function openChangelog(items,auto){
+      changelogItems=Array.isArray(items)?items:[];changelogIndex=0;changelogAuto=Boolean(auto);renderChangelogSlide();elements.changelogOverlay.hidden=false;document.body.classList.add('settings-open');requestAnimationFrame(function(){elements.closeChangelog.focus()});
+    }
+    function closeChangelog(){if(elements.changelogOverlay.hidden)return;elements.changelogOverlay.hidden=true;if(elements.settingsOverlay.hidden)document.body.classList.remove('settings-open');changelogAuto=false}
+    async function loadChangelogItems(){
+      try{var result=await requestJson('/api/changelog',{method:'GET',cache:'no-store'});changelogItems=Array.isArray(result.items)?result.items:[];renderAdminChangelog();var viewed=viewedChangelogIds();var unseen=changelogItems.filter(function(item){return viewed.indexOf(String(item.id))<0});if(unseen.length)openChangelog(unseen,true)}catch(error){renderAdminChangelog()}
+    }
+    function renderAdminChangelog(){
+      if(!elements.adminChangelogList)return;
+      if(!changelogItems.length){elements.adminChangelogList.innerHTML='<div class="changelog-empty">Belum ada perubahan.</div>';return}
+      elements.adminChangelogList.innerHTML=changelogItems.map(function(item){return'<div class="changelog-row"><div class="changelog-row-copy"><strong>'+escapeHtml(item.title)+'</strong><span>'+escapeHtml(changelogDate(item.publishedAt))+'</span></div><button class="changelog-edit" data-changelog-edit="'+item.id+'" type="button">Edit</button><button class="changelog-delete" data-changelog-delete="'+item.id+'" type="button">Hapus</button></div>'}).join('');
+    }
+    async function saveChangelog(event){
+      event.preventDefault();if(!adminMode)return;
+      var title=elements.changelogTitleInput.value.trim(),content=elements.changelogContentInput.value.trim();if(!title||!content)return;
+      elements.changelogSaveButton.disabled=true;
+      try{var result=await requestJson('/api/changelog',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({title:title,content:content})});changelogItems.unshift(result);elements.changelogForm.reset();renderAdminChangelog();showToast('Perubahan berhasil diterbitkan')}catch(error){showToast(error.message)}finally{elements.changelogSaveButton.disabled=false}
+    }
+    async function editChangelog(id){
+      var item=changelogItems.find(function(row){return row.id===id});if(!item)return;var title=window.prompt('Judul perubahan',item.title),content=window.prompt('Isi perubahan',item.content);if(title===null||content===null)return;
+      try{var updated=await requestJson('/api/changelog/'+id,{method:'PUT',headers:{'content-type':'application/json'},body:JSON.stringify({title:title,content:content})});changelogItems=changelogItems.map(function(row){return row.id===id?updated:row});renderAdminChangelog();showToast('Perubahan diperbarui')}catch(error){showToast(error.message)}
+    }
+    async function deleteChangelog(id){if(!window.confirm('Hapus perubahan ini?'))return;try{await requestJson('/api/changelog/'+id,{method:'DELETE'});changelogItems=changelogItems.filter(function(item){return item.id!==id});renderAdminChangelog();showToast('Perubahan dihapus')}catch(error){showToast(error.message)}}
+
     async function checkTelegramAvailability(){
+      if(!adminMode)return;
       if(location.protocol==='file:'){
         telegramServerReady=false;
         refreshTelegramControls();
@@ -571,7 +641,7 @@
     }
 
     async function connectTelegram(){
-      if(!telegramServerReady)return;
+      if(!adminMode||!telegramServerReady)return;
       elements.telegramConnect.disabled=true;
       setTelegramMessage('','success');
       setTelegramStatus('working','Menghubungkan…','Mencari pesan /start terbaru dan mengirim pesan uji.');
@@ -649,7 +719,7 @@
     }
 
     function queueTelegramNotification(year,month,index){
-      if(!telegramServerReady||!telegramState.chatId||!telegramState.enabled)return;
+      if(!adminMode||!telegramServerReady||!telegramState.chatId||!telegramState.enabled)return;
       var task={year:year,month:month,index:index};
       var key=telegramTaskKey(year,month,index);
       delete telegramFailed[key];
@@ -661,6 +731,7 @@
     }
 
     async function processTelegramQueue(){
+      if(!adminMode){telegramQueue=[];return}
       if(telegramSending||telegramQueue.length===0)return;
       if(!telegramServerReady||!telegramState.chatId||!telegramState.enabled){telegramQueue=[];return}
       telegramSending=true;
@@ -692,7 +763,7 @@
     }
 
     function retryFailedTelegram(){
-      if(!navigator.onLine||!telegramState.enabled)return;
+      if(!adminMode||!navigator.onLine||!telegramState.enabled)return;
       Object.keys(telegramFailed).forEach(function(key){var task=telegramFailed[key];delete telegramFailed[key];enqueueTelegramTask(task)});
     }
 
@@ -741,6 +812,7 @@
     function backupValue(value){return value===''||value===null||typeof value==='undefined'?null:Number(value)}
 
     function exportBackupJson(){
+      if(!adminMode)return;
       try{
         ensureMonth(viewYear,viewMonth);
         var months={};
@@ -859,7 +931,7 @@
     }
 
     async function importJsonFile(file){
-      if(!file)return;
+      if(!adminMode||!file)return;
       setImportStatus('Membaca dan memeriksa file…','success');
       try{
         if(file.size>2*1024*1024)throw new Error('Ukuran file melebihi batas 2 MB.');
@@ -893,11 +965,19 @@
     });
     elements.themeVariant.addEventListener('change',function(){applyThemeVariant(elements.themeVariant.value,true);showToast(THEME_NAMES[themeVariant]+' aktif')});
     elements.exportButton.addEventListener('click',exportBackupJson);
-    elements.importButton.addEventListener('click',function(){elements.jsonFileInput.click()});
-    elements.jsonFileInput.addEventListener('change',function(event){importJsonFile(event.target.files&&event.target.files[0])});
+    elements.importButton.addEventListener('click',function(){if(adminMode)elements.jsonFileInput.click()});
+    elements.jsonFileInput.addEventListener('change',function(event){if(adminMode)importJsonFile(event.target.files&&event.target.files[0])});
+    elements.changelogForm.addEventListener('submit',saveChangelog);
+    elements.adminChangelogList.addEventListener('click',function(event){var edit=event.target.closest('[data-changelog-edit]'),remove=event.target.closest('[data-changelog-delete]');if(edit)editChangelog(Number(edit.dataset.changelogEdit));if(remove)deleteChangelog(Number(remove.dataset.changelogDelete))});
+    elements.openChangelogHistory.addEventListener('click',async function(){try{var result=await requestJson('/api/changelog',{method:'GET',cache:'no-store'});openChangelog(result.items||[],false)}catch(error){showToast('Riwayat perubahan belum dapat dimuat.')}});
+    elements.closeChangelog.addEventListener('click',closeChangelog);
+    elements.changelogOverlay.addEventListener('click',function(event){if(event.target.hasAttribute('data-close-changelog'))closeChangelog()});
+    elements.previousChangelog.addEventListener('click',function(){if(changelogIndex>0){changelogIndex-=1;renderChangelogSlide()}});
+    elements.nextChangelog.addEventListener('click',function(){if(changelogIndex<changelogItems.length-1){changelogIndex+=1;renderChangelogSlide()}});
+    elements.understandChangelog.addEventListener('click',closeChangelog);
     elements.telegramConnect.addEventListener('click',connectTelegram);
     elements.telegramAutoSend.addEventListener('change',function(){
-      if(!telegramState.chatId)return;
+      if(!adminMode||!telegramState.chatId)return;
       telegramState.enabled=elements.telegramAutoSend.checked;
       saveTelegramState();
       var destination=telegramState.chatName||'chat tersimpan';
@@ -964,4 +1044,5 @@
     refreshAdminAuth();
     refreshTelegramControls();
     checkTelegramAvailability();
+    loadChangelogItems();
   })();

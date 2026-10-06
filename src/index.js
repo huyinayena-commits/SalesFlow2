@@ -204,6 +204,56 @@ async function readJson(request) {
   }
 }
 
+async function ensureChangelogTable(env) {
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS changelogs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    published_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now')),
+    updated_at TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ', 'now'))
+  )`).run();
+}
+
+async function getChangelogs(env) {
+  await ensureChangelogTable(env);
+  const { results } = await env.DB.prepare(
+    "SELECT id, title, content, published_at AS publishedAt, updated_at AS updatedAt FROM changelogs ORDER BY published_at DESC, id DESC",
+  ).all();
+  return results;
+}
+
+function changelogInput(body) {
+  if (!body || typeof body.title !== "string" || typeof body.content !== "string") return null;
+  const title = body.title.trim();
+  const content = body.content.trim();
+  if (!title || !content || title.length > 120 || content.length > 5000) return null;
+  return { title, content };
+}
+
+async function createChangelog(env, body) {
+  const item = changelogInput(body);
+  if (!item) return error("Judul dan isi perubahan wajib diisi (maksimal 120/5000 karakter).");
+  const result = await env.DB.prepare(
+    "INSERT INTO changelogs (title, content) VALUES (?, ?)",
+  ).bind(item.title, item.content).run();
+  return json({ id: result.meta.last_row_id, ...(await getChangelogs(env)).find((row) => row.id === result.meta.last_row_id) });
+}
+
+async function updateChangelog(env, id, body) {
+  const item = changelogInput(body);
+  if (!item) return error("Judul dan isi perubahan wajib diisi (maksimal 120/5000 karakter).");
+  const result = await env.DB.prepare(
+    "UPDATE changelogs SET title = ?, content = ?, updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?",
+  ).bind(item.title, item.content, id).run();
+  if (!result.meta.changes) return error("Perubahan tidak ditemukan.", 404);
+  return json((await getChangelogs(env)).find((row) => row.id === id));
+}
+
+async function deleteChangelog(env, id) {
+  const result = await env.DB.prepare("DELETE FROM changelogs WHERE id = ?").bind(id).run();
+  return result.meta.changes ? json({ ok: true }) : error("Perubahan tidak ditemukan.", 404);
+}
+
 async function getSettings(env) {
   await env.DB.prepare(
     `CREATE TABLE IF NOT EXISTS app_settings (
@@ -311,6 +361,10 @@ export default {
       return json({ authenticated: Boolean(type), admin: type === "admin" });
     }
 
+    if (url.pathname === "/api/changelog" && request.method === "GET") {
+      return json({ items: await getChangelogs(env) });
+    }
+
     const type = await authType(request, env);
     if (!type) return error(env.APP_PASSWORD ? "Password diperlukan." : "APP_PASSWORD belum dikonfigurasi.", env.APP_PASSWORD ? 401 : 503);
 
@@ -329,6 +383,16 @@ export default {
         const body = await readJson(request);
         if (!body) return error("Data pengaturan tidak valid.");
         return saveSettings(env, body);
+      }
+
+      const changelogMatch = url.pathname.match(/^\/api\/changelog(?:\/(\d+))?$/);
+      if (changelogMatch && ["POST", "PUT", "DELETE"].includes(request.method)) {
+        if (type !== "admin") return error("Mode Admin diperlukan.", 403);
+        const id = changelogMatch[1] ? Number(changelogMatch[1]) : null;
+        if (request.method === "POST" && id === null) return createChangelog(env, await readJson(request));
+        if (!id) return error("ID perubahan tidak valid.");
+        if (request.method === "PUT") return updateChangelog(env, id, await readJson(request));
+        return deleteChangelog(env, id);
       }
 
       if (url.pathname === "/api/month" && ["POST", "PUT"].includes(request.method)) {

@@ -131,13 +131,14 @@ Terimakasih
     var now=getReportDate(),year=now.getFullYear(),month=now.getMonth(),data=reportMonth(keyFor(now)),current=rowsFor(year,month,data),last=current[now.getDate()-1]||null,values={TOKO:getStoreName(),TANGGAL:now.getDate()+' '+MONTH_NAMES[month]+' '+now.getFullYear()};
     for(var i=0;i<31;i+=1){var row=current[i];values['A_'+(i+1)]=row&&(row.sales!==null||row.struk!==null)?[money(row.sales),row.struk===null?'':metric(row.struk),metricDecimal(row.apc)].join('_'):''}
     var previousDate=comparableDate(year,month-1,now.getDate()),previousData=reportMonth(keyFor(previousDate)),previous=rowsFor(previousDate.getFullYear(),previousDate.getMonth(),previousData),previousLast=previous[Math.min(now.getDate(),previous.length)-1]||null;
+    var yearAgoDate=comparableDate(year-1,month,now.getDate()),yearAgoData=reportMonth(keyFor(yearAgoDate)),yearAgo=rowsFor(yearAgoDate.getFullYear(),yearAgoDate.getMonth(),yearAgoData),yearAgoLast=yearAgo[Math.min(yearAgoDate.getDate(),yearAgo.length)-1]||null;
     values.B_AKM_SALES=last?money(last.akmSales):'';values.C_AKM_STRUK=last?metric(last.akmStruk):'';
     var d=last?triple(metricDecimal(last.spd),metricDecimal(last.std),metricDecimal(last.apc)):triple('','','');values.D_SPD=d.spd;values.D_STD=d.std;values.D_APC=d.apc;
     values.E_TARGET_AKM=money(data.targetAkm);values.F_ACH=last&&data.targetSpd?String(Math.floor(last.spd/number(data.targetSpd)*100)):'';values.F_TARGET_SPD=money(data.targetSpd);
     var g=previousLast?triple(metricDecimal(previousLast.spd),metricDecimal(previousLast.std),metricDecimal(previousLast.apc)):triple('','','');values.G_SPD=g.spd;values.G_STD=g.std;values.G_APC=g.apc;
     values.H_SPD=last&&previousLast?growthText(last.spd,previousLast.spd):'';values.H_STD=last&&previousLast?growthText(last.std,previousLast.std):'';values.H_APC=last&&previousLast?growthText(last.apc,previousLast.apc):'';
-    values.M_SPD=values.M_STD=values.M_APC='';
-    values.N_SPD=values.N_STD=values.N_APC='';
+    var m=yearAgoLast?triple(metricDecimal(yearAgoLast.spd),metricDecimal(yearAgoLast.std),metricDecimal(yearAgoLast.apc)):triple('','','');values.M_SPD=m.spd;values.M_STD=m.std;values.M_APC=m.apc;
+    values.N_SPD=last&&yearAgoLast?growthText(last.spd,yearAgoLast.spd):'';values.N_STD=last&&yearAgoLast?growthText(last.std,yearAgoLast.std):'';values.N_APC=last&&yearAgoLast?growthText(last.apc,yearAgoLast.apc):'';
     return Object.assign(values,input||{});
   }
   function formatValue(key,value){

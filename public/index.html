@@ -310,6 +310,13 @@
     .telegram-message.visible{display:block}
     .telegram-message.success{background:var(--positive-soft);color:var(--positive)}
     .telegram-message.error{background:var(--negative-soft);color:var(--negative)}
+    .changelog-list{display:grid;gap:8px;margin-top:10px}
+    .changelog-row{display:flex;align-items:center;gap:9px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+    .changelog-row-copy{flex:1;min-width:0}.changelog-row-copy strong{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.changelog-row-copy span{display:block;margin-top:3px;color:var(--muted);font-size:9px}
+    .changelog-edit,.changelog-delete{min-height:34px;padding:0 9px;border:1px solid var(--line);border-radius:9px;background:var(--surface-2);color:var(--ink);font-size:10px;font-weight:800;cursor:pointer}.changelog-delete{color:var(--negative)}
+    .changelog-form{display:grid;gap:8px;margin-top:10px}.changelog-form input,.changelog-form textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink);font-size:12px}.changelog-form textarea{min-height:90px;resize:vertical}.changelog-form button{min-height:42px;border:0;border-radius:11px;background:var(--blue);color:#fff;font-size:11px;font-weight:850;cursor:pointer}
+    .changelog-empty{padding:12px;color:var(--muted);font-size:10px;text-align:center}
+    .changelog-overlay{position:fixed;inset:0;z-index:120;display:grid;place-items:center;padding:18px}.changelog-overlay[hidden]{display:none}.changelog-dialog{position:relative;width:min(100%,420px);max-height:90dvh;overflow:auto;padding:22px 18px 16px;border:1px solid var(--line);border-radius:22px;background:var(--surface);box-shadow:0 18px 50px rgba(0,0,0,.25)}.changelog-dialog h2{margin:0;font-size:20px}.changelog-dialog>p{margin:5px 0 16px;color:var(--muted);font-size:10px}.changelog-slide h3{margin:0 34px 7px 0;font-size:17px}.changelog-slide time{color:var(--muted);font-size:10px}.changelog-slide .changelog-content{margin-top:14px;color:var(--ink);font-size:13px;line-height:1.6;white-space:pre-wrap}.changelog-progress{margin-top:18px;color:var(--muted);font-size:10px;font-weight:800;text-align:center}.changelog-actions{display:flex;align-items:center;gap:8px;margin-top:14px}.changelog-actions button{flex:1;min-height:43px;border:1px solid var(--line);border-radius:11px;background:var(--surface-2);color:var(--ink);font-size:11px;font-weight:850;cursor:pointer}.changelog-actions .primary{border-color:var(--blue);background:var(--blue);color:#fff}.changelog-close{position:absolute;top:12px;right:12px;width:34px!important;min-height:34px!important;flex:none!important;border-radius:50%!important}.changelog-history-button{width:100%;min-height:42px;margin-top:10px;border:1px solid var(--line);border-radius:11px;background:var(--surface);color:var(--blue);font-size:11px;font-weight:850;cursor:pointer}
     .toast{position:fixed;left:50%;bottom:calc(82px + env(safe-area-inset-bottom));z-index:130;max-width:calc(100vw - 28px);padding:11px 14px;border:1px solid var(--line);border-radius:13px;background:var(--ink);color:var(--surface);box-shadow:0 12px 30px rgba(0,0,0,.24);font-size:11px;font-weight:800;text-align:center;transform:translateX(-50%)}
     .toast[hidden]{display:none}
     body.settings-open{overflow:hidden}
@@ -479,7 +486,12 @@
           </div>
         </section>
 
-        <section class="setting-card" aria-labelledby="telegramTitle">
+        <section class="setting-card" aria-labelledby="historyTitle">
+          <div class="setting-card-header"><span class="setting-card-icon" aria-hidden="true">✦</span><div class="setting-card-title"><h3 id="historyTitle">Perubahan Aplikasi</h3><p>Lihat kembali catatan perubahan yang pernah diterbitkan.</p></div></div>
+          <button class="changelog-history-button" id="openChangelogHistory" type="button">Buka Riwayat Perubahan</button>
+        </section>
+
+        <section class="setting-card" id="adminOnlyTelegram" aria-labelledby="telegramTitle" hidden>
           <div class="setting-card-header">
             <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m21 3-7.5 18-4.2-7.3L3 10.5 21 3Z"></path><path d="m9.3 13.7 5.2-4.8"></path></svg></span>
             <div class="setting-card-title"><h3 id="telegramTitle">Backup Telegram</h3></div>
@@ -499,7 +511,7 @@
           <p class="telegram-message" id="telegramMessage" role="status" aria-live="polite"></p>
         </section>
 
-        <section class="setting-card" aria-labelledby="importTitle">
+        <section class="setting-card" id="adminOnlyBackup" aria-labelledby="importTitle" hidden>
           <div class="setting-card-header">
             <span class="setting-card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5"></path><path d="M5 21h14a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2"></path></svg></span>
             <div class="setting-card-title"><h3 id="importTitle">Backup &amp; Import JSON</h3></div>
@@ -518,7 +530,23 @@
           <input class="sr-only" id="jsonFileInput" type="file" accept="application/json,.json" tabindex="-1">
           <p class="import-status" id="importStatus" role="status" aria-live="polite"></p>
         </section>
+        <section class="setting-card" id="adminOnlyChangelog" aria-labelledby="changelogAdminTitle" hidden>
+          <div class="setting-card-header"><span class="setting-card-icon" aria-hidden="true">✦</span><div class="setting-card-title"><h3 id="changelogAdminTitle">Kelola Changelog</h3><p>Hanya Admin yang dapat menambah, mengubah, atau menghapus perubahan.</p></div></div>
+          <form class="changelog-form" id="changelogForm"><input id="changelogTitleInput" maxlength="120" placeholder="Judul perubahan" required><textarea id="changelogContentInput" maxlength="5000" placeholder="Jelaskan perubahan…" required></textarea><button type="submit" id="changelogSaveButton">Tambahkan Perubahan</button></form>
+          <div class="changelog-list" id="adminChangelogList"></div>
+        </section>
       </div>
+    </section>
+  </div>
+
+  <div class="changelog-overlay" id="changelogOverlay" hidden>
+    <div class="settings-backdrop" data-close-changelog aria-hidden="true"></div>
+    <section class="changelog-dialog" role="dialog" aria-modal="true" aria-labelledby="changelogHeading">
+      <button class="icon-button changelog-close" id="closeChangelog" type="button" aria-label="Tutup Changelog">×</button>
+      <h2 id="changelogHeading">Changelog</h2><p id="changelogIntro">Perubahan terbaru di SalesFlow.</p>
+      <article class="changelog-slide" id="changelogSlide"></article>
+      <div class="changelog-progress" id="changelogProgress"></div>
+      <div class="changelog-actions"><button id="previousChangelog" type="button">Sebelumnya</button><button id="nextChangelog" class="primary" type="button">Berikutnya</button><button id="understandChangelog" class="primary" type="button" hidden>Mengerti</button></div>
     </section>
   </div>
 
