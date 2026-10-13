@@ -1,0 +1,985 @@
+/* ==========================================================================
+   TEMA 3: LUXE ROYALE (OBSIDIAN & CHAMPAGNE GOLD)
+   Aesthetic: Ultra-Luxury Private Wealth Suite / Haute Horlogerie Fintech
+   Crafted with:
+   - Concentric double-bezel squircle architecture
+   - Physical spring micro-interactions (active: scale(0.96) press feedback)
+   - Luminous champagne gold & electric emerald ambient aura
+   - Frosted liquid glass masthead & modal sheets
+   - Tabular precision figures with tactile row & cell interactions
+   ========================================================================== */
+
+/* --- 1. Design Tokens & Color Systems --- */
+html[data-skin="luxe"] {
+  color-scheme: light;
+  --bg: #f8f7f4;
+  --bg-gradient: radial-gradient(circle at 50% -10%, rgba(212, 175, 55, 0.12) 0%, rgba(248, 247, 244, 0) 70%), #f8f7f4;
+  --surface: #ffffff;
+  --surface-2: #f4f1ea;
+  --surface-hover: #ece7db;
+  --surface-active: #e4ded0;
+  --ink: #111827;
+  --muted: #64748b;
+  --line: #e2dcd0;
+  --line-strong: #c8bea9;
+  
+  /* Luxe Metallic & Gem Accents */
+  --luxe-gold: #b48c36;
+  --luxe-gold-glow: rgba(180, 140, 54, 0.28);
+  --luxe-gold-gradient: linear-gradient(135deg, #c59b43 0%, #a67c28 100%);
+  --luxe-gold-text: #ffffff;
+  
+  --blue: #1e3a8a;
+  --blue-soft: #eff6ff;
+  --green: #15803d;
+  --green-soft: #ecfdf5;
+  --orange: #b45309;
+  --orange-soft: #fffbeb;
+  --positive: #166534;
+  --positive-soft: #dcfce7;
+  --negative: #991b1b;
+  --negative-soft: #fee2e2;
+  
+  --focus: #b48c36;
+  --track: #ebe6dc;
+  --day-bg: #f5f2eb;
+  --scrim: rgba(17, 24, 39, 0.55);
+  
+  --shadow-sm: 0 2px 6px rgba(44, 35, 20, 0.04);
+  --shadow-md: 0 10px 25px -4px rgba(44, 35, 20, 0.07), 0 4px 10px -2px rgba(44, 35, 20, 0.03);
+  --shadow-lg: 0 20px 40px -8px rgba(44, 35, 20, 0.12), 0 6px 14px -3px rgba(44, 35, 20, 0.05);
+  --shadow-gold: 0 10px 24px -4px rgba(180, 140, 54, 0.35);
+  
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-pill: 9999px;
+  
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+html[data-theme="dark"][data-skin="luxe"] {
+  color-scheme: dark;
+  --bg: #080c10;
+  --bg-gradient: radial-gradient(circle at 50% -12%, rgba(229, 193, 88, 0.14) 0%, rgba(8, 12, 16, 0) 65%), #080c10;
+  --surface: #10161f;
+  --surface-2: #161e2a;
+  --surface-hover: #1e2837;
+  --surface-active: #263346;
+  --ink: #f8fafc;
+  --muted: #94a3b8;
+  --line: #222d3d;
+  --line-strong: #33435b;
+  
+  --luxe-gold: #e5c158;
+  --luxe-gold-glow: rgba(229, 193, 88, 0.35);
+  --luxe-gold-gradient: linear-gradient(135deg, #f3d478 0%, #d4ad39 100%);
+  --luxe-gold-text: #080c10;
+  
+  --blue: #38bdf8;
+  --blue-soft: #082f49;
+  --green: #34d399;
+  --green-soft: #064e3b;
+  --orange: #fbbf24;
+  --orange-soft: #451a03;
+  --positive: #4ade80;
+  --positive-soft: #0f371e;
+  --negative: #f87171;
+  --negative-soft: #451414;
+  
+  --focus: #e5c158;
+  --track: #151d28;
+  --day-bg: #121923;
+  --scrim: rgba(3, 6, 9, 0.82);
+  
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 10px 28px -4px rgba(0, 0, 0, 0.5), 0 0 1px rgba(255, 255, 255, 0.1);
+  --shadow-lg: 0 24px 48px -10px rgba(0, 0, 0, 0.7), 0 0 1px rgba(255, 255, 255, 0.15);
+  --shadow-gold: 0 10px 28px -4px rgba(229, 193, 88, 0.32);
+}
+
+/* --- 2. Canvas Foundation & Ambient Backdrop --- */
+html[data-skin="luxe"] body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+}
+
+html[data-skin="luxe"] .app {
+  max-width: 1280px;
+  padding-inline: 16px;
+  margin-inline: auto;
+}
+
+/* --- 3. Fluid Physics & Micro-Interactions --- */
+html[data-skin="luxe"] :is(button, .nav-button, .settings-fab, .view-button, .auth-save, .export-button, .import-button, .telegram-button, .report-actions button) {
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 180ms ease, background 180ms ease, border-color 180ms ease;
+  will-change: transform;
+  touch-action: manipulation;
+}
+
+html[data-skin="luxe"] :is(button, .nav-button, .settings-fab, .view-button, .auth-save, .export-button, .import-button, .telegram-button, .report-actions button):active {
+  transform: scale(0.96) translateY(1px);
+}
+
+html[data-skin="luxe"] :is(button, input, select):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--luxe-gold-glow), 0 0 0 1px var(--luxe-gold);
+}
+
+/* Primary Luxe Buttons */
+html[data-skin="luxe"] :is(.settings-fab, .auth-save, .export-button, .telegram-button, .report-actions button, .view-button.active, .changelog-actions button.primary) {
+  background: var(--luxe-gold-gradient);
+  color: var(--luxe-gold-text);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: var(--shadow-gold);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* --- 4. Floating Liquid Glass Masthead --- */
+html[data-skin="luxe"] .month-header {
+  position: sticky;
+  top: 12px;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+  align-items: center;
+  min-height: calc(72px + env(safe-area-inset-top));
+  padding: calc(8px + env(safe-area-inset-top)) 10px 8px;
+  margin-bottom: 16px;
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+html[data-skin="luxe"] .nav-button {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 600;
+}
+
+html[data-skin="luxe"] .nav-button:hover:not(:disabled) {
+  background: var(--surface-hover);
+  border-color: var(--line-strong);
+  color: var(--luxe-gold);
+  transform: translateY(-1px);
+}
+
+html[data-skin="luxe"] .month-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+html[data-skin="luxe"] .month-button small {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--luxe-gold);
+}
+
+html[data-skin="luxe"] .month-button small::before {
+  content: "✦";
+  font-size: 9px;
+}
+
+html[data-skin="luxe"] .month-button strong {
+  font-size: 21px;
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+/* --- 5. Target Module (Concentric Double-Bezel) --- */
+html[data-skin="luxe"] .targets-section {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: 16px;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+html[data-skin="luxe"] .targets-section::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--luxe-gold-gradient);
+}
+
+html[data-skin="luxe"] .targets-section[hidden] {
+  display: none;
+}
+
+html[data-skin="luxe"] .targets-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+html[data-skin="luxe"] .targets-header h2 {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 0;
+}
+
+html[data-skin="luxe"] .targets-header p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 2px 0 0;
+}
+
+html[data-skin="luxe"] .target-month {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--luxe-gold);
+}
+
+html[data-skin="luxe"] .target-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+html[data-skin="luxe"] .target-card {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+html[data-skin="luxe"] .target-card:focus-within {
+  border-color: var(--luxe-gold);
+  box-shadow: 0 0 0 3px var(--luxe-gold-glow);
+  background: var(--surface);
+}
+
+html[data-skin="luxe"] .target-card span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+html[data-skin="luxe"] .target-input {
+  width: 100%;
+  height: 38px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+html[data-skin="luxe"] .target-input:focus {
+  outline: none;
+}
+
+/* --- 6. Live Status Bar & Control Pills --- */
+html[data-skin="luxe"] .list-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 54px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  gap: 10px;
+}
+
+html[data-skin="luxe"] .table-info p {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+html[data-skin="luxe"] .save-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+
+html[data-skin="luxe"] .save-state::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+
+html[data-skin="luxe"] .save-state.saving::before {
+  background: var(--luxe-gold);
+  box-shadow: 0 0 10px var(--luxe-gold);
+  animation: luxe-pulse 1s infinite ease-in-out;
+}
+
+@keyframes luxe-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.4; }
+}
+
+html[data-skin="luxe"] .settings-fab {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+html[data-skin="luxe"] .settings-fab svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2.2;
+}
+
+/* --- 7. Haute Workstation (Horizontal Table) --- */
+html[data-skin="luxe"] .horizontal-shell {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+html[data-skin="luxe"] .horizontal-scroll {
+  max-height: 75svh;
+  scrollbar-color: var(--luxe-gold) var(--surface-2);
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+html[data-skin="luxe"] .horizontal-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-family: var(--font-mono);
+}
+
+html[data-skin="luxe"] .horizontal-table :is(th, td) {
+  height: 42px;
+  padding: 4px 10px;
+  border-style: solid;
+  border-color: var(--line);
+  border-width: 0 1px 1px 0;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  vertical-align: middle;
+  transition: background-color 150ms ease;
+}
+
+/* Group Headers */
+html[data-skin="luxe"] .horizontal-table .group-head th {
+  height: 34px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--line-strong);
+}
+
+html[data-skin="luxe"] .horizontal-table .group-head th.group-sales {
+  border-bottom-color: var(--luxe-gold);
+}
+
+html[data-skin="luxe"] .horizontal-table .group-head th.group-struk {
+  border-bottom-color: var(--blue);
+  border-left: 2px solid var(--line-strong);
+}
+
+html[data-skin="luxe"] .horizontal-table .group-head th.group-apc {
+  border-bottom-color: var(--green);
+  border-left: 2px solid var(--line-strong);
+}
+
+/* Column Heads */
+html[data-skin="luxe"] .horizontal-table .column-head th {
+  height: 48px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--line);
+}
+
+html[data-skin="luxe"] .horizontal-table .column-head th small {
+  display: block;
+  font-size: 8px;
+  color: var(--luxe-gold);
+  letter-spacing: 0.1em;
+}
+
+/* Sticky First Column */
+html[data-skin="luxe"] .horizontal-table .sticky-day {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-weight: 800;
+  text-align: center;
+  border-right: 2px solid var(--line-strong);
+}
+
+/* Group Vertical Dividers */
+html[data-skin="luxe"] .horizontal-table :is(th, td):nth-child(7),
+html[data-skin="luxe"] .horizontal-table :is(th, td):nth-child(12) {
+  border-right: 2px solid var(--line-strong);
+}
+
+/* Zebra & Interactive Hover */
+html[data-skin="luxe"] .horizontal-table tbody tr:nth-child(even):not(.today-row) td {
+  background: var(--surface-2);
+}
+
+html[data-skin="luxe"] .horizontal-table tbody tr:hover:not(.today-row) td {
+  background: var(--surface-hover) !important;
+}
+
+html[data-skin="luxe"] .horizontal-table tbody tr:focus-within td {
+  background: var(--blue-soft) !important;
+}
+
+html[data-skin="luxe"] .horizontal-table tbody tr:focus-within .sticky-day {
+  background: var(--luxe-gold) !important;
+  color: var(--luxe-gold-text) !important;
+}
+
+/* Today Row */
+html[data-skin="luxe"] .horizontal-table tr.today-row td {
+  background-color: var(--green-soft);
+  font-weight: 700;
+}
+
+html[data-skin="luxe"] .horizontal-table tr.today-row .sticky-day {
+  background: var(--green);
+  color: #ffffff;
+  font-weight: 900;
+}
+
+/* Interactive Input Cell */
+html[data-skin="luxe"] .horizontal-table .table-input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  padding: 2px 8px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+html[data-skin="luxe"] .horizontal-table .table-input:focus {
+  border-color: var(--luxe-gold);
+  box-shadow: 0 0 0 2px var(--luxe-gold-glow);
+  outline: none;
+}
+
+/* --- 8. Mobile Day Cards (Bento Cassettes) --- */
+html[data-skin="luxe"] .day-list {
+  display: grid;
+  gap: 16px;
+  margin-top: 10px;
+}
+
+html[data-skin="luxe"] .day-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease, border-color 200ms ease;
+}
+
+html[data-skin="luxe"] .day-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--line-strong);
+}
+
+html[data-skin="luxe"] .day-card.today {
+  border-color: var(--luxe-gold);
+  box-shadow: 0 0 0 1px var(--luxe-gold), var(--shadow-gold);
+}
+
+html[data-skin="luxe"] .day-header {
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+  padding: 10px 16px;
+  background: var(--surface-2);
+  border-bottom: 1px solid var(--line);
+  gap: 12px;
+}
+
+html[data-skin="luxe"] .day-number {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  border-radius: var(--radius-md);
+  background: var(--luxe-gold-gradient);
+  color: var(--luxe-gold-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 900;
+  box-shadow: 0 4px 12px var(--luxe-gold-glow);
+}
+
+html[data-skin="luxe"] .day-number strong {
+  font-size: 19px;
+  line-height: 1;
+}
+
+html[data-skin="luxe"] .day-date strong {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+html[data-skin="luxe"] .today .today-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 3px;
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+  background: var(--luxe-gold-gradient);
+  color: var(--luxe-gold-text);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px var(--luxe-gold-glow);
+}
+
+/* Mobile Inputs */
+html[data-skin="luxe"] .input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+html[data-skin="luxe"] .input-box {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+html[data-skin="luxe"] .input-box:focus-within {
+  border-color: var(--luxe-gold);
+  box-shadow: 0 0 0 3px var(--luxe-gold-glow);
+  background: var(--surface);
+}
+
+html[data-skin="luxe"] .input-box span {
+  display: block;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+
+html[data-skin="luxe"] .number-input {
+  width: 100%;
+  height: 36px;
+  border: none;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+html[data-skin="luxe"] .number-input:focus {
+  outline: none;
+}
+
+/* Mobile Metric Compartments */
+html[data-skin="luxe"] .metrics-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--line);
+}
+
+html[data-skin="luxe"] .metrics-section:last-child {
+  border-bottom: none;
+}
+
+html[data-skin="luxe"] .section-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+html[data-skin="luxe"] .section-label::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--luxe-gold);
+}
+
+html[data-skin="luxe"] .metric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+html[data-skin="luxe"] .metric-item {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+html[data-skin="luxe"] .metric-label {
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+html[data-skin="luxe"] .metric-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+html[data-skin="luxe"] .metric-value.positive {
+  color: var(--positive);
+}
+
+html[data-skin="luxe"] .metric-value.negative {
+  color: var(--negative);
+}
+
+/* --- 9. Modal Command Drawer (Settings) --- */
+html[data-skin="luxe"] .settings-overlay {
+  background: var(--scrim);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+html[data-skin="luxe"] .settings-panel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  box-shadow: var(--shadow-lg);
+  color: var(--ink);
+}
+
+html[data-skin="luxe"] .settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-2);
+}
+
+html[data-skin="luxe"] .settings-title-wrap h2 {
+  font-size: 18px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+html[data-skin="luxe"] .sheet-handle {
+  width: 44px;
+  height: 5px;
+  border-radius: var(--radius-pill);
+  background: var(--line-strong);
+  margin: 10px auto 0;
+}
+
+html[data-skin="luxe"] .setting-card {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+html[data-skin="luxe"] .setting-card-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  color: var(--luxe-gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Orientation View Switcher */
+html[data-skin="luxe"] .view-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-pill);
+  gap: 4px;
+}
+
+html[data-skin="luxe"] .view-button {
+  min-height: 38px;
+  border-radius: var(--radius-pill);
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+html[data-skin="luxe"] .view-button.active {
+  background: var(--luxe-gold-gradient);
+  color: var(--luxe-gold-text);
+  box-shadow: 0 2px 8px var(--luxe-gold-glow);
+}
+
+/* Settings Form Controls */
+html[data-skin="luxe"] :is(.auth-input, .theme-select, .report-store-setting input, #reportDate, #changelogTitleInput) {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--ink);
+  padding: 0 12px;
+  font-size: 13px;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+html[data-skin="luxe"] textarea#changelogContentInput {
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--ink);
+  padding: 10px 12px;
+  font-size: 13px;
+  min-height: 90px;
+}
+
+html[data-skin="luxe"] .auth-save {
+  border-radius: var(--radius-md);
+  min-height: 44px;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
+html[data-skin="luxe"] .theme-toggle {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+html[data-skin="luxe"] .telegram-dot[data-state="connected"] {
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+
+/* --- 10. Prestige Report Card & Dialogues --- */
+html[data-skin="luxe"] .report-card {
+  margin: 24px auto;
+  max-width: 900px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+html[data-skin="luxe"] .report-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--luxe-gold-gradient);
+}
+
+html[data-skin="luxe"] .report-card h2 {
+  font-size: 17px;
+  font-weight: 850;
+  letter-spacing: -0.02em;
+  margin: 0 0 12px;
+  color: var(--ink);
+}
+
+html[data-skin="luxe"] .report-output {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+html[data-skin="luxe"] .changelog-overlay {
+  background: var(--scrim);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+html[data-skin="luxe"] .changelog-dialog {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--ink);
+  padding: 24px;
+  max-width: 520px;
+}
+
+html[data-skin="luxe"] .toast {
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-pill);
+  color: var(--ink);
+  box-shadow: var(--shadow-lg);
+  padding: 10px 20px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* --- 11. Responsive Desktop Command Suite (>= 1180px) --- */
+@media (min-width: 1180px) {
+  html[data-skin="luxe"] .app {
+    padding-inline: 32px;
+  }
+  
+  html[data-skin="luxe"] .settings-overlay {
+    align-items: stretch;
+    justify-content: flex-end;
+  }
+  
+  html[data-skin="luxe"] .settings-panel {
+    max-width: 480px;
+    max-height: 100dvh;
+    border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+    border-right: none;
+  }
+  
+  html[data-skin="luxe"] .sheet-handle {
+    display: none;
+  }
+}
+
+/* --- 12. Accessibility & Reduced Motion --- */
+@media (prefers-reduced-motion: reduce) {
+  html[data-skin="luxe"] :is(button, .day-card, .settings-panel, .save-state::before) {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
