@@ -772,6 +772,7 @@
       elements.settingsOverlay.hidden=false;
       document.body.classList.add('settings-open');
       elements.settingsButton.setAttribute('aria-expanded','true');
+      refreshAdminAuth();
       if(!telegramServerReady&&location.protocol!=='file:')checkTelegramAvailability();
       requestAnimationFrame(function(){elements.closeSettings.focus()});
     }

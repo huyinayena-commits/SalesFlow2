@@ -83,8 +83,8 @@ async function adminSession(request, env) {
 }
 
 async function authType(request, env) {
-  if (env.APP_PASSWORD && request.headers.get("Authorization") === `Bearer ${env.APP_PASSWORD}`) return "password";
   if (await adminSession(request, env)) return "admin";
+  if (env.APP_PASSWORD && request.headers.get("Authorization") === `Bearer ${env.APP_PASSWORD}`) return "password";
   return null;
 }
 

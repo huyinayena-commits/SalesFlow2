@@ -8,8 +8,9 @@
   - `/report.js`
 - Tes `tests/reliability.cjs` diperbarui agar memeriksa `public/app.js`.
 - Tema 3 baru dibuat: **Luxe Royale** (`public/luxe.css`), sebuah tema ultra-luxury obsidian & champagne gold dengan haptik interaktif spring physics, kartu konsentris bento, ambient glow, dan masthead liquid glass.
-- Pilihan tema dan stylesheet `luxe.css` terpasang di `public/index.html` dan `public/app.js`.
-- Pengujian `tests/reliability.cjs` diperbarui dan lolos 100%.
+- Prioritas `authType()` di `src/index.js` diperbaiki agar `adminSession` dicek lebih dahulu daripada `APP_PASSWORD`.
+- `public/app.js` diperbarui agar memanggil `refreshAdminAuth()` saat membuka menu Pengaturan.
+- Tes `tests/reliability.cjs` diperiksa dan lulus 100%.
 
 ## Verifikasi
 
