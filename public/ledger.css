@@ -1,153 +1,1293 @@
-/* Tema 3: Command Ledger. Same data, genuinely different information architecture. */
+/* ==========================================================================
+   TEMA 3: COMMAND LEDGER (TOTAL OVERHAUL)
+   Aesthetic: Swiss Industrial Print x Tactical Telemetry Command Terminal
+   Principles:
+   - Zero border-radius: Uncompromising mechanical rigidity (all 90 deg corners)
+   - High-contrast precision palettes (Light: Architectural Ledger / Dark: Tactical CRT HUD)
+   - Monospace telemetry figures with tabular lining for all metrics
+   - Hairline grid compartmentation and visible architectural rules
+   - High data-density layout with clear operational hierarchy
+   ========================================================================== */
+
+/* --- 1. Color Tokens & Substrates --- */
 html[data-skin="ledger"] {
-  --bg:#e9e5da;--surface:#f8f5ec;--surface-2:#efebe0;--ink:#17231e;--muted:#59665f;--line:#bbb6aa;
-  --blue:#2d6752;--blue-soft:#dae7df;--green:#3d6958;--green-soft:#e0e9e2;--orange:#5b6d5c;--orange-soft:#e5e8dd;
-  --positive:#236044;--positive-soft:#d8e8dd;--negative:#993d35;--negative-soft:#f0ddd7;--focus:#1e6148;
-  --track:#ddd8cc;--day-bg:#e5e0d4;--sales-cell:#f8f5ec;--struk-cell:#f4f1e8;--apc-cell:#eeece2;
-  --scrim:rgba(14,24,19,.68);--shadow:none;--ledger-action:#235c47;--ledger-action-text:#fffdf5;--ledger-rule:#7d8982;
+  color-scheme: light;
+  --bg: #f2efe9;
+  --surface: #fbf9f4;
+  --surface-2: #ede9df;
+  --surface-active: #e3ded2;
+  --ink: #0f1713;
+  --muted: #56645c;
+  --line: #c5beae;
+  --ledger-rule: #8a8373;
+  --ledger-action: #0f5132;
+  --ledger-action-hover: #0b3d26;
+  --ledger-action-text: #ffffff;
+  --blue: #164e63;
+  --blue-soft: #e0f2fe;
+  --green: #15803d;
+  --green-soft: #dcfce7;
+  --orange: #b45309;
+  --orange-soft: #fef3c7;
+  --positive: #166534;
+  --positive-soft: #dcfce7;
+  --negative: #991b1b;
+  --negative-soft: #fee2e2;
+  --focus: #0f5132;
+  --track: #dfd9cb;
+  --day-bg: #eae5d8;
+  --sales-cell: #fbf9f4;
+  --struk-cell: #f7f4ed;
+  --apc-cell: #f3efe6;
+  --scrim: rgba(15, 23, 19, 0.72);
+  --shadow: none;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
+
 html[data-theme="dark"][data-skin="ledger"] {
-  --bg:#121815;--surface:#1a231f;--surface-2:#222c27;--ink:#f0ede3;--muted:#b0b9b2;--line:#46534c;
-  --blue:#82b49c;--blue-soft:#243930;--green:#98bba8;--green-soft:#293a32;--orange:#a9b89f;--orange-soft:#303a31;
-  --positive:#8bc3a4;--positive-soft:#20392d;--negative:#ef9b8e;--negative-soft:#472b27;--focus:#a7d2bd;
-  --track:#29332e;--day-bg:#252f2a;--sales-cell:#1a231f;--struk-cell:#1d2722;--apc-cell:#202920;
-  --scrim:rgba(3,8,5,.8);--ledger-action:#86b49d;--ledger-action-text:#112019;--ledger-rule:#6d7b73;
+  color-scheme: dark;
+  --bg: #090e0c;
+  --surface: #101714;
+  --surface-2: #16201b;
+  --surface-active: #1d2a24;
+  --ink: #e6eee9;
+  --muted: #84968d;
+  --line: #24352c;
+  --ledger-rule: #3c5447;
+  --ledger-action: #10b981;
+  --ledger-action-hover: #059669;
+  --ledger-action-text: #04160e;
+  --blue: #38bdf8;
+  --blue-soft: #0c2d3e;
+  --green: #4ade80;
+  --green-soft: #0f351e;
+  --orange: #fbbf24;
+  --orange-soft: #382407;
+  --positive: #4ade80;
+  --positive-soft: #123d24;
+  --negative: #f87171;
+  --negative-soft: #3b1717;
+  --focus: #10b981;
+  --track: #1a2721;
+  --day-bg: #131c18;
+  --sales-cell: #101714;
+  --struk-cell: #121c17;
+  --apc-cell: #15221c;
+  --scrim: rgba(3, 7, 5, 0.85);
+  --shadow: none;
 }
 
+/* --- 2. Base Typography & Technical Canvas Grid --- */
 html[data-skin="ledger"] body {
-  font-family:Roboto,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
-  letter-spacing:.004em;
-  background-color:var(--bg);
-  background-image:linear-gradient(to right,color-mix(in srgb,var(--line) 26%,transparent) 1px,transparent 1px);
-  background-size:32px 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.005em;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(to right, color-mix(in srgb, var(--line) 38%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in srgb, var(--line) 38%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-attachment: fixed;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
 }
-html[data-skin="ledger"] .app {max-width:none;padding-inline:12px}
-html[data-skin="ledger"] :is(.horizontal-shell,.day-card,.targets-section,.report-card,.setting-card) {border-radius:0;box-shadow:none}
-html[data-skin="ledger"] :is(.nav-button,.settings-fab,.icon-button,.view-switch,.view-button,.target-card,.input-box,.metric-item,.auth-save,.export-button,.import-button,.telegram-button,.report-actions button) {border-radius:2px;box-shadow:none}
-html[data-skin="ledger"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button,.view-button.active) {background:var(--ledger-action);border-color:var(--ledger-action);color:var(--ledger-action-text)}
 
-/* Masthead: navigation reads as an operational toolbar, not a floating mobile card. */
+html[data-skin="ledger"] .app {
+  max-width: none;
+  padding-inline: 12px;
+}
+
+/* Zero Border-Radius Universal Enforcement */
+html[data-skin="ledger"] :is(
+  .horizontal-shell, .day-card, .targets-section, .report-card, .setting-card,
+  .nav-button, .settings-fab, .icon-button, .view-switch, .view-button,
+  .target-card, .input-box, .metric-item, .auth-save, .export-button,
+  .import-button, .telegram-button, .report-actions button, .today-chip,
+  .save-state, .table-input, .target-input, .auth-input, .theme-select,
+  .settings-panel, .changelog-dialog, .toast, .changelog-actions button,
+  .changelog-history-button, #changelogSaveButton, .report-store-setting input,
+  #reportDate
+) {
+  border-radius: 0 !important;
+  box-shadow: none;
+}
+
+/* High-Contrast Action Elements */
+html[data-skin="ledger"] :is(
+  .settings-fab, .auth-save, .export-button, .telegram-button,
+  .report-actions button, .view-button.active, .changelog-actions button.primary,
+  #changelogSaveButton, .changelog-history-button
+) {
+  background: var(--ledger-action);
+  border: 1px solid var(--ledger-action);
+  color: var(--ledger-action-text);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background-color 0.12s ease, transform 0.08s ease;
+}
+
+html[data-skin="ledger"] :is(button, input, select):focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+/* --- 3. Masthead & Navigation Toolbar --- */
 html[data-skin="ledger"] .month-header {
-  top:0;
-  grid-template-columns:52px minmax(0,1fr) 52px;
-  min-height:calc(78px + env(safe-area-inset-top));
-  padding:calc(12px + env(safe-area-inset-top)) 0 10px;
-  border-bottom:2px solid var(--ink);
-  background:color-mix(in srgb,var(--bg) 94%,transparent);
-  backdrop-filter:blur(12px);
-  -webkit-backdrop-filter:blur(12px);
+  top: 0;
+  grid-template-columns: 52px minmax(0, 1fr) 52px;
+  min-height: calc(80px + env(safe-area-inset-top));
+  padding: calc(12px + env(safe-area-inset-top)) 0 10px;
+  border-bottom: 2px solid var(--ink);
+  background: color-mix(in srgb, var(--bg) 95%, transparent);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  position: sticky;
+  z-index: 30;
 }
-html[data-skin="ledger"] .nav-button {width:52px;border:1px solid var(--ink);background:transparent;color:var(--ink)}
-html[data-skin="ledger"] .month-button {align-items:flex-start;padding-inline:12px}
-html[data-skin="ledger"] .month-button small {color:var(--blue);font-size:9px;letter-spacing:.18em}
-html[data-skin="ledger"] .month-button strong {font-size:22px;font-weight:950;letter-spacing:-.04em}
 
-/* Target strip and status rail. */
-html[data-skin="ledger"] .targets-section {margin-top:12px;padding:0;border:2px solid var(--ink);background:var(--surface)}
+html[data-skin="ledger"] .nav-button {
+  width: 52px;
+  height: 48px;
+  border: 1px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
+}
+
+html[data-skin="ledger"] .month-button {
+  align-items: flex-start;
+  padding-inline: 14px;
+  background: transparent;
+  border: none;
+}
+
+html[data-skin="ledger"] .month-button small {
+  color: var(--ledger-action);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+html[data-skin="ledger"] .month-button small::before {
+  content: ":: ";
+  opacity: 0.7;
+}
+
+html[data-skin="ledger"] .month-button strong {
+  font-size: 23px;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--ink);
+}
+
+/* --- 4. Target Module (Operational Strip) --- */
+html[data-skin="ledger"] .targets-section {
+  margin-top: 12px;
+  padding: 0;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+}
+
 html[data-skin="ledger"] .targets-section[hidden] {display:none}
-html[data-skin="ledger"] .targets-header {align-items:center;margin:0;padding:12px;border-bottom:1px solid var(--ledger-rule)}
-html[data-skin="ledger"] .targets-header h2 {font-size:18px;letter-spacing:-.035em}
-html[data-skin="ledger"] .target-grid {display:grid;grid-template-columns:1fr 1fr;gap:0}
-html[data-skin="ledger"] .target-card {width:auto;padding:9px 12px;border:0;background:transparent}
-html[data-skin="ledger"] .target-card + .target-card {border-left:1px solid var(--ledger-rule)}
-html[data-skin="ledger"] .target-card span {font-size:9px;letter-spacing:.12em}
-html[data-skin="ledger"] .target-input {width:100%;height:38px;border:0;border-bottom:2px solid var(--ink);border-radius:0;background:transparent;text-align:right}
 
+html[data-skin="ledger"] .targets-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--ledger-rule);
+  background: var(--surface-2);
+}
+
+html[data-skin="ledger"] .targets-header h2 {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+html[data-skin="ledger"] .targets-header p {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 2px 0 0;
+  font-family: var(--font-mono);
+}
+
+html[data-skin="ledger"] .target-month {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  border: 1px solid var(--ledger-rule);
+  background: var(--surface);
+}
+
+html[data-skin="ledger"] .target-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+
+html[data-skin="ledger"] .target-card {
+  width: auto;
+  padding: 10px 14px;
+  border: 0;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+}
+
+html[data-skin="ledger"] .target-card + .target-card {
+  border-left: 1px solid var(--ledger-rule);
+}
+
+html[data-skin="ledger"] .target-card span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+html[data-skin="ledger"] .target-input {
+  width: 100%;
+  height: 42px;
+  border: 0;
+  border-bottom: 2px solid var(--ink);
+  background: transparent;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+html[data-skin="ledger"] .target-input:focus {
+  outline: none;
+  border-bottom-color: var(--focus);
+  background: var(--blue-soft);
+}
+
+/* --- 5. Action Status Rail (Heading Toolbar) --- */
 html[data-skin="ledger"] .list-heading {
-  align-items:center;
-  min-height:66px;
-  margin-top:12px;
-  padding:9px 10px;
-  border:2px solid var(--ink);
-  background:var(--ink);
-}
-html[data-skin="ledger"] .table-info p {margin:0;color:var(--ledger-action-text);font-size:12px;font-weight:750;line-height:1.45}
-html[data-skin="ledger"] .settings-fab {width:46px;height:46px;border:1px solid color-mix(in srgb,var(--ledger-action-text) 48%,transparent)}
-
-/* Dense horizontal workstation. Strong rules replace floating cards. */
-html[data-skin="ledger"] .horizontal-shell {margin-top:10px;border:2px solid var(--ink);background:var(--surface)}
-html[data-skin="ledger"] .horizontal-scroll {max-height:74svh;scrollbar-color:var(--ledger-action) var(--surface-2)}
-html[data-skin="ledger"] .horizontal-table {font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-html[data-skin="ledger"] .horizontal-table :is(th,td) {height:42px;border-color:var(--line)}
-html[data-skin="ledger"] .horizontal-table .group-head th {height:34px;background:var(--ledger-action);color:var(--ledger-action-text);font-family:Roboto,ui-sans-serif,system-ui,sans-serif;letter-spacing:.15em}
-html[data-skin="ledger"] .horizontal-table .column-head th {height:52px;border-bottom:2px solid var(--ink);background:var(--surface-2);font-size:9px;letter-spacing:.055em}
-html[data-skin="ledger"] .horizontal-table :is(th,td):nth-child(7),
-html[data-skin="ledger"] .horizontal-table :is(th,td):nth-child(12) {border-right:2px solid var(--ledger-rule)}
-html[data-skin="ledger"] .horizontal-table tbody tr:nth-child(even):not(.today-row) td {background:var(--surface-2)}
-html[data-skin="ledger"] .horizontal-table tbody tr:focus-within td {background:var(--blue-soft)}
-html[data-skin="ledger"] .horizontal-table tr.today-row td {background-image:none;background-color:var(--blue-soft)}
-html[data-skin="ledger"] .horizontal-table tr.today-row .sticky-day {background:var(--ledger-action);color:var(--ledger-action-text)}
-html[data-skin="ledger"] .horizontal-table .table-input {border:1px solid var(--ledger-rule);border-radius:0;background:var(--surface);color:var(--ink);font-family:inherit}
-html[data-skin="ledger"] .horizontal-table .table-input:focus {border-color:var(--focus);outline:2px solid var(--focus);outline-offset:-2px;box-shadow:none}
-
-/* Mobile records: the date is a mast, metrics become ruled rows. */
-html[data-skin="ledger"] .day-list {gap:14px;margin-top:10px}
-html[data-skin="ledger"] .day-card {border:2px solid var(--ink);border-top:6px solid var(--ledger-action);background:var(--surface)}
-html[data-skin="ledger"] .day-header {min-height:68px;border-bottom:1px solid var(--ink);background:transparent}
-html[data-skin="ledger"] .day-number {width:48px;height:48px;border-radius:0;background:var(--ledger-action);color:var(--ledger-action-text)}
-html[data-skin="ledger"] .day-date strong {font-size:15px;letter-spacing:-.025em}
-html[data-skin="ledger"] .today .today-chip {border:1px solid var(--ledger-action);border-radius:0;background:transparent;color:var(--blue)}
-html[data-skin="ledger"] .input-grid {gap:0;padding:0;border-bottom:1px solid var(--ink)}
-html[data-skin="ledger"] .input-box {padding:10px 12px;border:0;background:var(--surface)}
-html[data-skin="ledger"] .input-box + .input-box {border-left:1px solid var(--ledger-rule)}
-html[data-skin="ledger"] .input-box span {letter-spacing:.1em}
-html[data-skin="ledger"] .number-input {font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-html[data-skin="ledger"] .metrics-section {margin:0;padding:10px 12px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent}
-html[data-skin="ledger"] .metrics-section:last-child {border-bottom:0}
-html[data-skin="ledger"] .section-label {margin-bottom:6px;letter-spacing:.14em}
-html[data-skin="ledger"] .section-label::before {width:12px;height:3px;border-radius:0;background:var(--ledger-action)}
-html[data-skin="ledger"] .metric-grid {gap:0}
-html[data-skin="ledger"] .metric-item {min-height:40px;padding:7px 8px;border-width:1px 0 0;border-radius:0;background:transparent}
-html[data-skin="ledger"] .metric-item:nth-child(even) {border-left:1px solid var(--line)}
-html[data-skin="ledger"] .metric-value {font-family:ui-monospace,SFMono-Regular,Consolas,monospace}
-html[data-skin="ledger"] .metric-value:is(.positive,.negative) {border-radius:1px}
-
-/* Settings is a right-side command drawer on wide screens. */
-html[data-skin="ledger"] .settings-backdrop {backdrop-filter:none;-webkit-backdrop-filter:none}
-html[data-skin="ledger"] .settings-panel {border-radius:0;background:var(--surface)}
-html[data-skin="ledger"] .settings-header {border-bottom:2px solid var(--ink)}
-html[data-skin="ledger"] .sheet-handle {border-radius:0;background:var(--ledger-rule)}
-html[data-skin="ledger"] .setting-card {border-width:1px 0 0;background:transparent}
-html[data-skin="ledger"] .setting-card-icon {border:1px solid var(--line);border-radius:2px;background:var(--surface-2);color:var(--blue)}
-html[data-skin="ledger"] :is(.target-input,.auth-input,.theme-select,.report-store-setting input,#reportDate) {min-height:44px;border-color:var(--ledger-rule);border-radius:1px;background:var(--surface);color:var(--ink)}
-html[data-skin="ledger"] :is(button,input,select):focus-visible {outline:2px solid var(--focus);outline-offset:2px}
-
-@media (min-width:720px) {
-  html[data-skin="ledger"] .app {padding-inline:24px}
-  html[data-skin="ledger"] .targets-section {display:grid;grid-template-columns:minmax(260px,1fr) minmax(360px,1fr)}
-  html[data-skin="ledger"] .targets-header {border-right:1px solid var(--ledger-rule);border-bottom:0}
-  html[data-skin="ledger"] .day-list {grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  gap: 8px;
 }
 
-@media (min-width:1180px) {
-  html[data-skin="ledger"] .app {max-width:1440px;padding-inline:28px}
-  html[data-skin="ledger"] .month-header {grid-template-columns:64px minmax(0,1fr) 64px;padding-left:190px}
-  html[data-skin="ledger"] .month-header::before {content:"SF / DAILY OPERATIONS";position:absolute;left:0;bottom:19px;width:170px;color:var(--blue);font-size:10px;font-weight:900;letter-spacing:.16em}
-  html[data-skin="ledger"] .nav-button {width:64px}
-  html[data-skin="ledger"] .month-button strong {font-size:28px}
-  html[data-skin="ledger"] .day-list {grid-template-columns:1fr}
+html[data-skin="ledger"] .table-info p {
+  margin: 0;
+  color: var(--ledger-action-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+
+html[data-skin="ledger"] .save-state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border: 1px solid color-mix(in srgb, var(--ledger-action-text) 30%, transparent);
+  color: var(--ledger-action-text);
+  background: transparent;
+}
+
+html[data-skin="ledger"] .save-state::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+}
+
+html[data-skin="ledger"] .save-state.saving::before {
+  background: var(--orange);
+  animation: ledger-blink 0.8s infinite ease-in-out;
+}
+
+@keyframes ledger-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+html[data-skin="ledger"] .settings-fab {
+  width: 42px;
+  height: 42px;
+  min-width: 42px;
+  border: 1px solid color-mix(in srgb, var(--ledger-action-text) 50%, transparent);
+  background: var(--ledger-action);
+  color: var(--ledger-action-text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+html[data-skin="ledger"] .settings-fab svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+/* --- 6. Horizontal Workstation (Dense Financial Matrix) --- */
+html[data-skin="ledger"] .horizontal-shell {
+  margin-top: 10px;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+}
+
+html[data-skin="ledger"] .horizontal-scroll {
+  max-height: 74svh;
+  scrollbar-color: var(--ledger-action) var(--surface-2);
+  scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
+}
+
+html[data-skin="ledger"] .horizontal-table {
+  font-family: var(--font-mono);
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+html[data-skin="ledger"] .horizontal-table :is(th, td) {
+  height: 40px;
+  border-color: var(--line);
+  border-style: solid;
+  border-width: 0 1px 1px 0;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  vertical-align: middle;
+}
+
+/* Category Master Headers */
+html[data-skin="ledger"] .horizontal-table .group-head th {
+  height: 32px;
+  background: var(--ink);
+  color: var(--ledger-action-text);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ledger-rule);
+  text-align: center;
+}
+
+html[data-skin="ledger"] .horizontal-table .group-head th.group-sales {
+  background: var(--ink);
+}
+
+html[data-skin="ledger"] .horizontal-table .group-head th.group-struk {
+  background: color-mix(in srgb, var(--ink) 85%, var(--ledger-action));
+  border-left: 2px solid var(--ledger-rule);
+}
+
+html[data-skin="ledger"] .horizontal-table .group-head th.group-apc {
+  background: color-mix(in srgb, var(--ink) 70%, var(--blue));
+  border-left: 2px solid var(--ledger-rule);
+}
+
+/* Detail Column Sub-headers */
+html[data-skin="ledger"] .horizontal-table .column-head th {
+  height: 48px;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-bottom: 2px solid var(--ink);
+}
+
+html[data-skin="ledger"] .horizontal-table .column-head th small {
+  display: block;
+  font-size: 8px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+}
+
+/* Sticky First Column ("No") */
+html[data-skin="ledger"] .horizontal-table .sticky-day {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: var(--surface-2);
+  color: var(--ink);
+  font-weight: 800;
+  text-align: center;
+  border-right: 2px solid var(--ink);
+}
+
+/* Hard Vertical Borders Separating Metric Groups */
+html[data-skin="ledger"] .horizontal-table :is(th, td):nth-child(7),
+html[data-skin="ledger"] .horizontal-table :is(th, td):nth-child(12) {
+  border-right: 2px solid var(--ledger-rule);
+}
+
+/* Zebra Stripes & Focus Interaction */
+html[data-skin="ledger"] .horizontal-table tbody tr:nth-child(even):not(.today-row) td {
+  background: var(--surface-2);
+}
+
+html[data-skin="ledger"] .horizontal-table tbody tr:nth-child(even):not(.today-row) .sticky-day {
+  background: var(--surface-2);
+}
+
+html[data-skin="ledger"] .horizontal-table tbody tr:focus-within td {
+  background: var(--blue-soft) !important;
+}
+
+html[data-skin="ledger"] .horizontal-table tbody tr:focus-within .sticky-day {
+  background: var(--ledger-action) !important;
+  color: var(--ledger-action-text) !important;
+}
+
+/* Today Row Telemetry Marker */
+html[data-skin="ledger"] .horizontal-table tr.today-row td {
+  background-image: none;
+  background-color: var(--green-soft);
+  font-weight: 600;
+}
+
+html[data-skin="ledger"] .horizontal-table tr.today-row .sticky-day {
+  background: var(--ledger-action);
+  color: var(--ledger-action-text);
+  font-weight: 900;
+}
+
+/* High-Speed Tabular Input Cells */
+html[data-skin="ledger"] .horizontal-table .table-input {
+  width: 100%;
+  height: 32px;
+  border: 1px solid var(--ledger-rule);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  padding: 2px 6px;
+}
+
+html[data-skin="ledger"] .horizontal-table .table-input:focus {
+  border-color: var(--focus);
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+  background: var(--surface);
+}
+
+/* --- 7. Mobile Day Cassettes (Vertical Cards) --- */
+html[data-skin="ledger"] .day-list {
+  display: grid;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+html[data-skin="ledger"] .day-card {
+  border: 2px solid var(--ink);
+  border-top: 5px solid var(--ledger-action);
+  background: var(--surface);
+}
+
+html[data-skin="ledger"] .day-card.today {
+  border-color: var(--ink);
+  border-top: 5px solid var(--positive);
+  background: var(--surface);
+}
+
+html[data-skin="ledger"] .day-header {
+  display: flex;
+  align-items: center;
+  min-height: 60px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ink);
+  background: var(--surface-2);
+  gap: 12px;
+}
+
+html[data-skin="ledger"] .day-number {
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  background: var(--ledger-action);
+  color: var(--ledger-action-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 900;
+}
+
+html[data-skin="ledger"] .day-number strong {
+  font-size: 18px;
+  line-height: 1;
+}
+
+html[data-skin="ledger"] .day-date {
+  display: flex;
+  flex-direction: column;
+}
+
+html[data-skin="ledger"] .day-date strong {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+
+html[data-skin="ledger"] .today .today-chip {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 2px 6px;
+  border: 1px solid var(--ledger-action);
+  background: var(--green-soft);
+  color: var(--positive);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Input Grid Slots */
+html[data-skin="ledger"] .input-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0;
+  border-bottom: 1px solid var(--ink);
+}
+
+html[data-skin="ledger"] .input-box {
+  padding: 10px 12px;
+  border: 0;
+  background: var(--surface);
+}
+
+html[data-skin="ledger"] .input-box + .input-box {
+  border-left: 1px solid var(--ledger-rule);
+}
+
+html[data-skin="ledger"] .input-box span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 4px;
+}
+
+html[data-skin="ledger"] .number-input {
+  width: 100%;
+  height: 38px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  padding: 4px 8px;
+  text-align: right;
+}
+
+html[data-skin="ledger"] .number-input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: -1px;
+  background: var(--surface);
+}
+
+/* Telemetry Section Dividers */
+html[data-skin="ledger"] .metrics-section {
+  margin: 0;
+  padding: 10px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+
+html[data-skin="ledger"] .metrics-section:last-child {
+  border-bottom: 0;
+}
+
+html[data-skin="ledger"] .section-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+html[data-skin="ledger"] .section-label::before {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background: var(--ledger-action);
+}
+
+/* Metric Data Items */
+html[data-skin="ledger"] .metric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1px solid var(--line);
+}
+
+html[data-skin="ledger"] .metric-item {
+  min-height: 46px;
+  padding: 6px 10px;
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: var(--line);
+  background: var(--surface);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+html[data-skin="ledger"] .metric-item:nth-child(even) {
+  border-left: 1px solid var(--line);
+}
+
+html[data-skin="ledger"] .metric-item:nth-last-child(-n+2) {
+  border-bottom: 0;
+}
+
+html[data-skin="ledger"] .metric-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+html[data-skin="ledger"] .metric-value {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  margin-top: 2px;
+}
+
+html[data-skin="ledger"] .metric-value.positive {
+  color: var(--positive);
+  font-weight: 900;
+}
+
+html[data-skin="ledger"] .metric-value.negative {
+  color: var(--negative);
+  font-weight: 900;
+}
+
+html[data-skin="ledger"] .metric-value.empty {
+  color: var(--muted);
+  opacity: 0.6;
+}
+
+/* --- 8. Settings Drawer Module --- */
+html[data-skin="ledger"] .settings-overlay {
+  background: var(--scrim);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+html[data-skin="ledger"] .settings-backdrop {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html[data-skin="ledger"] .settings-panel {
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  color: var(--ink);
+}
+
+html[data-skin="ledger"] .settings-header {
+  border-bottom: 2px solid var(--ink);
+  background: var(--surface-2);
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+html[data-skin="ledger"] .settings-title-wrap h2 {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+html[data-skin="ledger"] .settings-header .icon-button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+html[data-skin="ledger"] .sheet-handle {
+  height: 4px;
+  width: 40px;
+  background: var(--ledger-rule);
+  margin: 8px auto 0;
+}
+
+html[data-skin="ledger"] .setting-card {
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: var(--line);
+  background: transparent;
+  padding: 14px 18px;
+}
+
+html[data-skin="ledger"] .setting-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+html[data-skin="ledger"] .setting-card-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  color: var(--ledger-action);
+}
+
+html[data-skin="ledger"] .setting-card-title h3 {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin: 0;
+}
+
+html[data-skin="ledger"] .setting-card-title p {
+  font-size: 11px;
+  color: var(--muted);
+  margin: 2px 0 0;
+}
+
+/* Orientation Switcher */
+html[data-skin="ledger"] .view-switch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--ink);
+  background: var(--surface-2);
+  padding: 2px;
+  gap: 2px;
+}
+
+html[data-skin="ledger"] .view-button {
+  min-height: 38px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+html[data-skin="ledger"] .view-button.active {
+  background: var(--ledger-action);
+  color: var(--ledger-action-text);
+}
+
+/* Input Fields inside Settings */
+html[data-skin="ledger"] :is(.target-input, .auth-input, .theme-select, .report-store-setting input, #reportDate, #changelogTitleInput) {
+  min-height: 44px;
+  border: 1px solid var(--ledger-rule);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 0 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+}
+
+html[data-skin="ledger"] textarea#changelogContentInput {
+  border: 1px solid var(--ledger-rule);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 8px 10px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  min-height: 80px;
+}
+
+html[data-skin="ledger"] .auth-input-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+html[data-skin="ledger"] .auth-input-row .auth-input {
+  flex: 1;
+}
+
+html[data-skin="ledger"] .auth-save {
+  min-height: 44px;
+  padding: 0 14px;
+  cursor: pointer;
+}
+
+html[data-skin="ledger"] .auth-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+/* Theme Chooser Row */
+html[data-skin="ledger"] .theme-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+html[data-skin="ledger"] .theme-copy {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+html[data-skin="ledger"] .theme-copy strong {
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+html[data-skin="ledger"] .theme-copy span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+}
+
+html[data-skin="ledger"] .theme-select {
+  margin-top: 6px;
+}
+
+html[data-skin="ledger"] .theme-toggle {
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+/* Telegram Backup & JSON */
+html[data-skin="ledger"] .telegram-state {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  margin-bottom: 10px;
+}
+
+html[data-skin="ledger"] .telegram-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--muted);
+}
+
+html[data-skin="ledger"] .telegram-dot[data-state="connected"] {
+  background: var(--green);
+}
+
+html[data-skin="ledger"] .telegram-state-copy strong {
+  font-size: 12px;
+  display: block;
+}
+
+html[data-skin="ledger"] .telegram-state-copy span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--muted);
+}
+
+html[data-skin="ledger"] .telegram-button {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+html[data-skin="ledger"] .backup-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+html[data-skin="ledger"] .import-button {
+  background: var(--surface-2);
+  border: 1px solid var(--ink);
+  color: var(--ink);
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* --- 9. Report Module Overhaul --- */
+html[data-skin="ledger"] .report-card {
+  margin: 20px auto;
+  max-width: 900px;
+  padding: 16px;
+  border: 2px solid var(--ink);
+  background: var(--surface);
+}
+
+html[data-skin="ledger"] .report-card h2 {
+  font-size: 16px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--ledger-rule);
+}
+
+html[data-skin="ledger"] .report-card h2::before {
+  content: ":: ";
+  color: var(--ledger-action);
+}
+
+html[data-skin="ledger"] .report-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+html[data-skin="ledger"] .report-actions label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+html[data-skin="ledger"] .report-output {
+  margin: 0;
+  padding: 14px;
+  border: 1px solid var(--ink);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+}
+
+/* --- 10. Changelog Dialog & Toast --- */
+html[data-skin="ledger"] .changelog-overlay {
+  background: var(--scrim);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+html[data-skin="ledger"] .changelog-dialog {
+  border: 2px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+  padding: 20px;
+  max-width: 520px;
+}
+
+html[data-skin="ledger"] .changelog-close {
+  border: 1px solid var(--ink);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+html[data-skin="ledger"] .changelog-dialog h2 {
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  margin: 0 0 4px;
+}
+
+html[data-skin="ledger"] #changelogIntro {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+html[data-skin="ledger"] .changelog-slide {
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+html[data-skin="ledger"] .changelog-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+html[data-skin="ledger"] .changelog-actions button {
+  min-height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--ink);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+html[data-skin="ledger"] .changelog-actions button.primary {
+  background: var(--ledger-action);
+  border-color: var(--ledger-action);
+  color: var(--ledger-action-text);
+}
+
+html[data-skin="ledger"] .toast {
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--ledger-action-text);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 10px 16px;
+}
+
+/* --- 11. Responsive Breakpoints --- */
+
+/* Tablet (>= 720px) */
+@media (min-width: 720px) {
+  html[data-skin="ledger"] .app {
+    padding-inline: 24px;
+  }
+  html[data-skin="ledger"] .targets-section {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) minmax(360px, 1fr);
+  }
+  html[data-skin="ledger"] .targets-header {
+    border-right: 1px solid var(--ledger-rule);
+    border-bottom: 0;
+  }
+  html[data-skin="ledger"] .day-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+/* Desktop Command Station (>= 1180px) */
+@media (min-width: 1180px) {
+  html[data-skin="ledger"] .app {
+    max-width: 1440px;
+    padding-inline: 28px;
+  }
+
+  html[data-skin="ledger"] .month-header {
+    grid-template-columns: 64px minmax(0, 1fr) 64px;
+    padding-left: 200px;
+  }
+
+  html[data-skin="ledger"] .month-header::before {
+    content: "SF / DAILY OPERATIONS :: TERMINAL V3";
+    position: absolute;
+    left: 0;
+    bottom: 20px;
+    width: 180px;
+    color: var(--ledger-action);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+  }
+
+  html[data-skin="ledger"] .nav-button {
+    width: 64px;
+  }
+
+  html[data-skin="ledger"] .month-button strong {
+    font-size: 28px;
+  }
+
+  /* Grid layout required by tests and desktop architecture */
+  html[data-skin="ledger"] .day-list {
+    grid-template-columns: 1fr;
+  }
+
   html[data-skin="ledger"] .day-card {display:grid;grid-template-columns:150px 210px repeat(3,minmax(0,1fr));border-top-width:2px}
-  html[data-skin="ledger"] .day-header {grid-row:1;flex-direction:column;align-items:flex-start;justify-content:center;border-right:1px solid var(--ink);border-bottom:0}
-  html[data-skin="ledger"] .day-number {width:100%;height:auto;align-items:flex-start;background:transparent;color:var(--ink)}
-  html[data-skin="ledger"] .day-number span {color:var(--muted)}
-  html[data-skin="ledger"] .day-number strong {font-size:34px;letter-spacing:-.05em}
-  html[data-skin="ledger"] .today .day-number {background:transparent;color:var(--blue)}
-  html[data-skin="ledger"] .day-date {margin-top:10px}
-  html[data-skin="ledger"] .input-grid {grid-template-columns:1fr;grid-row:1;border-right:1px solid var(--ink);border-bottom:0}
-  html[data-skin="ledger"] .input-box {display:flex;flex-direction:column;justify-content:center}
-  html[data-skin="ledger"] .input-box + .input-box {border-top:1px solid var(--line);border-left:0}
-  html[data-skin="ledger"] .metrics-section {grid-row:1;padding:12px;border-right:1px solid var(--line);border-bottom:0}
-  html[data-skin="ledger"] .metrics-section:last-child {border-right:0}
+
+  html[data-skin="ledger"] .day-header {
+    grid-row: 1;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    border-right: 1px solid var(--ink);
+    border-bottom: 0;
+  }
+
+  html[data-skin="ledger"] .day-number {
+    width: 100%;
+    height: auto;
+    align-items: flex-start;
+    background: transparent;
+    color: var(--ink);
+    padding: 0;
+  }
+
+  html[data-skin="ledger"] .day-number span {
+    color: var(--muted);
+  }
+
+  html[data-skin="ledger"] .day-number strong {
+    font-size: 34px;
+    letter-spacing: -0.05em;
+  }
+
+  html[data-skin="ledger"] .today .day-number {
+    background: transparent;
+    color: var(--positive);
+  }
+
+  html[data-skin="ledger"] .day-date {
+    margin-top: 8px;
+  }
+
+  html[data-skin="ledger"] .input-grid {
+    grid-template-columns: 1fr;
+    grid-row: 1;
+    border-right: 1px solid var(--ink);
+    border-bottom: 0;
+  }
+
+  html[data-skin="ledger"] .input-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  html[data-skin="ledger"] .input-box + .input-box {
+    border-top: 1px solid var(--line);
+    border-left: 0;
+  }
+
+  html[data-skin="ledger"] .metrics-section {
+    grid-row: 1;
+    padding: 12px;
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+  }
+
+  html[data-skin="ledger"] .metrics-section:last-child {
+    border-right: 0;
+  }
+
+  /* Right-Docked Command Drawer required by tests */
   html[data-skin="ledger"] .settings-overlay {align-items:stretch;justify-content:flex-end}
-  html[data-skin="ledger"] .settings-panel {max-width:480px;max-height:100dvh;border:0;border-left:2px solid var(--ink)}
-  html[data-skin="ledger"] .sheet-handle {display:none}
+
+  html[data-skin="ledger"] .settings-panel {
+    max-width: 480px;
+    max-height: 100dvh;
+    border: 0;
+    border-left: 2px solid var(--ink);
+  }
+
+  html[data-skin="ledger"] .sheet-handle {
+    display: none;
+  }
 }
 
-@media (hover:hover) and (pointer:fine) {
-  html[data-skin="ledger"] :is(.nav-button,.month-button,.icon-button,.import-button,.view-button:not(.active)):hover:not(:disabled) {background:var(--track);color:var(--blue)}
-  html[data-skin="ledger"] :is(.settings-fab,.auth-save,.export-button,.telegram-button,.report-actions button,.view-button.active):hover:not(:disabled) {filter:brightness(.9)}
-  html[data-skin="ledger"] .horizontal-table tbody tr:not(.today-row):not(:focus-within):hover td {background:var(--blue-soft)}
+/* --- 12. Hover & Interaction Optimizations (Desktop) --- */
+@media (hover: hover) and (pointer: fine) {
+  html[data-skin="ledger"] :is(.nav-button, .month-button, .icon-button, .import-button, .view-button:not(.active)):hover:not(:disabled) {
+    background: var(--surface-active);
+    color: var(--ink);
+  }
+
+  html[data-skin="ledger"] :is(
+    .settings-fab, .auth-save, .export-button, .telegram-button,
+    .report-actions button, .view-button.active, .changelog-actions button.primary,
+    #changelogSaveButton
+  ):hover:not(:disabled) {
+    background: var(--ledger-action-hover);
+    border-color: var(--ledger-action-hover);
+  }
+
+  html[data-skin="ledger"] .horizontal-table tbody tr:not(.today-row):not(:focus-within):hover td {
+    background: color-mix(in srgb, var(--blue-soft) 60%, transparent);
+  }
 }
-@media (prefers-reduced-motion:reduce) {
-  html[data-skin="ledger"] :is(button,.settings-panel,.switch-track,.switch-track::after) {animation:none;transition:none}
+
+/* --- 13. Reduced Motion Support --- */
+@media (prefers-reduced-motion: reduce) {
+  html[data-skin="ledger"] :is(button, .settings-panel, .switch-track, .switch-track::after) {
+    animation: none;
+    transition: none;
+  }
+  html[data-skin="ledger"] .save-state.saving::before {
+    animation: none;
+  }
 }
