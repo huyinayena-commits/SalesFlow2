@@ -7,7 +7,9 @@
   - `/app.js`
   - `/report.js`
 - Tes `tests/reliability.cjs` diperbarui agar memeriksa `public/app.js`.
-- Tidak ada framework, bundler, atau modul tambahan yang ditambahkan.
+- Tema 3 (Command Ledger) telah dihapus total (`public/ledger.css` dihapus, opsi dan stylesheet dilepas dari HTML dan app.js).
+- Aplikasi sekarang hanya memiliki Tema 1 (SalesFlow Klasik) dan Tema 2 (Monochrome).
+- Pengguna yang sebelumnya menyimpan setting Tema 3 otomatis fallback ke Tema 1.
 
 ## Verifikasi
 
@@ -28,7 +30,7 @@ PASS: syntax, exact template, date rollover, offline queue, edits during save.
 Commit dan push berhasil ke GitHub:
 
 ```text
-207f584 Overhaul Theme 3 (Command Ledger) layout and design
+9b779bb Remove Theme 3 (Command Ledger) completely
 ```
 
 Push ke `origin/main` selesai (`https://github.com/huyinayena-commits/SalesFlow2`).
