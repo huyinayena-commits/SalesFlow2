@@ -381,9 +381,9 @@ html[data-skin="luxe"] .save-state.saving::before {
 }
 
 html[data-skin="luxe"] .settings-fab {
-  width: 40px;
-  height: 40px;
-  min-width: 40px;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
@@ -952,7 +952,28 @@ html[data-skin="luxe"] .toast {
   font-size: 13px;
 }
 
-/* --- 11. Responsive Desktop Command Suite (>= 1180px) --- */
+/* --- 11. Responsive Breakpoints --- */
+@media (min-width: 720px) {
+  html[data-skin="luxe"] .app {
+    padding-inline: 24px;
+  }
+  html[data-skin="luxe"] .targets-section {
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) minmax(360px, 1fr);
+  }
+  html[data-skin="luxe"] .targets-header {
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+    margin-bottom: 0;
+    padding-right: 18px;
+  }
+  html[data-skin="luxe"] .day-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+  }
+}
+
+/* Desktop Command Suite (>= 1180px) */
 @media (min-width: 1180px) {
   html[data-skin="luxe"] .app {
     padding-inline: 32px;
