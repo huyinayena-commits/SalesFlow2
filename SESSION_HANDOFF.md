@@ -25,17 +25,13 @@ PASS: syntax, exact template, date rollover, offline queue, edits during save.
 
 ## Git
 
-Commit lokal sudah dibuat:
+Commit dan push berhasil ke GitHub:
 
 ```text
-f3361a2 Split frontend app script from HTML
+207f584 Overhaul Theme 3 (Command Ledger) layout and design
 ```
 
-Push ke GitHub belum berhasil karena environment belum memiliki kredensial GitHub:
-
-```text
-fatal: could not read Username for 'https://github.com'
-```
+Push ke `origin/main` selesai (`https://github.com/huyinayena-commits/SalesFlow2`).
 
 ## Deploy
 
