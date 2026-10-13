@@ -122,14 +122,14 @@ Terimakasih
       if(salesValue!==null)sales+=salesValue;
       if(strukValue!==null)struk+=strukValue;
       var hasSales=salesValue!==null,hasStruk=strukValue!==null,akmSales=hasSales?sales:null,akmStruk=hasStruk?struk:null,spd=akmSales!==null?akmSales/(i+1):null,std=akmStruk!==null?Math.floor(akmStruk/(i+1)):null;
-      rows.push({sales:salesValue,struk:strukValue,akmSales:hasSales?sales:null,akmStruk:hasStruk?struk:null,spd:spd,std:std,apc:hasSales&&hasStruk&&strukValue>0?salesValue/strukValue:null});
+      rows.push({sales:salesValue,struk:strukValue,akmSales:akmSales,akmStruk:akmStruk,spd:spd,std:std,apc:spd!==null&&std!==null&&std>0?spd/std:null,dailyApc:hasSales&&hasStruk&&strukValue>0?salesValue/strukValue:null});
     }
     return rows;
   }
   function lastRow(rows){for(var i=rows.length-1;i>=0;i-=1)if(rows[i].sales!==null||rows[i].struk!==null)return rows[i];return null}
   function buildValues(input){
     var now=getReportDate(),year=now.getFullYear(),month=now.getMonth(),data=reportMonth(keyFor(now)),current=rowsFor(year,month,data),last=current[now.getDate()-1]||null,values={TOKO:getStoreName(),TANGGAL:now.getDate()+' '+MONTH_NAMES[month]+' '+now.getFullYear()};
-    for(var i=0;i<31;i+=1){var row=current[i];values['A_'+(i+1)]=row&&(row.sales!==null||row.struk!==null)?[money(row.sales),row.struk===null?'':metric(row.struk),metricDecimal(row.apc)].join('_'):''}
+    for(var i=0;i<31;i+=1){var row=current[i];values['A_'+(i+1)]=row&&(row.sales!==null||row.struk!==null)?[money(row.sales),row.struk===null?'':metric(row.struk),metricDecimal(row.dailyApc)].join('_'):''}
     var previousDate=comparableDate(year,month-1,now.getDate()),previousData=reportMonth(keyFor(previousDate)),previous=rowsFor(previousDate.getFullYear(),previousDate.getMonth(),previousData),previousLast=previous[Math.min(now.getDate(),previous.length)-1]||null;
     var yearAgoDate=comparableDate(year-1,month,now.getDate()),yearAgoData=reportMonth(keyFor(yearAgoDate)),yearAgo=rowsFor(yearAgoDate.getFullYear(),yearAgoDate.getMonth(),yearAgoData),yearAgoLast=yearAgo[Math.min(yearAgoDate.getDate(),yearAgo.length)-1]||null;
     values.B_AKM_SALES=last?money(last.akmSales):'';values.C_AKM_STRUK=last?metric(last.akmStruk):'';
