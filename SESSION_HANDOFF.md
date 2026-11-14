@@ -2,6 +2,12 @@
 
 ## Perubahan yang sudah dilakukan
 
+- Tema 4 baru dibuat: **Apple Cupertino** (`public/cupertino.css`), bertema antarmuka autentik Apple Human Interface Guidelines (HIG):
+  - Liquid frosted glass & dynamic vibrancy (`backdrop-filter: blur(25px) saturate(190%)`).
+  - Tipografi San Francisco (-apple-system) dengan optical tracking dan tabular figures.
+  - Haptik & iOS spring physics (`transform: scale(0.965)` pada `:active` dengan `cubic-bezier(0.2, 0.8, 0.2, 1)`).
+  - Apple Segmented Control, iOS green toggle, dan kartu bento inset-grouped squircle (`border-radius: 20px`).
+  - True OLED black dark mode (`#000000`) dan target sentuh ramah mobile (44px touch targets).
 - Kolom input manual data pembanding tahun sebelumnya (Year-over-Year / YoY) ditambahkan pada bagian laporan (`public/report.js`).
   - Menyediakan input kolom: **SPD Tahun Lalu**, **STD Tahun Lalu**, dan **APC Tahun Lalu** (otomatis terhitung dari SPD/STD jika dikosongkan, atau dapat diisi manual).
   - Terintegrasi dengan tanggal laporan yang dipilih dan menampilkan label tanggal pembanding tahun lalu secara dinamis (misal `14 November 2025` untuk laporan `14 November 2026`).
