@@ -1,102 +1,106 @@
 /* ==========================================================================
    TEMA 4: APPLE CUPERTINO (iOS FROSTED GLASS & SF PRECISION)
-   Designed in strict accordance with the Apple Human Interface Guidelines (HIG):
+   Designed in strict accordance with Apple Human Interface Guidelines (HIG):
    - Liquid frosted glass & dynamic vibrancy (backdrop-filter: blur(25px))
+   - Restrained, professional Apple Dark Mode palette (deep OLED grays, no harsh neon)
    - Authentic San Francisco typography & tabular figures (-apple-system)
    - iOS physical spring response (active: scale(0.97) with cubic-bezier)
-   - Inset grouped squircle cards & segmented controls
-   - True OLED black dark mode & 44px touch targets
+   - Inset grouped squircle cards & native segmented controls
+   - 44px minimum touch targets and refined specular borders
    ========================================================================== */
 
 /* --- 1. Design Tokens & iOS Color System --- */
 html[data-skin="cupertino"] {
   color-scheme: light;
   --bg: #f2f2f7;
-  --bg-gradient: linear-gradient(180deg, #f2f2f7 0%, #e5e5ea 100%);
-  --surface: rgba(255, 255, 255, 0.85);
+  --surface: rgba(255, 255, 255, 0.88);
   --surface-solid: #ffffff;
   --surface-2: #f2f2f7;
+  --surface-inset: #e5e5ea;
   --surface-hover: #e5e5ea;
   --surface-active: #d1d1d6;
   --ink: #000000;
   --muted: #8e8e93;
-  --line: rgba(60, 60, 67, 0.14);
-  --line-strong: rgba(60, 60, 67, 0.28);
+  --line: rgba(60, 60, 67, 0.12);
+  --line-strong: rgba(60, 60, 67, 0.24);
 
-  /* iOS System Palette */
+  /* Apple System Colors (Light) */
   --apple-blue: #007aff;
   --apple-blue-hover: #0062cc;
-  --apple-blue-soft: rgba(0, 122, 255, 0.12);
+  --apple-blue-soft: rgba(0, 122, 255, 0.1);
   --apple-blue-gradient: linear-gradient(180deg, #007aff 0%, #0062cc 100%);
-  
+
   --blue: #007aff;
-  --blue-soft: rgba(0, 122, 255, 0.12);
+  --blue-soft: rgba(0, 122, 255, 0.1);
   --green: #34c759;
-  --green-soft: rgba(52, 199, 89, 0.12);
+  --green-soft: rgba(52, 199, 89, 0.1);
   --orange: #ff9500;
-  --orange-soft: rgba(255, 149, 0, 0.12);
+  --orange-soft: rgba(255, 149, 0, 0.1);
   --positive: #34c759;
-  --positive-soft: rgba(52, 199, 89, 0.12);
+  --positive-soft: rgba(52, 199, 89, 0.1);
   --negative: #ff3b30;
-  --negative-soft: rgba(255, 59, 48, 0.12);
+  --negative-soft: rgba(255, 59, 48, 0.1);
 
   --focus: #007aff;
   --track: #e5e5ea;
   --day-bg: rgba(255, 255, 255, 0.65);
-  --scrim: rgba(0, 0, 0, 0.38);
+  --scrim: rgba(0, 0, 0, 0.36);
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05), 0 1px 2px rgba(0, 0, 0, 0.03);
-  --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.04);
-  --shadow-lg: 0 16px 36px rgba(0, 0, 0, 0.12), 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 14px rgba(0, 0, 0, 0.06), 0 1px 3px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04);
 
   --radius-sm: 10px;
   --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 26px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
   --radius-pill: 9999px;
 
   --blur-glass: blur(25px) saturate(190%);
   --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, Consolas, monospace;
 }
 
+/* Apple Dark Mode: Pure, restrained, elegant.
+   No garish rainbow colors; deep neutrals, subtle rim highlights, and purposeful accent tinting. */
 html[data-theme="dark"][data-skin="cupertino"] {
   color-scheme: dark;
   --bg: #000000;
-  --bg-gradient: linear-gradient(180deg, #000000 0%, #121214 100%);
   --surface: rgba(28, 28, 30, 0.82);
   --surface-solid: #1c1c1e;
-  --surface-2: #2c2c2e;
-  --surface-hover: #3a3a3c;
-  --surface-active: #48484a;
+  --surface-2: #242426;
+  --surface-inset: #18181a;
+  --surface-hover: #2c2c2e;
+  --surface-active: #3a3a3c;
   --ink: #ffffff;
   --muted: #8e8e93;
-  --line: rgba(84, 84, 88, 0.36);
-  --line-strong: rgba(84, 84, 88, 0.58);
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.15);
 
+  /* Apple System Colors (Dark - calibrated, not neon) */
   --apple-blue: #0a84ff;
-  --apple-blue-hover: #409cff;
-  --apple-blue-soft: rgba(10, 132, 255, 0.2);
-  --apple-blue-gradient: linear-gradient(180deg, #0a84ff 0%, #0071e3 100%);
+  --apple-blue-hover: #2693ff;
+  --apple-blue-soft: rgba(10, 132, 255, 0.14);
+  --apple-blue-gradient: linear-gradient(180deg, #0a84ff 0%, #0066d6 100%);
 
   --blue: #0a84ff;
-  --blue-soft: rgba(10, 132, 255, 0.2);
+  --blue-soft: rgba(10, 132, 255, 0.14);
   --green: #30d158;
-  --green-soft: rgba(48, 209, 88, 0.2);
+  --green-soft: rgba(48, 209, 88, 0.14);
   --orange: #ff9f0a;
-  --orange-soft: rgba(255, 159, 10, 0.2);
+  --orange-soft: rgba(255, 159, 10, 0.14);
   --positive: #30d158;
-  --positive-soft: rgba(48, 209, 88, 0.2);
+  --positive-soft: rgba(48, 209, 88, 0.14);
   --negative: #ff453a;
-  --negative-soft: rgba(255, 69, 58, 0.2);
+  --negative-soft: rgba(255, 69, 58, 0.14);
 
   --focus: #0a84ff;
   --track: #2c2c2e;
-  --day-bg: rgba(28, 28, 30, 0.65);
-  --scrim: rgba(0, 0, 0, 0.75);
+  --day-bg: rgba(24, 24, 26, 0.6);
+  --scrim: rgba(0, 0, 0, 0.72);
 
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.65), 0 0 1px rgba(255, 255, 255, 0.12);
-  --shadow-lg: 0 18px 44px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.18);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.6);
+  --shadow-md: 0 6px 20px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 /* --- 2. Canvas Foundation & Typography --- */
@@ -139,7 +143,7 @@ html[data-skin="cupertino"] :is(.settings-fab, .auth-save, .export-button, .tele
   color: #ffffff;
   border: none;
   border-radius: var(--radius-pill);
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.28);
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
   font-weight: 600;
   letter-spacing: -0.01em;
 }
@@ -158,14 +162,14 @@ html[data-skin="cupertino"] .month-header {
   backdrop-filter: var(--blur-glass);
   -webkit-backdrop-filter: var(--blur-glass);
   border: 1px solid var(--line);
-  border-top: 1px solid rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
   margin-bottom: 16px;
 }
 
 html[data-theme="dark"][data-skin="cupertino"] .month-header {
-  border-top: 1px solid rgba(255, 255, 255, 0.16);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 html[data-skin="cupertino"] .nav-button {
@@ -254,11 +258,11 @@ html[data-skin="cupertino"] .target-card {
 }
 
 html[data-skin="cupertino"] .target-card span {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 html[data-skin="cupertino"] .target-input {
@@ -313,7 +317,20 @@ html[data-skin="cupertino"] .settings-fab {
   justify-content: center;
 }
 
-/* --- 7. Inset Grouped Table (Horizontal) --- */
+/* In dark mode, FABs use subtle dark glass with bright white iconography */
+html[data-theme="dark"][data-skin="cupertino"] .settings-fab {
+  background: var(--surface-solid);
+  border: 1px solid var(--line);
+  color: var(--ink);
+  box-shadow: var(--shadow-sm);
+}
+
+html[data-theme="dark"][data-skin="cupertino"] .settings-fab:active {
+  background: var(--surface-hover);
+}
+
+/* --- 7. Inset Grouped Table (Apple Numbers Style) ---
+   Clean, unified dark obsidian glass header. NO garish rainbow backgrounds! */
 html[data-skin="cupertino"] .horizontal-shell {
   background: var(--surface);
   backdrop-filter: var(--blur-glass);
@@ -330,30 +347,35 @@ html[data-skin="cupertino"] .horizontal-table {
   font-variant-numeric: tabular-nums;
 }
 
+/* Unified, sophisticated group head in both light & dark */
 html[data-skin="cupertino"] .horizontal-table .group-head th {
-  padding: 10px 12px;
+  padding: 10px 14px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
+  background: var(--surface-2);
+  color: var(--muted);
   border-bottom: 1px solid var(--line);
 }
 
+/* Subtle group head accents: clean, refined, non-glaring */
 html[data-skin="cupertino"] .horizontal-table .group-sales {
-  background: var(--apple-blue);
-  color: #ffffff;
+  color: var(--apple-blue);
+  border-top: 2px solid var(--apple-blue);
 }
 
 html[data-skin="cupertino"] .horizontal-table .group-struk {
-  background: var(--green);
-  color: #ffffff;
+  color: var(--green);
+  border-top: 2px solid var(--green);
 }
 
 html[data-skin="cupertino"] .horizontal-table .group-apc {
-  background: var(--orange);
-  color: #ffffff;
+  color: var(--orange);
+  border-top: 2px solid var(--orange);
 }
 
+/* Column headers: muted secondary typography */
 html[data-skin="cupertino"] .horizontal-table .column-head th {
   padding: 8px 10px;
   background: var(--surface-2);
@@ -364,11 +386,19 @@ html[data-skin="cupertino"] .horizontal-table .column-head th {
   white-space: nowrap;
 }
 
+html[data-skin="cupertino"] .horizontal-table .column-head th small {
+  display: block;
+  font-size: 9px;
+  font-weight: 500;
+  opacity: 0.75;
+}
+
 html[data-skin="cupertino"] .horizontal-table td {
   padding: 8px 10px;
   border-bottom: 1px solid var(--line);
   font-size: 13px;
   font-weight: 500;
+  color: var(--ink);
 }
 
 html[data-skin="cupertino"] .horizontal-table .sticky-day {
@@ -380,8 +410,13 @@ html[data-skin="cupertino"] .horizontal-table .sticky-day {
   border-right: 1px solid var(--line);
 }
 
+/* Today Row: Delicate, comfortable highlight (no glaring wash) */
 html[data-skin="cupertino"] .horizontal-table tr.today-row td {
   background: var(--apple-blue-soft);
+}
+
+html[data-theme="dark"][data-skin="cupertino"] .horizontal-table tr.today-row td {
+  background: rgba(255, 255, 255, 0.04);
 }
 
 html[data-skin="cupertino"] .horizontal-table tr.today-row .sticky-day {
@@ -389,8 +424,9 @@ html[data-skin="cupertino"] .horizontal-table tr.today-row .sticky-day {
   color: #ffffff;
 }
 
+/* Table Input: Subtle inset surface with smooth focus */
 html[data-skin="cupertino"] .table-input {
-  height: 34px;
+  height: 32px;
   padding: 0 8px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--line);
@@ -402,6 +438,11 @@ html[data-skin="cupertino"] .table-input {
   width: 100%;
 }
 
+html[data-theme="dark"][data-skin="cupertino"] .table-input {
+  background: var(--surface-inset);
+  border-color: var(--line);
+}
+
 html[data-skin="cupertino"] .table-input:focus {
   border-color: var(--apple-blue);
   box-shadow: 0 0 0 2px var(--apple-blue-soft);
@@ -411,6 +452,7 @@ html[data-skin="cupertino"] .table-input:focus {
 html[data-skin="cupertino"] .metric-value {
   font-weight: 600;
   font-variant-numeric: tabular-nums;
+  color: var(--ink);
 }
 
 html[data-skin="cupertino"] .metric-value.growth-pos {
@@ -436,7 +478,7 @@ html[data-skin="cupertino"] .day-card {
 
 html[data-skin="cupertino"] .day-card.today {
   border-color: var(--apple-blue);
-  box-shadow: 0 0 0 2px var(--apple-blue-soft), var(--shadow-md);
+  box-shadow: 0 0 0 1px var(--apple-blue), var(--shadow-md);
 }
 
 html[data-skin="cupertino"] .day-header {
@@ -484,6 +526,7 @@ html[data-skin="cupertino"] .day-date strong {
   font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.015em;
+  color: var(--ink);
 }
 
 html[data-skin="cupertino"] .day-date small {
@@ -494,7 +537,7 @@ html[data-skin="cupertino"] .day-date small {
 html[data-skin="cupertino"] .today-chip {
   margin-left: auto;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--radius-pill);
   background: var(--apple-blue);
@@ -508,11 +551,16 @@ html[data-skin="cupertino"] .input-box {
   padding: 10px 12px;
 }
 
+html[data-theme="dark"][data-skin="cupertino"] .input-box {
+  background: var(--surface-inset);
+}
+
 html[data-skin="cupertino"] .input-box span {
   font-size: 11px;
   font-weight: 600;
   color: var(--muted);
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 html[data-skin="cupertino"] .input-box input {
@@ -529,11 +577,16 @@ html[data-skin="cupertino"] .input-box input {
   box-sizing: border-box;
 }
 
+html[data-theme="dark"][data-skin="cupertino"] .input-box input {
+  background: var(--surface-2);
+}
+
 html[data-skin="cupertino"] .input-box input:focus {
   border-color: var(--apple-blue);
   box-shadow: 0 0 0 2px var(--apple-blue-soft);
 }
 
+/* Metric Sections: Restrained, sophisticated dark inset boxes */
 html[data-skin="cupertino"] .metrics-section {
   background: var(--surface-2);
   border: 1px solid var(--line);
@@ -542,15 +595,20 @@ html[data-skin="cupertino"] .metrics-section {
   margin-top: 10px;
 }
 
+html[data-theme="dark"][data-skin="cupertino"] .metrics-section {
+  background: var(--surface-inset);
+}
+
 html[data-skin="cupertino"] .section-label {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   margin-bottom: 8px;
   color: var(--muted);
 }
 
+/* Subtle, sophisticated tint on category titles (not whole colored sections) */
 html[data-skin="cupertino"] .metrics-section.sales .section-label { color: var(--apple-blue); }
 html[data-skin="cupertino"] .metrics-section.struk .section-label { color: var(--green); }
 html[data-skin="cupertino"] .metrics-section.apc .section-label { color: var(--orange); }
@@ -560,6 +618,10 @@ html[data-skin="cupertino"] .metric-box {
   border: 1px solid var(--line);
   border-radius: var(--radius-sm);
   padding: 8px 10px;
+}
+
+html[data-theme="dark"][data-skin="cupertino"] .metric-box {
+  background: var(--surface-2);
 }
 
 html[data-skin="cupertino"] .metric-box span {
@@ -572,13 +634,14 @@ html[data-skin="cupertino"] .metric-box strong {
   font-size: 13px;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
+  color: var(--ink);
 }
 
 /* --- 9. Modal Command Drawer (Settings) --- */
 html[data-skin="cupertino"] .settings-overlay {
   background: var(--scrim);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 html[data-skin="cupertino"] .settings-panel {
@@ -611,10 +674,15 @@ html[data-skin="cupertino"] .setting-card {
   margin-bottom: 12px;
 }
 
+html[data-theme="dark"][data-skin="cupertino"] .setting-card {
+  background: var(--surface-inset);
+}
+
 html[data-skin="cupertino"] .setting-card-title h3 {
   font-size: 14px;
   font-weight: 700;
   letter-spacing: -0.01em;
+  color: var(--ink);
 }
 
 /* Apple Segmented Control (View Switch) */
@@ -644,8 +712,9 @@ html[data-skin="cupertino"] .view-button.active {
 }
 
 html[data-theme="dark"][data-skin="cupertino"] .view-button.active {
-  background: #636366;
+  background: #3a3a3c;
   color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
 }
 
 /* iOS Controls & Toggles */
@@ -676,6 +745,10 @@ html[data-skin="cupertino"] .report-store-setting input {
   font-weight: 500;
   width: 100%;
   box-sizing: border-box;
+}
+
+html[data-theme="dark"][data-skin="cupertino"] :is(.auth-input, .theme-select, .report-store-setting input) {
+  background: var(--surface-2);
 }
 
 /* --- 10. Prestige Report Card & YoY Section --- */
@@ -711,12 +784,20 @@ html[data-skin="cupertino"] #reportDate {
   font-weight: 600;
 }
 
+html[data-theme="dark"][data-skin="cupertino"] #reportDate {
+  background: var(--surface-inset);
+}
+
 html[data-skin="cupertino"] .report-yoy-box {
   background: var(--surface-2);
   border: 1px solid var(--line);
   border-radius: var(--radius-lg);
   padding: 14px 16px;
   margin-bottom: 14px;
+}
+
+html[data-theme="dark"][data-skin="cupertino"] .report-yoy-box {
+  background: var(--surface-inset);
 }
 
 html[data-skin="cupertino"] .report-yoy-date {
@@ -741,6 +822,10 @@ html[data-skin="cupertino"] .report-yoy-field input {
   padding: 0 12px;
 }
 
+html[data-theme="dark"][data-skin="cupertino"] .report-yoy-field input {
+  background: var(--surface-2);
+}
+
 html[data-skin="cupertino"] .report-yoy-field input:focus {
   border-color: var(--apple-blue);
   box-shadow: 0 0 0 3px var(--apple-blue-soft);
@@ -755,6 +840,11 @@ html[data-skin="cupertino"] .report-output {
   font-size: 12.5px;
   line-height: 1.5;
   padding: 16px;
+}
+
+html[data-theme="dark"][data-skin="cupertino"] .report-output {
+  background: var(--surface-inset);
+  color: #ebebf5;
 }
 
 /* Toast Message Pill */
