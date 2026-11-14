@@ -2,11 +2,18 @@
 
 ## Perubahan yang sudah dilakukan
 
+- Kolom input manual data pembanding tahun sebelumnya (Year-over-Year / YoY) ditambahkan pada bagian laporan (`public/report.js`).
+  - Menyediakan input kolom: **SPD Tahun Lalu**, **STD Tahun Lalu**, dan **APC Tahun Lalu** (otomatis terhitung dari SPD/STD jika dikosongkan, atau dapat diisi manual).
+  - Terintegrasi dengan tanggal laporan yang dipilih dan menampilkan label tanggal pembanding tahun lalu secara dinamis (misal `14 November 2025` untuk laporan `14 November 2026`).
+  - Hasil input langsung diperhitungkan ke dalam laporan pada poin **M (Spd_std_apc tahun lalu)** dan menghitung persentase pertumbuhan pada poin **N (growth Spd_std_apc vs thun lalu)** secara real-time.
+  - Tersimpan secara persisten per tanggal laporan di `localStorage` (`salesflow2-yoy-data-v1`).
+  - Jika input manual kosong, sistem tetap dapat menggunakan data rekaman tahun lalu yang tersimpan di server/database jika ada.
+  - Tampilan box input responsif dan kompatibel dengan semua tema (Klasik, Monochrome, dan Luxe Royale).
 - JavaScript utama yang sebelumnya inline di `public/index.html` dipindahkan ke `public/app.js`.
 - `public/index.html` sekarang hanya memuat:
   - `/app.js`
   - `/report.js`
-- Tes `tests/reliability.cjs` diperbarui agar memeriksa `public/app.js`.
+- Tes `tests/reliability.cjs` diperbarui agar memeriksa `public/app.js` serta memvalidasi ketersediaan kolom input YoY.
 - Tema 3 baru dibuat: **Luxe Royale** (`public/luxe.css`), sebuah tema ultra-luxury obsidian & champagne gold dengan haptik interaktif spring physics, kartu konsentris bento, ambient glow, dan masthead liquid glass.
 - Prioritas `authType()` di `src/index.js` diperbaiki agar `adminSession` dicek lebih dahulu daripada `APP_PASSWORD`.
 - `public/app.js` diperbarui agar memanggil `refreshAdminAuth()` saat membuka menu Pengaturan.

@@ -28,6 +28,7 @@ assert.equal(context.reportDateSession.getFullYear(), 2020, 'Selection must surv
 context.calendarDay='old day';context.checkCalendarDay();
 assert.equal(context.reportDateSession.toDateString(), new Date().toDateString());
 assert(report.includes('yearAgo'), 'Year-over-year report data present');
+assert(report.includes('reportYoySpd') && report.includes('reportYoyStd') && report.includes('reportYoyApc'), 'YoY manual input fields present');
 const memory = new Map();
 const sync = {localStorage:{getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,v)}, navigator:{onLine:true}, apiHeaders:()=>({Authorization:'Bearer test'}), apiFetch:async()=>({ok:true}), connectionError:()=>'',viewYear:2026,viewMonth:8,monthKey:()=> '2026-09',markSaved(){},updateTableInfo(){},lastSavedAt:'12.00',elements:{saveState:{classList:{remove(){}}}}};
 vm.createContext(sync);
